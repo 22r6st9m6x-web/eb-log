@@ -3,466 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EmiBonnie Butterfly Eternal Archive | THE ULTIMATE VERSION</title>
-    
+    <title>EmiBonnie Memories Eternal - Pro Max</title>
     <style>
-        /* ============================================================
-           1. 視覺系統與全域變數 (Global System Variables)
-           ============================================================ */
         :root {
-            --emi-primary: #f37021;
-            --emi-gradient: linear-gradient(135deg, #f37021, #ff8c4b);
-            --bonnie-primary: #662d91;
-            --bonnie-gradient: linear-gradient(135deg, #662d91, #8e54bd);
-            --any-accent: #ff85a2;
-            --glass-bg: rgba(255, 255, 255, 0.96);
-            --border-light: 1px solid rgba(0,0,0,0.06);
-            --shadow-float: 0 15px 45px rgba(0,0,0,0.1);
-            --shadow-inset: inset 0 2px 8px rgba(0,0,0,0.05);
-            --radius-main: 25px;
-            --radius-round: 50px;
-            --transition-main: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --emi: #f37021; --bonnie: #662d91; --any: #ff85a2;
+            --eb: linear-gradient(135deg, #f37021, #662d91);
+            --eba: linear-gradient(135deg, #f37021, #662d91, #ff85a2);
+            --grad: linear-gradient(135deg, #f37021, #662d91);
+            --glass: rgba(255, 255, 255, 0.94);
         }
 
-        /* ============================================================
-           2. 基礎佈局與重置 (Base Layout & Reset)
-           ============================================================ */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif; color: #333; }
         
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #ffffff; color: #333333;
-            font-family: "PingFang TC", "Hiragino Sans GB", "Microsoft JhengHei", sans-serif;
-            overflow: hidden; /* 由分頁自行處理捲動 */
-        }
+        /* 視覺品牌層 */
+        .bg-overlay { position: fixed; inset: 0; z-index: 0; background: radial-gradient(circle at 20% 20%, rgba(243, 112, 33, 0.05) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(102, 45, 145, 0.05) 0%, transparent 40%); }
+        .butterfly-bg { position: absolute; font-size: 20px; opacity: 0.18; pointer-events: none; transition: 0.3s; }
 
-        /* 背景迷霧裝飾 */
-        .ambient-glow {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background: radial-gradient(circle at 15% 15%, rgba(243,112,33,0.08), transparent 40%),
-                        radial-gradient(circle at 85% 85%, rgba(102,45,145,0.08), transparent 40%);
-            filter: blur(40px);
-        }
-
-        /* 靜止蝴蝶裝飾組件 - 全展開 CSS */
-        .butterfly-asset { position: absolute; z-index: 1; opacity: 0.85; pointer-events: none; }
-        .wing-l, .wing-r {
-            position: absolute; width: 30px; height: 42px;
-            background: linear-gradient(135deg, var(--emi-primary), var(--bonnie-primary));
-            border-radius: 50% 60% 10% 60%;
-            box-shadow: inset -3px -3px 10px rgba(0,0,0,0.15);
-            border: 0.5px solid rgba(255,255,255,0.3);
-        }
-        .wing-r { left: 28px; border-radius: 60% 50% 60% 10%; transform: scaleX(-1); }
-        .b-body { position: absolute; left: 26px; top: 15px; width: 6px; height: 26px; background: #333; border-radius: 10px; }
-
-        /* ============================================================
-           3. 主畫面 D-Day 與導覽 (Navigation Dock)
-           ============================================================ */
-        .hero-view {
-            position: fixed; inset: 0; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 5;
-            transition: var(--transition-main);
-        }
-        .main-logo {
-            font-size: 5rem; font-weight: 900; background: linear-gradient(135deg, var(--emi-primary), var(--bonnie-primary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 40px; letter-spacing: -3px;
-        }
-        .dday-container { display: flex; gap: 35px; }
+        /* 首頁四邊圓弧看板 */
+        .home-hero { position: fixed; top: 18%; width: 100%; text-align: center; z-index: 1; padding: 0 20px; }
+        .main-title { font-size: 4rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 40px 0; letter-spacing: -1px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.05)); }
+        .dday-box { display: flex; justify-content: center; gap: 20px; }
         .dday-item {
-            background: var(--glass-bg); padding: 35px 50px; border-radius: var(--radius-main);
-            box-shadow: var(--shadow-float); border: var(--border-light); text-align: center;
-            cursor: pointer; transition: 0.3s;
-        }
-        .dday-item:hover { transform: translateY(-10px); }
-        .dday-val { font-size: 3.5rem; font-weight: 900; color: var(--emi-primary); }
-
-        .nav-dock {
-            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; width: 90%; max-width: 750px;
-            background: rgba(255,255,255,0.92); backdrop-filter: blur(25px);
-            border-radius: var(--radius-round); padding: 12px 20px;
-            display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.4);
-        }
-        .nav-link { 
-            color: #888; font-weight: 800; font-size: 0.9rem; cursor: pointer; padding: 10px; 
-            transition: 0.3s; position: relative;
-        }
-        .nav-link.active { color: var(--emi-primary); transform: scale(1.1); }
-        .nav-link.active::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--emi-primary); border-radius: 50%; }
-
-        /* ============================================================
-           4. 模態分頁系統 (Page Overlay System)
-           ============================================================ */
-        .overlay-p {
-            position: fixed; inset: 0; background: #ffffff; z-index: 500;
-            transform: translateY(100%); transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-            overflow-y: auto; padding-bottom: 150px;
-        }
-        .overlay-p.active { transform: translateY(0); }
-        .page-header {
-            position: sticky; top: 0; background: #fff; padding: 30px 40px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 100;
-            border-bottom: 1px solid #f0f0f0;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); padding: 25px 30px;
+            border-radius: 20px 60px 20px 60px; /* 特色四邊圓弧 */
+            border: 2px solid transparent;
+            background-image: linear-gradient(white, white), var(--grad);
+            background-origin: border-box; background-clip: padding-box, border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            min-width: 140px;
         }
 
-        /* 交互編輯器樣式 */
-        .editor-zone { 
-            background: #f9f9f9; border: 2.5px dashed #ddd; border-radius: 20px;
-            padding: 25px; margin: 20px; display: none; 
-        }
-        .input-ui { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #eee; font-size: 1rem; }
-        .btn-ui { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--emi-primary), var(--bonnie-primary)); color: #fff; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(243,112,33,0.2); }
+        /* 導航控制 */
+        .nav-container { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 92%; max-width: 650px; }
+        .main-nav { background: var(--glass); padding: 10px; border-radius: 40px; backdrop-filter: blur(30px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; border: 1px solid rgba(255,255,255,0.8); }
+        .main-nav::-webkit-scrollbar { display: none; }
+        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 800; color: #666; padding: 12px 18px; flex-shrink: 0; transition: 0.3s; }
+        .nav-btn.active-tab { color: var(--emi); transform: scale(1.1); }
 
-        /* ============================================================
-           5. 模組專屬樣式 (Module Styles)
-           ============================================================ */
-        /* 作品集拍立得 */
-        .polaroid-grid { display: flex; flex-wrap: wrap; gap: 20px; padding: 30px; justify-content: center; }
-        .polaroid-card {
-            background: #fff; width: calc(50% - 20px); max-width: 260px; padding: 12px 12px 40px 12px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.06); border: 1px solid #eee; position: relative;
-            transform: rotate(var(--r)); transition: 0.4s;
-        }
-        .polaroid-card:hover { transform: rotate(0) translateY(-10px) scale(1.05); z-index: 50; }
-        .polaroid-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-        .del-x { position: absolute; top: -10px; right: -10px; width: 32px; height: 32px; background: #ff4757; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,0,0.3); border: 2px solid #fff; }
+        /* 全能內容模態框 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); overflow-y: auto; padding-bottom: 150px; }
+        .modal.active { transform: translateY(0); }
+        .header { position: sticky; top: 0; background: rgba(255,255,255,0.98); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #f0f0f0; backdrop-filter: blur(10px); }
+        .m-title { font-size: 1.4rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* 珍藏館瀑布流 */
-        .masonry-view { column-count: 2; column-gap: 15px; padding: 20px; }
-        .masonry-item { break-inside: avoid; margin-bottom: 15px; border-radius: 15px; overflow: hidden; background: #fff; border: 1px solid #eee; position: relative; }
-        .masonry-item img { width: 100%; display: block; }
+        /* 行程與標籤 (包含 Any 粉色) */
+        .cal-ctrl { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #fbfbfb; margin: 15px; border-radius: 20px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: #eee; margin: 0 15px; border-radius: 20px; overflow: hidden; border: 2px solid #eee; }
+        .cal-day { background: #fff; min-height: 100px; padding: 10px; font-size: 0.8rem; position: relative; cursor: pointer; }
+        .cal-day:active { background: #f0f0f0; }
+        .ev-tag { font-size: 0.6rem; padding: 3px 6px; border-radius: 6px; color: #fff; margin-top: 3px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+        .tag-emi { background: var(--emi); } .tag-bonnie { background: var(--bonnie); } .tag-any { background: var(--any); }
+        .tag-emibonnie { background: var(--eb); } .tag-emibonnieany { background: var(--eba); }
 
-        /* 軌跡錄階梯 */
-        .ladder-view { position: relative; padding: 40px 20px; }
-        .ladder-view::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #eee; transform: translateX(-50%); }
-        .ladder-step { width: 45%; margin-bottom: 40px; padding: 20px; background: #fff; border-radius: 15px; box-shadow: var(--shadow-float); position: relative; }
-        .ladder-step.L { margin-left: 0; text-align: right; border-right: 5px solid var(--emi-primary); }
-        .ladder-step.R { margin-left: 55%; text-align: left; border-left: 5px solid var(--bonnie-primary); }
+        /* 列表展示內容 (作品/收藏) */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .item-card { background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid #eee; box-shadow: 0 8px 20px rgba(0,0,0,0.04); transition: 0.3s; }
+        .item-card:active { transform: scale(0.96); }
+        .item-card img { width: 100%; height: 160px; object-fit: cover; background: #f5f5f5; }
+        .item-info { padding: 15px; }
+        .item-cat { font-size: 0.7rem; font-weight: 800; color: var(--emi); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .item-n { font-size: 1rem; font-weight: 800; color: #222; }
 
-        /* 3D 日記翻頁 */
-        .diary-page { background: #fff; margin: 20px; padding: 30px; border-left: 12px solid var(--emi-primary); border-radius: 0 20px 20px 0; box-shadow: 10px 10px 30px rgba(0,0,0,0.03); transform-origin: left center; animation: pageIn 0.8s ease-out; }
-        @keyframes pageIn { from { transform: perspective(1000px) rotateY(-30deg); opacity: 0; } to { transform: perspective(1000px) rotateY(0deg); opacity: 1; } }
+        /* 管理面板 */
+        .adm-card { background: #f9f9f9; padding: 25px; border-radius: 25px; margin: 15px; border: 1px solid #eee; }
+        .btn-action { background: var(--grad); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: 800; font-size: 1rem; margin-top: 10px; box-shadow: 0 10px 20px rgba(243, 112, 33, 0.2); }
+        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; font-size: 1rem; background: #fff; }
+
+        /* 彈窗細節 */
+        #day-pop { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 2000; padding: 30px; border-radius: 35px 35px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.15); display: none; }
+        .pop-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8f8f8; border-radius: 12px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="ambient-glow"></div>
-    
-    <div class="butterfly-asset" style="top:15%; left:10%;">
-        <div class="wing-l"></div><div class="wing-r"></div><div class="b-body"></div>
-    </div>
-    <div class="butterfly-asset" style="bottom:20%; right:15%; transform: rotate(-20deg) scale(0.8);">
-        <div class="wing-l" style="background:var(--bonnie-gradient)"></div>
-        <div class="wing-r" style="background:var(--bonnie-gradient)"></div>
-        <div class="b-body"></div>
-    </div>
+<div class="bg-overlay" id="butterfly-layer"></div>
 
-    <main class="hero-view" id="view-home">
-        <h1 class="main-logo">EmiBonnie</h1>
-        <div class="dday-container">
-            <div class="dday-item" onclick="logic_SetDDay('born')">
-                <div style="font-size:0.8rem; color:#aaa; font-weight:800; letter-spacing:2px;">蝴蝶誕生</div>
-                <div id="out-born" class="dday-val">0</div>
-            </div>
-            <div class="dday-item" onclick="logic_SetDDay('meet')">
-                <div style="font-size:0.8rem; color:#aaa; font-weight:800; letter-spacing:2px;">與你相遇</div>
-                <div id="out-meet" class="dday-val" style="color:var(--bonnie-primary)">0</div>
-            </div>
+<div class="home-hero">
+    <h1 class="main-title">EmiBonnie</h1>
+    <div class="dday-box">
+        <div class="dday-item">
+            <div style="font-size:0.8rem; color:#888; margin-bottom:5px; font-weight:700;">蝴蝶誕生</div>
+            <span id="d1" style="font-size:2.8rem; font-weight:900; color:var(--emi);">0</span><small> Days</small>
         </div>
-    </main>
+        <div class="dday-item">
+            <div style="font-size:0.8rem; color:#888; margin-bottom:5px; font-weight:700;">與你相遇</div>
+            <span id="d2" style="font-size:2.8rem; font-weight:900; color:var(--bonnie);">0</span><small> Days</small>
+        </div>
+    </div>
+</div>
 
-    <nav class="nav-dock">
-        <div class="nav-link active" onclick="ui_Navigate('home', this)">🦋</div>
-        <div class="nav-link" onclick="ui_Navigate('page-profile', this)">名牌</div>
-        <div class="nav-link" onclick="ui_Navigate('page-works', this)">作品</div>
-        <div class="nav-link" onclick="ui_Navigate('page-timeline', this)">軌跡</div>
-        <div class="nav-link" onclick="ui_Navigate('page-colls', this)">珍藏</div>
-        <div class="nav-link" onclick="ui_Navigate('page-plans', this)">行程</div>
-        <div class="nav-link" onclick="ui_Navigate('page-diary', this)">日記</div>
+<div class="nav-container">
+    <nav class="main-nav">
+        <div style="padding:0 20px; font-size:1.6rem; cursor:pointer;" onclick="closeAll()">🦋</div>
+        <button class="nav-btn" onclick="openM('m-profile', this)">名牌介紹</button>
+        <button class="nav-btn" onclick="openM('m-plans', this)">行程安排</button>
+        <button class="nav-btn" onclick="openM('m-works', this)">官方作品</button>
+        <button class="nav-btn" onclick="openM('m-timeline', this)">成長軌跡</button>
+        <button class="nav-btn" onclick="openM('m-coll', this)">珍藏圖庫</button>
+        <button class="nav-btn" onclick="openM('m-diary', this)">私密日記</button>
+        <button class="nav-btn" onclick="openM('m-admin', this)" style="color:var(--emi)">管理後台</button>
     </nav>
+</div>
 
-    <section id="page-profile" class="overlay-p">
-        <header class="page-header"><b>成員名牌管家</b><span onclick="ui_Navigate('home')" style="cursor:pointer; font-size:1.8rem;">✕</span></header>
-        <div style="display:flex; justify-content:center; gap:20px; padding:30px;">
-            <button class="nav-link" onclick="logic_SwitchMember('emi', this)">Emi</button>
-            <button class="nav-link" onclick="logic_SwitchMember('bonnie', this)">Bonnie</button>
-            <button class="nav-link" onclick="logic_SwitchMember('any', this)">Any</button>
+<div id="m-profile" class="modal">
+    <div class="header"><span class="m-title">成員名牌</span><span onclick="closeAll()">✕</span></div>
+    <div style="display:flex; justify-content:center; gap:15px; padding:20px;">
+        <button class="nav-btn" style="border:2px solid var(--emi); border-radius:20px;" onclick="renderProfile('emi')">Emi</button>
+        <button class="nav-btn" style="border:2px solid var(--bonnie); border-radius:20px;" onclick="renderProfile('bonnie')">Bonnie</button>
+        <button class="nav-btn" style="border:2px solid var(--any); border-radius:20px; color:var(--any);" onclick="renderProfile('any')">Any</button>
+    </div>
+    <div id="p-render"></div>
+</div>
+
+<div id="m-plans" class="modal">
+    <div class="header"><span class="m-title">行程月曆</span><span onclick="closeAll()">✕</span></div>
+    <div class="cal-ctrl">
+        <select class="cal-select" id="cal-year" onchange="jumpDate()" style="width:100px; margin:0;"></select>
+        <select class="cal-select" id="cal-month" onchange="jumpDate()" style="width:100px; margin:0;"></select>
+        <div style="display:flex; gap:10px;">
+            <button class="nav-btn" onclick="changeMonth(-1)">上月</button>
+            <button class="nav-btn" onclick="changeMonth(1)">下月</button>
         </div>
-        <div style="text-align:center; padding:40px;">
-            <div style="width:160px; height:160px; margin:0 auto 25px; border-radius:50%; border:5px solid var(--emi-primary); padding:5px; cursor:pointer;" onclick="document.getElementById('file-p').click()">
-                <img id="p-img" src="https://via.placeholder.com/200" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+    </div>
+    <div class="cal-grid" id="cal-body"></div>
+</div>
+
+<div id="m-works" class="modal">
+    <div class="header"><span class="m-title">官方作品集</span><span onclick="closeAll()">✕</span></div>
+    <div class="filter-bar" style="display:flex; gap:10px; padding:10px 20px; overflow-x:auto;">
+        <button class="filter-tab active" onclick="filterWorks('all', this)">全部作品</button>
+        <button class="filter-tab" onclick="filterWorks('movie', this)">影視錄像</button>
+        <button class="filter-tab" onclick="filterWorks('music', this)">音樂單曲</button>
+        <button class="filter-tab" onclick="filterWorks('show', this)">現場演出</button>
+    </div>
+    <div class="grid-2" id="w-render"></div>
+</div>
+
+<div id="m-timeline" class="modal">
+    <div class="header"><span class="m-title">成長軌跡</span><span onclick="closeAll()">✕</span></div>
+    <div id="tl-render" style="padding:25px;"></div>
+</div>
+
+<div id="m-coll" class="modal">
+    <div class="header"><span class="m-title">珍藏館</span><span onclick="closeAll()">✕</span></div>
+    <div class="grid-2" id="coll-render"></div>
+</div>
+
+<div id="m-diary" class="modal">
+    <div class="header"><span class="m-title">蝴蝶私語日記</span><span onclick="closeAll()">✕</span></div>
+    <div id="diary-render" style="padding:25px;"></div>
+</div>
+
+<div id="m-admin" class="modal">
+    <div class="header"><span class="m-title">管理中心</span><span onclick="closeAll()">✕</span></div>
+    <div class="adm-card">
+        <h3>✨ 新增內容</h3>
+        內容分類：<select id="adm-type">
+            <option value="tl">成長軌跡 (Timeline)</option>
+            <option value="work_movie">作品 - 影視錄像</option>
+            <option value="work_music">作品 - 音樂單曲</option>
+            <option value="work_show">作品 - 現場演出</option>
+            <option value="coll">珍藏館 (Collection)</option>
+            <option value="diary">私密日記 (Diary)</option>
+        </select>
+        標題名稱：<input type="text" id="adm-name" placeholder="請輸入標題...">
+        內容詳述：<textarea id="adm-txt" rows="3" placeholder="請描述精彩內容..."></textarea>
+        圖片上傳：<input type="file" id="adm-file">
+        <button class="btn-action" onclick="handleNew()">確認發布</button>
+    </div>
+    <div class="adm-card">
+        <h3>👤 成員/日期設定</h3>
+        成員頭像：<select id="adm-p-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
+        <input type="file" id="adm-p-file">
+        成員簡介：<textarea id="adm-p-bio" placeholder="更新個人簡介..."></textarea>
+        誕生日期：<input type="date" id="adm-born">
+        相遇日期：<input type="date" id="adm-meet">
+        <button class="btn-action" style="background:#444;" onclick="updateSystem()">更新系統設定</button>
+    </div>
+    <div class="adm-card" style="margin-bottom:100px;">
+        <h3>🗑️ 內容清理清單</h3>
+        <div id="adm-list-render"></div>
+    </div>
+</div>
+
+<div id="day-pop">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 id="pop-date" style="margin:0; font-size:1.5rem; color:var(--bonnie);"></h2>
+        <span onclick="document.getElementById('day-pop').style.display='none'" style="font-size:1.5rem;">✕</span>
+    </div>
+    <div id="pop-list" style="max-height:180px; overflow-y:auto; margin-bottom:20px;"></div>
+    <div style="background:#f9f9f9; padding:20px; border-radius:20px;">
+        <div style="font-size:0.8rem; color:#888; margin-bottom:10px;">快速新增行程：</div>
+        <select id="pop-who" class="cal-select" style="width:100%; margin-bottom:10px;">
+            <option value="emi">Emi (橘)</option>
+            <option value="bonnie">Bonnie (紫)</option>
+            <option value="any">Any (粉)</option>
+            <option value="emibonnie">EmiBonnie (雙人)</option>
+            <option value="emibonnieany">全體 (三人)</option>
+        </select>
+        <input type="text" id="pop-new-ev" placeholder="輸入行程內容..." style="margin-bottom:10px;">
+        <button class="btn-action" onclick="quickAddPlan()">發布行程</button>
+    </div>
+</div>
+
+<script>
+    // 終極資料庫 v9
+    let db = JSON.parse(localStorage.getItem('eb_mega_v9')) || {
+        profiles: { 
+            emi: { bio: "Emi 是充滿活力的橘色小蝴蝶，最喜歡唱歌。", img: "" }, 
+            bonnie: { bio: "Bonnie 是優雅神祕的紫色小蝴蝶，擅長舞蹈。", img: "" }, 
+            any: { bio: "Any 是甜美可人的粉色小蝴蝶，是大家的開心果。", img: "" } 
+        },
+        settings: { born: "2024-01-01", meet: "2024-05-20" },
+        timeline: [], works: [], colls: [], diaries: [], plans: []
+    };
+
+    let viewDate = new Date();
+    const save = () => { localStorage.setItem('eb_mega_v9', JSON.stringify(db)); renderHome(); };
+    const toBase64 = f => new Promise(r => { if(!f) r(""); else { const rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(f); } });
+
+    // 管理中心功能
+    async function handleNew() {
+        const typeRaw = document.getElementById('adm-type').value;
+        const img = await toBase64(document.getElementById('adm-file').files[0]);
+        const data = { id: Date.now(), n: document.getElementById('adm-name').value, t: document.getElementById('adm-txt').value, i: img, date: new Date().toLocaleDateString() };
+        
+        if(typeRaw.startsWith('work_')) { data.cat = typeRaw.split('_')[1]; db.works.unshift(data); }
+        else if(typeRaw === 'tl') db.timeline.unshift(data);
+        else if(typeRaw === 'coll') db.colls.unshift(data);
+        else if(typeRaw === 'diary') db.diaries.unshift(data);
+        
+        save(); renderManageList(); alert("發布完成！");
+    }
+
+    async function updateSystem() {
+        const who = document.getElementById('adm-p-who').value;
+        const bio = document.getElementById('adm-p-bio').value;
+        const born = document.getElementById('adm-born').value;
+        const meet = document.getElementById('adm-meet').value;
+        const img = await toBase64(document.getElementById('adm-p-file').files[0]);
+
+        if(bio) db.profiles[who].bio = bio;
+        if(img) db.profiles[who].img = img;
+        if(born) db.settings.born = born;
+        if(meet) db.settings.meet = meet;
+        save(); alert("系統與名牌已更新！");
+    }
+
+    function renderManageList() {
+        const container = document.getElementById('adm-list-render');
+        const items = [
+            ...db.timeline.map(x=>({...x, l:'軌跡', ty:'timeline'})),
+            ...db.works.map(x=>({...x, l:'作品', ty:'works'})),
+            ...db.colls.map(x=>({...x, l:'珍藏', ty:'colls'})),
+            ...db.diaries.map(x=>({...x, l:'日記', ty:'diaries'}))
+        ];
+        container.innerHTML = items.map(i => `
+            <div class="pop-list-item">
+                <span><b>[${i.l}]</b> ${i.n || i.t.substring(0,10)}</span>
+                <button onclick="delData('${i.ty}', ${i.id})" style="color:red; border:none; background:none; font-weight:800;">✕</button>
             </div>
-            <input type="file" id="file-p" style="display:none" onchange="logic_HandleAvatar(this)">
-            <h2 id="p-name" style="font-size:2.5rem; margin-bottom:10px;">NAME</h2>
-            <p id="p-bio" style="color:#666; padding:0 40px; line-height:1.8; margin-bottom:30px;">載入中...</p>
-            <button class="btn-ui" style="width:auto; padding:12px 40px;" onclick="ui_ToggleEditor('edit-p')">編輯名牌</button>
-            <div id="edit-p" class="editor-zone">
-                <textarea id="p-in-bio" class="input-ui" rows="4"></textarea>
-                <button class="btn-ui" onclick="logic_SaveProfile()">保存更新</button>
+        `).join('') || "目前無任何發布內容。";
+    }
+
+    function delData(ty, id) { if(confirm("確定刪除？")) { db[ty] = db[ty].filter(x => x.id !== id); save(); renderManageList(); } }
+
+    // 行程系統
+    function renderCal() {
+        const y = viewDate.getFullYear(), m = viewDate.getMonth();
+        document.getElementById('cal-year').value = y; document.getElementById('cal-month').value = m;
+        const first = new Date(y, m, 1).getDay(), days = new Date(y, m+1, 0).getDate();
+        let h = ['日','一','二','三','四','五','六'].map(d => `<div style="text-align:center; padding:10px; font-size:0.7rem; color:#bbb;">${d}</div>`).join('');
+        for(let i=0; i<first; i++) h += `<div></div>`;
+        for(let d=1; d<=days; d++) {
+            const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const evs = db.plans.filter(p => p.date === ds);
+            h += `<div class="cal-day" onclick="showPop('${ds}')"><b>${d}</b>${evs.map(e => `<span class="ev-tag tag-${e.who}">${e.txt}</span>`).join('')}</div>`;
+        }
+        document.getElementById('cal-body').innerHTML = h;
+    }
+
+    function showPop(d) {
+        document.getElementById('pop-date').innerText = d;
+        const evs = db.plans.filter(p => p.date === d);
+        document.getElementById('pop-list').innerHTML = evs.map((e, i) => `
+            <div class="pop-list-item">
+                <span><span class="ev-tag tag-${e.who}" style="display:inline;">${e.who.toUpperCase()}</span> ${e.txt}</span>
+                <button onclick="delPlan('${d}',${i})" style="color:red; border:none; background:none;">✕</button>
             </div>
-        </div>
-    </section>
+        `).join('') || "<div style='color:#ccc; text-align:center;'>今天暫時沒有行程～</div>";
+        document.getElementById('day-pop').style.display = 'block';
+    }
 
-    <section id="page-works" class="overlay-p">
-        <header class="page-header"><b style="color:var(--emi-primary)">蝴蝶作品集</b><div onclick="ui_ToggleEditor('edit-w')" style="cursor:pointer; font-size:2.5rem; color:var(--emi-primary)">＋</div></header>
-        <div id="edit-w" class="editor-zone">
-            <h3>發布新回憶</h3>
-            <input type="text" id="w-in-t" class="input-ui" placeholder="作品標題...">
-            <select id="w-in-c" class="input-ui"><option>影視</option><option>音樂</option><option>演出</option></select>
-            <input type="file" id="w-in-f" class="input-ui">
-            <button class="btn-ui" onclick="logic_AddItem('works')">發布拍立得</button>
-        </div>
-        <div id="render-works" class="polaroid-grid"></div>
-    </section>
+    function quickAddPlan() {
+        const d = document.getElementById('pop-date').innerText, w = document.getElementById('pop-who').value, t = document.getElementById('pop-new-ev').value;
+        if(!t) return alert("請輸入行程內容");
+        db.plans.push({ date: d, who: w, txt: t });
+        document.getElementById('pop-new-ev').value = ''; save(); renderCal(); showPop(d);
+    }
 
-    <section id="page-timeline" class="overlay-p">
-        <header class="page-header"><b>成長軌跡錄</b><div onclick="ui_ToggleEditor('edit-tl')" style="cursor:pointer; font-size:2.5rem;">＋</div></header>
-        <div id="edit-tl" class="editor-zone">
-            <input type="text" id="tl-in-t" class="input-ui" placeholder="事件標題...">
-            <input type="date" id="tl-in-d" class="input-ui">
-            <button class="btn-ui" onclick="logic_AddItem('timeline')">寫入時空機</button>
-        </div>
-        <div class="ladder-view">
-            <div id="render-timeline"></div>
-        </div>
-    </section>
+    function delPlan(d, idx) { db.plans = db.plans.filter((p, i) => !(p.date === d && i === idx)); save(); renderCal(); showPop(d); }
 
-    <section id="page-colls" class="overlay-p">
-        <header class="page-header"><b style="color:var(--bonnie-primary)">私人珍藏館</b><div onclick="ui_ToggleEditor('edit-c')" style="cursor:pointer; font-size:2.5rem; color:var(--bonnie-primary)">＋</div></header>
-        <div id="edit-c" class="editor-zone" style="border-color:var(--bonnie-primary)">
-            <input type="text" id="c-in-n" class="input-ui" placeholder="簡單描述...">
-            <input type="file" id="c-in-f" class="input-ui">
-            <button class="btn-ui" style="background:var(--bonnie-primary)" onclick="logic_AddItem('colls')">存入珍藏</button>
-        </div>
-        <div id="render-colls" class="masonry-view"></div>
-    </section>
-
-    <section id="page-plans" class="overlay-p">
-        <header class="page-header"><b>蝴蝶行程表</b><span onclick="ui_Navigate('home')">✕</span></header>
-        <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; background:#eee; margin:20px; border-radius:15px; overflow:hidden; border:2px solid #eee;">
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(1)"><b>1</b><div id="plan-1" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(2)"><b>2</b><div id="plan-2" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(3)"><b>3</b><div id="plan-3" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(4)"><b>4</b><div id="plan-4" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(5)"><b>5</b><div id="plan-5" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(6)"><b>6</b><div id="plan-6" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(7)"><b>7</b><div id="plan-7" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(8)"><b>8</b><div id="plan-8" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(9)"><b>9</b><div id="plan-9" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            <div style="background:#fff; min-height:120px; padding:10px; cursor:pointer;" onclick="logic_EditPlan(10)"><b>10</b><div id="plan-10" style="font-size:0.7rem; color:var(--emi-primary); margin-top:5px;"></div></div>
-            </div>
-    </section>
-
-    <section id="page-diary" class="overlay-p">
-        <header class="page-header"><b>蝴蝶隨筆日記</b><div onclick="ui_ToggleEditor('edit-dy')" style="cursor:pointer; font-size:2.5rem;">＋</div></header>
-        <div id="edit-dy" class="editor-zone">
-            <textarea id="dy-in-t" class="input-ui" rows="5" placeholder="此刻的心情..."></textarea>
-            <button class="btn-ui" onclick="logic_AddItem('diary')">密封日記</button>
-        </div>
-        <div id="render-diary" style="padding:20px;"></div>
-    </section>
-
-    <script>
-        /**
-         * 1. 數據庫初始化
-         */
-        const DB_KEY = "EB_ULTIMATE_VAULT_FINAL";
-        let EB_DB = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            meta: { born: "2024-01-01", meet: "2024-05-20" },
-            profiles: {
-                emi: { bio: "活力橘色蝴蝶，用笑容感染世界。", avatar: "" },
-                bonnie: { bio: "神祕紫色蝴蝶，歌聲穿梭銀河。", avatar: "" },
-                any: { bio: "溫柔粉色蝴蝶，最安心的依靠。", avatar: "" }
-            },
-            vault: { works: [], timeline: [], colls: [], diary: [], plans: {} }
-        };
-
-        let currentMember = 'emi';
-
-        // 資料同步與刷新
-        const sys_Sync = () => {
-            localStorage.setItem(DB_KEY, JSON.stringify(EB_DB));
-            logic_UpdateDDay();
-        };
-
-        /**
-         * 2. 導覽與 UI 輔助邏輯
-         */
-        function ui_Navigate(id, btn) {
-            document.querySelectorAll('.overlay-p').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
-            
-            if(id === 'home') {
-                document.getElementById('view-home').style.opacity = "1";
-                document.getElementById('view-home').style.transform = "scale(1)";
-                document.querySelector('.nav-link:first-child').classList.add('active');
-                return;
-            }
-
-            const target = document.getElementById(id);
-            target.classList.add('active');
-            if(btn) btn.classList.add('active');
-            document.getElementById('view-home').style.opacity = "0";
-            document.getElementById('view-home').style.transform = "scale(0.95)";
-            
-            // 觸發渲染
-            if(id === 'page-profile') logic_SwitchMember('emi');
-            if(id === 'page-works') logic_RenderWorks();
-            if(id === 'page-timeline') logic_RenderTimeline();
-            if(id === 'page-colls') logic_RenderColls();
-            if(id === 'page-diary') logic_RenderDiary();
-            if(id === 'page-plans') logic_RenderPlans();
+    // 頁面渲染邏輯
+    function openM(id, btn) {
+        closeAll(); document.getElementById(id).classList.add('active');
+        if(btn) btn.classList.add('active-tab');
+        if(id === 'm-plans') renderCal();
+        if(id === 'm-profile') renderProfile('emi');
+        if(id === 'm-works') filterWorks('all');
+        if(id === 'm-timeline') document.getElementById('tl-render').innerHTML = db.timeline.map(t => `<div style="margin-bottom:30px; border-left:4px solid var(--emi); padding-left:20px; position:relative;"><small style="color:#aaa;">${t.date}</small><br><b>${t.n}</b><p>${t.t}</p>${t.i?`<img src="${t.i}" style="width:100%; border-radius:15px; margin-top:10px;">`:''}</div>`).join('') || "等待記錄第一份回憶...";
+        if(id === 'm-coll') document.getElementById('coll-render').innerHTML = db.colls.map(c => `<div class="item-card"><img src="${c.i}"><div class="item-info"><span class="item-n">${c.n}</span></div></div>`).join('') || "圖庫暫無內容";
+        if(id === 'm-diary') document.getElementById('diary-render').innerHTML = db.diaries.map(d => `<div style="background:#fff9f9; padding:25px; border-radius:25px; margin-bottom:20px; border:1px solid #ffebeb;"><small style="color:var(--any); font-weight:800;">${d.date}</small><h3 style="margin:10px 0;">${d.n}</h3><p style="line-height:1.6;">${d.t}</p>${d.i?`<img src="${d.i}" style="width:100%; border-radius:15px; margin-top:15px;">`:''}</div>`).join('') || "這裡寫下的都是悄悄話...";
+        if(id === 'm-admin') {
+            document.getElementById('adm-born').value = db.settings.born;
+            document.getElementById('adm-meet').value = db.settings.meet;
+            renderManageList();
         }
+    }
 
-        function ui_ToggleEditor(id) {
-            const e = document.getElementById(id);
-            e.style.display = (e.style.display === 'block' ? 'none' : 'block');
+    function filterWorks(cat, btn) {
+        if(btn) { document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+        const list = cat === 'all' ? db.works : db.works.filter(w => w.cat === cat);
+        const map = { movie: '影視錄像', music: '音樂單曲', show: '現場演出' };
+        document.getElementById('w-render').innerHTML = list.map(w => `<div class="item-card"><img src="${w.i || 'https://via.placeholder.com/300x200'}"><div class="item-info"><span class="item-cat">${map[w.cat] || '作品'}</span><span class="item-n">${w.n}</span><p style="font-size:0.8rem; color:#888; margin-top:8px;">${w.t}</p></div></div>`).join('') || "作品集備妥中...";
+    }
+
+    function renderProfile(who) {
+        const p = db.profiles[who];
+        document.getElementById('p-render').innerHTML = `
+            <div style="text-align:center; padding:40px;">
+                <img src="${p.img || 'https://via.placeholder.com/200'}" style="width:150px; height:150px; border-radius:75px; object-fit:cover; border:5px solid var(--${who}); box-shadow:0 15px 30px rgba(0,0,0,0.1);">
+                <h1 style="color:var(--${who}); font-size:2.2rem; margin-top:20px;">${who.toUpperCase()}</h1>
+                <div style="background:#fcfcfc; padding:25px; border-radius:25px; margin:20px; line-height:1.8;">${p.bio}</div>
+            </div>`;
+    }
+
+    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab')); }
+    function jumpDate() { viewDate = new Date(document.getElementById('cal-year').value, document.getElementById('cal-month').value, 1); renderCal(); }
+    function changeMonth(s) { viewDate.setMonth(viewDate.getMonth()+s); renderCal(); }
+    
+    function renderHome() {
+        const calc = d => Math.floor((new Date() - new Date(d)) / 86400000);
+        document.getElementById('d1').innerText = Math.max(0, calc(db.settings.born));
+        document.getElementById('d2').innerText = Math.max(0, calc(db.settings.meet));
+    }
+
+    window.onload = () => {
+        const yS = document.getElementById('cal-year'), mS = document.getElementById('cal-month');
+        for(let y=2024; y<=2026; y++) yS.add(new Option(y+'年', y));
+        for(let m=1; m<=12; m++) mS.add(new Option(m+'月', m-1));
+        
+        const layer = document.getElementById('butterfly-layer');
+        for(let i=0; i<20; i++){
+            const b = document.createElement('div'); b.className = 'butterfly-bg'; b.innerHTML = '🦋';
+            b.style.left = Math.random()*95+'%'; b.style.top = Math.random()*95+'%';
+            b.style.fontSize = (12 + Math.random()*15) + 'px';
+            layer.appendChild(b);
         }
-
-        /**
-         * 3. 核心功能邏輯 (CRUD)
-         */
-        // 名牌管理
-        function logic_SwitchMember(m, btn) {
-            currentMember = m;
-            const data = EB_DB.profiles[m];
-            document.getElementById('p-name').innerText = m.toUpperCase();
-            document.getElementById('p-bio').innerText = data.bio;
-            document.getElementById('p-img').src = data.avatar || "https://via.placeholder.com/200";
-            document.getElementById('p-in-bio').value = data.bio;
-        }
-
-        function logic_SaveProfile() {
-            EB_DB.profiles[currentMember].bio = document.getElementById('p-in-bio').value;
-            sys_Sync(); logic_SwitchMember(currentMember); ui_ToggleEditor('edit-p');
-        }
-
-        function logic_HandleAvatar(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => { EB_DB.profiles[currentMember].avatar = e.target.result; sys_Sync(); logic_SwitchMember(currentMember); };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // 萬用發布系統
-        async function logic_AddItem(type) {
-            const id = Date.now();
-            let newItem = { id };
-            
-            if(type === 'works') {
-                const t = document.getElementById('w-in-t').value;
-                const c = document.getElementById('w-in-c').value;
-                const f = document.getElementById('w-in-f').files[0];
-                if(!t || !f) return;
-                newItem.title = t; newItem.cat = c;
-                newItem.img = await logic_ToB64(f);
-                EB_DB.vault.works.push(newItem); logic_RenderWorks();
-            } else if(type === 'timeline') {
-                const t = document.getElementById('tl-in-t').value;
-                const d = document.getElementById('tl-in-d').value;
-                if(!t || !d) return;
-                newItem.title = t; newItem.date = d;
-                EB_DB.vault.timeline.push(newItem); logic_RenderTimeline();
-            } else if(type === 'colls') {
-                const n = document.getElementById('c-in-n').value;
-                const f = document.getElementById('c-in-f').files[0];
-                if(!f) return;
-                newItem.note = n; newItem.img = await logic_ToB64(f);
-                EB_DB.vault.colls.push(newItem); logic_RenderColls();
-            } else if(type === 'diary') {
-                const t = document.getElementById('dy-in-t').value;
-                if(!t) return;
-                newItem.text = t; newItem.date = new Date().toLocaleDateString();
-                EB_DB.vault.diary.push(newItem); logic_RenderDiary();
-            }
-
-            sys_Sync(); ui_ToggleEditor('edit-' + (type==='works'?'w':type==='timeline'?'tl':type==='colls'?'c':'dy'));
-        }
-
-        function logic_DeleteItem(type, id) {
-            if(confirm("確定要刪除這段記憶嗎？")) {
-                EB_DB.vault[type] = EB_DB.vault[type].filter(i => i.id !== id);
-                sys_Sync();
-                if(type === 'works') logic_RenderWorks();
-                if(type === 'timeline') logic_RenderTimeline();
-                if(type === 'colls') logic_RenderColls();
-                if(type === 'diary') logic_RenderDiary();
-            }
-        }
-
-        /**
-         * 4. 渲染引擎
-         */
-        function logic_RenderWorks() {
-            const container = document.getElementById('render-works');
-            container.innerHTML = EB_DB.vault.works.map(item => `
-                <div class="polaroid-card" style="--r: ${(Math.random()*6-3)}deg">
-                    <div class="del-x" onclick="logic_DeleteItem('works', ${item.id})">×</div>
-                    <img src="${item.img}">
-                    <div style="text-align:center; padding-top:10px;"><small style="color:var(--emi-primary)">${item.cat}</small><br><b>${item.title}</b></div>
-                </div>
-            `).join('');
-        }
-
-        function logic_RenderTimeline() {
-            const container = document.getElementById('render-timeline');
-            const sorted = [...EB_DB.vault.timeline].sort((a,b) => new Date(b.date)-new Date(a.date));
-            container.innerHTML = sorted.map((item, idx) => `
-                <div class="ladder-step ${idx%2===0?'L':'R'}">
-                    <div class="del-x" style="width:20px; height:20px; font-size:12px;" onclick="logic_DeleteItem('timeline', ${item.id})">×</div>
-                    <small style="color:#aaa">${item.date}</small>
-                    <div style="font-weight:700">${item.title}</div>
-                </div>
-            `).join('');
-        }
-
-        function logic_RenderColls() {
-            const container = document.getElementById('render-colls');
-            container.innerHTML = EB_DB.vault.colls.map(item => `
-                <div class="masonry-item">
-                    <div class="del-x" style="width:25px; height:25px;" onclick="logic_DeleteItem('colls', ${item.id})">×</div>
-                    <img src="${item.img}">
-                    <div style="padding:10px; font-size:0.8rem;">${item.note}</div>
-                </div>
-            `).reverse().join('');
-        }
-
-        function logic_RenderDiary() {
-            const container = document.getElementById('render-diary');
-            container.innerHTML = EB_DB.vault.diary.map(item => `
-                <div class="diary-page">
-                    <div class="del-x" onclick="logic_DeleteItem('diary', ${item.id})">×</div>
-                    <small style="color:#aaa">${item.date}</small>
-                    <p style="margin-top:10px; line-height:1.7;">${item.text}</p>
-                </div>
-            `).reverse().join('');
-        }
-
-        function logic_RenderPlans() {
-            for(let i=1; i<=10; i++) {
-                document.getElementById('plan-'+i).innerText = EB_DB.vault.plans[i] || "";
-            }
-        }
-
-        function logic_EditPlan(day) {
-            const note = prompt("輸入第 "+day+" 日的行程紀錄：", EB_DB.vault.plans[day] || "");
-            if(note !== null) { EB_DB.vault.plans[day] = note; sys_Sync(); logic_RenderPlans(); }
-        }
-
-        // 工具函數
-        function logic_ToB64(file) { return new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file); }); }
-        function logic_UpdateDDay() {
-            const c = d => Math.floor((new Date() - new Date(d))/86400000);
-            document.getElementById('out-born').innerText = c(EB_DB.meta.born);
-            document.getElementById('out-meet').innerText = c(EB_DB.meta.meet);
-        }
-        function logic_SetDDay(k) { const v = prompt("輸入日期 (YYYY-MM-DD)：", EB_DB.meta[k]); if(v) { EB_DB.meta[k] = v; sys_Sync(); } }
-
-        window.onload = () => { logic_UpdateDDay(); console.log("Final System Loaded."); };
-    </script>
+        renderHome();
+    };
+</script>
 </body>
 </html>
+
