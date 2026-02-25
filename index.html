@@ -19,14 +19,14 @@
             background-size: cover; font-family: -apple-system, "PingFang TC", sans-serif;
         }
 
-        /* ✨ 首頁樣式 */
+        /* 🏠 首頁：計數器 */
         .hero { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; }
         .eb-logo { font-size: 5rem; font-weight: 800; margin: 0; letter-spacing: 12px; }
         .counters { display: flex; justify-content: center; gap: 45px; margin-top: 25px; }
         .c-num { font-size: 3rem; font-weight: 800; color: #222; }
         .c-lab { font-size: 0.8rem; color: #888; font-weight: 600; margin-top: 10px; letter-spacing: 2px; }
 
-        /* 🧭 導航欄 */
+        /* 🧭 導航：磨砂玻璃 */
         .nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 95%; max-width: 600px; }
         .main-nav { 
             background: var(--glass); padding: 12px; border-radius: 50px; 
@@ -37,24 +37,36 @@
         .nav-logo-btn { padding-right: 15px; margin-right: 12px; border-right: 1.5px solid #eee; flex-shrink: 0; cursor: pointer; }
         .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 700; color: #444; padding: 10px 15px; flex-shrink: 0; }
 
-        /* 🖼️ 視窗與通用元件 */
+        /* 🖼️ 視窗與標題 */
         .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.5s cubic-bezier(0.3, 1, 0.3, 1); overflow-y: auto; padding-bottom: 120px; }
         .modal.active { transform: translateY(0); }
         .header { position: sticky; top: 0; background: #fff; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 600; border-bottom: 1px solid #f0f0f0; }
         .m-title { font-size: 1.3rem; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* 🎁 周邊收藏網格 */
-        .coll-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .coll-card { background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid #f0f0f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        .coll-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
-        .coll-info { padding: 12px; }
-        .coll-name { font-weight: bold; font-size: 0.95rem; margin-bottom: 5px; color: #333; }
-        .coll-tag { font-size: 0.75rem; color: var(--bonnie); background: #f8f4ff; padding: 2px 8px; border-radius: 5px; display: inline-block; }
+        /* 📁 個人資料名片 (Snap) */
+        .profile-snap { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 20px; gap: 20px; }
+        .p-card { min-width: 85%; scroll-snap-align: center; background: #fdfdfd; border-radius: 30px; padding: 30px 20px; text-align: center; border: 1px solid #f0f0f0; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .p-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px; }
 
-        /* ✍️ 通用表單樣式 */
-        .form-group { background: #f9f9f9; padding: 20px; border-radius: 25px; margin: 15px; }
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; font-size: 1rem; background: #fff; }
-        .btn-main { background: var(--grad); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; }
+        /* 📁 分類標籤 */
+        .filter-bar { display: flex; gap: 10px; padding: 15px; overflow-x: auto; }
+        .tag { padding: 8px 16px; border-radius: 20px; background: #f0f0f0; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; }
+        .tag.active { background: var(--grad); color: #fff; }
+
+        /* 🎁 周邊收藏 */
+        .coll-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .coll-card { background: #fff; border-radius: 15px; overflow: hidden; border: 1px solid #f0f0f0; }
+        .coll-img { width: 100%; height: 140px; object-fit: cover; }
+
+        /* 📅 日曆格子 */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #eee; margin: 15px; border-radius: 12px; overflow: hidden; }
+        .cal-day { background: #fff; min-height: 80px; padding: 5px; font-size: 0.75rem; }
+        .cal-ev { font-size: 0.6rem; padding: 2px 4px; border-radius: 3px; margin-top: 2px; border-left: 2px solid var(--emi); background: #fff5ee; }
+
+        /* ✍️ 表單 */
+        .form-group { background: #f9f9f9; padding: 20px; border-radius: 20px; margin: 15px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #eee; }
+        .btn-main { background: var(--grad); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -70,121 +82,137 @@
 <div class="nav-container">
     <nav class="main-nav">
         <div class="nav-logo-btn" onclick="closeAll()"><img src="https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_2_PNG.png" style="width:30px"></div>
-        <button class="nav-btn" onclick="openM('m-coll')">周邊收藏</button>
-        <button class="nav-btn" onclick="openM('m-diary')">蝴蝶日記</button>
+        <button class="nav-btn" onclick="openM('m-profile')">EmiBonnie</button>
+        <button class="nav-btn" onclick="openM('m-works')">作品集</button>
         <button class="nav-btn" onclick="openM('m-plans')">行程表</button>
+        <button class="nav-btn" onclick="openM('m-coll')">收藏館</button>
+        <button class="nav-btn" onclick="openM('m-diary')">日記</button>
         <button class="nav-btn" onclick="openM('m-admin')">管理</button>
     </nav>
 </div>
 
+<div id="m-profile" class="modal">
+    <div class="header"><span class="m-title">EmiBonnie</span><span onclick="closeAll()">✕</span></div>
+    <div class="profile-snap" id="p-list"></div>
+</div>
+
+<div id="m-works" class="modal">
+    <div class="header"><span class="m-title">官方作品集</span><span onclick="closeAll()">✕</span></div>
+    <div class="filter-bar"><div class="tag active">全部</div><div class="tag">影視</div><div class="tag">演出</div><div class="tag">音樂</div></div>
+    <div id="w-list" style="padding:15px; color:#999; text-align:center;">作品載入中...</div>
+</div>
+
+<div id="m-plans" class="modal">
+    <div class="header"><span class="m-title">2026年 2月</span><span onclick="closeAll()">✕</span></div>
+    <div class="cal-grid" id="cal-list"></div>
+</div>
+
 <div id="m-coll" class="modal">
-    <div class="header"><span class="m-title">周邊收藏館</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
+    <div class="header"><span class="m-title">周邊收藏館</span><span onclick="closeAll()">✕</span></div>
     <div class="coll-grid" id="coll-list"></div>
 </div>
 
 <div id="m-diary" class="modal">
-    <div class="header"><span class="m-title">蝴蝶日記</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
+    <div class="header"><span class="m-title">蝴蝶日記</span><span onclick="closeAll()">✕</span></div>
     <div id="diary-list"></div>
 </div>
 
-<div id="m-plans" class="modal">
-    <div class="header"><span class="m-title">2026年 2月</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
-    <div style="display:grid; grid-template-columns: repeat(7,1fr); gap:1px; background:#eee; margin:15px; border-radius:15px; overflow:hidden;" id="cal-render"></div>
-</div>
-
 <div id="m-admin" class="modal">
-    <div class="header"><span class="m-title">系統管理中心</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
-    
+    <div class="header"><span class="m-title">管理中心</span><span onclick="closeAll()">✕</span></div>
     <div class="form-group">
-        <h4>🎁 新增收藏</h4>
-        <input type="text" id="coll-name" placeholder="周邊名稱 (例：首場見面會小卡)">
-        <select id="coll-type"><option>官方周邊</option><option>應援物</option><option>自製週邊</option></select>
-        <input type="file" id="coll-img" accept="image/*">
-        <button class="btn-main" onclick="addColl()">加入清單</button>
+        <h4>🎁 收藏與日記</h4>
+        <input type="text" id="adm-name" placeholder="名稱">
+        <textarea id="adm-text" placeholder="內容/心得" rows="3"></textarea>
+        <input type="file" id="adm-img" accept="image/*">
+        <div style="display:flex; gap:10px;">
+            <button class="btn-main" onclick="add('coll')">加周邊</button>
+            <button class="btn-main" onclick="add('diary')">發日記</button>
+        </div>
     </div>
-
     <div class="form-group">
-        <h4>✍️ 寫日記</h4>
-        <textarea id="diary-text" placeholder="紀錄此刻的心情..." rows="3"></textarea>
-        <input type="file" id="diary-img" accept="image/*">
-        <button class="btn-main" onclick="addDiary()">儲存日記</button>
+        <h4>📅 日期設定</h4>
+        蝴蝶誕生 <input type="date" id="in-born" onchange="upDate()">
+        與你相遇 <input type="date" id="in-meet" onchange="upDate()">
     </div>
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('eb_v6_full')) || {
+    let db = JSON.parse(localStorage.getItem('eb_final_v7')) || {
         settings: { born: "2024-01-01", meet: "2024-01-01" },
-        diaries: [],
-        colls: [
-            { name: "EmiBonnie 官方立牌", type: "官方周邊", img: "" }
-        ],
-        plans: [{ day: 1, title: "BD Party", who: "purple" }]
+        diaries: [], colls: [], 
+        plans: [{ day: 14, title: "Valentine Live" }]
     };
 
-    function save() { localStorage.setItem('eb_v6_full', JSON.stringify(db)); }
+    const info = {
+        emi: { nick: "Mimi", birth: "04/25", fav: "牛肉湯" },
+        bonnie: { nick: "Nini", birth: "01/27", fav: "鮭魚" },
+        any: { nick: "Any", birth: "03/14", fav: "抖耳朵" }
+    };
 
-    // 周邊功能
-    async function addColl() {
-        const name = document.getElementById('coll-name').value;
-        const type = document.getElementById('coll-type').value;
-        const file = document.getElementById('coll-img').files[0];
-        let img = "";
-        if(file) img = await toBase64(file);
-        if(name) {
-            db.colls.unshift({ name, type, img });
-            save(); alert("已入庫！"); renderColls();
-        }
+    function save() { localStorage.setItem('eb_final_v7', JSON.stringify(db)); }
+
+    function openM(id) {
+        document.getElementById(id).classList.add('active');
+        if(id === 'm-profile') renderP();
+        if(id === 'm-coll') renderC();
+        if(id === 'm-diary') renderD();
+        if(id === 'm-plans') renderCal();
     }
 
-    function renderColls() {
+    function renderP() {
+        document.getElementById('p-list').innerHTML = ["emi","bonnie","any"].map(id => `
+            <div class="p-card">
+                <div class="p-img" style="background:#eee; margin:0 auto 15px;"></div>
+                <h2>${id.toUpperCase()}</h2><p>${info[id].nick} | ${info[id].birth}</p>
+                <div style="font-size:0.9rem; color:#666;">喜歡：${info[id].fav}</div>
+            </div>
+        `).join('');
+    }
+
+    async function add(type) {
+        const name = document.getElementById('adm-name').value;
+        const text = document.getElementById('adm-text').value;
+        const file = document.getElementById('adm-img').files[0];
+        let img = file ? await new Promise(r => { const f = new FileReader(); f.onload = e => r(e.target.result); f.readAsDataURL(file); }) : "";
+        
+        if(type === 'coll') db.colls.unshift({ name, img });
+        else db.diaries.unshift({ date: new Date().toLocaleDateString(), text, img });
+        save(); alert("已更新！");
+    }
+
+    function renderC() {
         document.getElementById('coll-list').innerHTML = db.colls.map(c => `
-            <div class="coll-card">
-                <img src="${c.img || 'https://via.placeholder.com/150'}" class="coll-img">
-                <div class="coll-info">
-                    <div class="coll-name">${c.name}</div>
-                    <div class="coll-tag">${c.type}</div>
-                </div>
-            </div>
+            <div class="coll-card"><img src="${c.img}" class="coll-img"><div style="padding:10px; font-size:0.8rem;">${c.name}</div></div>
         `).join('');
     }
 
-    // 日記功能
-    async function addDiary() {
-        const text = document.getElementById('diary-text').value;
-        const file = document.getElementById('diary-img').files[0];
-        let img = "";
-        if(file) img = await toBase64(file);
-        if(text) {
-            db.diaries.unshift({ date: new Date().toLocaleDateString(), text, img });
-            save(); alert("已紀錄！"); renderDiaries();
-        }
-    }
-
-    function renderDiaries() {
+    function renderD() {
         document.getElementById('diary-list').innerHTML = db.diaries.map(d => `
-            <div style="background:#f9f9f9; margin:15px; padding:20px; border-radius:20px; border:1px solid #eee;">
-                <div style="font-size:0.8rem; color:var(--emi); font-weight:bold;">${d.date}</div>
-                <div style="margin-top:10px; line-height:1.6;">${d.text}</div>
-                ${d.img ? `<img src="${d.img}" style="width:100%; border-radius:12px; margin-top:10px;">` : ''}
-            </div>
+            <div class="form-group"><b>${d.date}</b><p>${d.text}</p>${d.img ? `<img src="${d.img}" style="width:100%; border-radius:10px;">` : ''}</div>
         `).join('');
     }
 
-    // 輔助與基礎渲染
-    function toBase64(file) {
-        return new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); });
+    function renderCal() {
+        let h = "";
+        for(let i=1; i<=28; i++) {
+            let ev = db.plans.find(p => p.day === i);
+            h += `<div class="cal-day">${i}${ev ? `<div class="cal-ev">${ev.title}</div>` : ''}</div>`;
+        }
+        document.getElementById('cal-list').innerHTML = h;
+    }
+
+    function upDate() {
+        db.settings.born = document.getElementById('in-born').value;
+        db.settings.meet = document.getElementById('in-meet').value;
+        save(); renderHome();
     }
 
     function renderHome() {
         const c = d => Math.floor((new Date() - new Date(d)) / 86400000);
         document.getElementById('d1').innerText = Math.max(0, c(db.settings.born));
         document.getElementById('d2').innerText = Math.max(0, c(db.settings.meet));
-    }
-
-    function openM(id) {
-        document.getElementById(id).classList.add('active');
-        if(id === 'm-coll') renderColls();
-        if(id === 'm-diary') renderDiaries();
+        document.getElementById('in-born').value = db.settings.born;
+        document.getElementById('in-meet').value = db.settings.meet;
     }
 
     function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
@@ -192,4 +220,5 @@
 </script>
 </body>
 </html>
+
 
