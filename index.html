@@ -3,282 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EB Butterfly Log</title>
+    <title>EB Butterfly Log - Console</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
         :root { 
-            --emi-deep-orange: #f37021; /* 深橘 */
-            --bonnie-deep-purple: #662d91; /* 深紫 */
+            --eb-soft-pink: #ffb7c5;
             --eb-gradient: linear-gradient(135deg, #f37021 0%, #662d91 100%);
-            --bg-white: #ffffff;
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --emi-orange: #f37021;
+            --bonnie-purple: #662d91;
         }
         
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", sans-serif; 
-            background-color: var(--bg-white); color: #333; margin: 0; padding: 0;
-            overflow-x: hidden;
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: -apple-system, sans-serif; }
 
-        /* 🦋 背景蝴蝶動畫 */
-        .butterfly-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; pointer-events: none; overflow: hidden;
-        }
-        .butterfly {
-            position: absolute; width: 30px; height: 30px; opacity: 0.2;
-            animation: float 15s infinite ease-in-out;
-        }
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(100px, 150px) rotate(15deg); }
-            50% { transform: translate(-50px, 300px) rotate(-10deg); }
-            75% { transform: translate(150px, 450px) rotate(5deg); }
-        }
+        /* 🖼️ 背景幻燈片 */
+        #slideshow { position: fixed; width: 100%; height: 100%; z-index: 1; }
+        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease-in-out; }
+        .slide.active { opacity: 1; }
+        .overlay { position: fixed; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 2; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        /* 🌸 主頁：EB 與 雙計時器 */
+        .hero { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -60%); z-index: 3; text-align: center; width: 100%; }
+        .eb-logo { font-size: 5.5rem; font-weight: 800; letter-spacing: 15px; color: var(--eb-soft-pink); margin: 0; text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .main-counters { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; color: white; }
+        .counter-num { font-size: 2.8rem; font-weight: 900; display: block; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .counter-label { font-size: 0.8rem; letter-spacing: 2px; opacity: 0.9; }
 
-        /* 標題設計 */
-        .header-area { text-align: center; margin-bottom: 40px; padding-top: 30px; }
-        .eb-logo { 
-            font-size: 3.5rem; font-weight: 900; letter-spacing: 12px; margin: 0;
-            display: flex; justify-content: center; gap: 10px;
-        }
-        .logo-e { color: var(--emi-deep-orange); }
-        .logo-b { color: var(--bonnie-purple-deep); }
-        .sub-title { 
-            font-size: 0.9rem; letter-spacing: 5px; color: #888; margin-top: 10px;
-            font-weight: 300; text-transform: uppercase;
-        }
+        /* 📱 底部導航 */
+        .nav-bar { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 20px; background: rgba(255,255,255,0.15); padding: 12px 25px; border-radius: 40px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }
+        .nav-btn { width: 45px; height: 45px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; border: none; }
 
-        /* 佈局架構 */
-        .main-layout { display: grid; grid-template-columns: 1fr; gap: 30px; }
-        @media (min-width: 992px) {
-            .main-layout { grid-template-columns: 380px 1fr; }
-            .left-col { position: sticky; top: 20px; height: fit-content; }
-        }
+        /* 🪟 全屏功能彈窗 (僅顯示) */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; }
+        .modal.open { transform: translateY(0); }
+        .modal-header { position: sticky; top: 0; background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; z-index: 10; }
+        .content { padding: 20px; max-width: 600px; margin: 0 auto; }
 
-        /* 卡片設計 - 增加漸變邊框感 */
-        .card { 
-            background: #ffffff; border-radius: 20px; padding: 25px; 
-            margin-bottom: 25px; box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.05);
-            position: relative; overflow: hidden;
-        }
-        .card::before {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: var(--eb-gradient);
-        }
-
-        .section-title { font-size: 1.1rem; font-weight: 700; color: #444; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-
-        /* 行程與時間軸樣式 */
-        .item-img { width: 100%; border-radius: 12px; margin: 15px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .tl-tag { font-size: 0.75rem; background: var(--eb-gradient); color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; display: inline-block; }
-        .tl-title { font-size: 1.2rem; font-weight: 800; color: #222; margin-bottom: 10px; }
-        .tl-box { background: #f9f9fb; padding: 18px; border-radius: 15px; font-size: 1rem; color: #555; line-height: 1.6; }
-        .tl-mood-quote { margin-top: 15px; color: var(--bonnie-deep-purple); border-left: 3px solid var(--bonnie-deep-purple); padding-left: 15px; font-style: italic; background: rgba(102, 45, 145, 0.03); padding: 10px 15px; border-radius: 0 10px 10px 0; }
-
-        /* 輸入框優化 */
-        input, textarea, select { 
-            width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #eee; 
-            background: #fcfcfd; color: #333; font-size: 15px; transition: 0.3s;
-        }
-        input:focus { border-color: var(--emi-deep-orange); outline: none; background: #fff; }
-        .file-label { background: #f0f0f5; padding: 12px; border-radius: 12px; display: block; text-align: center; cursor: pointer; color: #666; font-weight: 500; }
-        .btn-eb { background: var(--eb-gradient); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(243, 112, 33, 0.3); }
-
-        .milestone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .milestone-card { background: #fcfcfd; padding: 20px; border-radius: 18px; text-align: center; border: 1px solid #f0f0f5; }
+        /* ⚙️ 設定中心專用樣式 */
+        .setting-section { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 25px; }
+        .setting-section h3 { font-size: 1rem; color: var(--bonnie-purple); margin-top: 0; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        .btn-eb { background: var(--eb-gradient); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        
+        /* 展示用組件 */
+        .display-card { border-bottom: 1px solid #eee; padding: 20px 0; }
+        .display-img { width: 100%; border-radius: 12px; margin: 10px 0; }
+        .mood-tag { background: #fff0f3; color: #662d91; padding: 10px; border-radius: 10px; font-style: italic; font-size: 0.9rem; margin-top: 8px; }
     </style>
 </head>
 <body>
 
-<div class="butterfly-bg" id="butterflyBg"></div>
+<div id="slideshow"><div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1494972308255-023c550c8188?q=80&w=2070')"></div></div>
+<div class="overlay"></div>
 
-<div class="container">
-    <div class="header-area">
-        <h1 class="eb-logo">
-            <span class="logo-e">E</span><span class="logo-b" style="color:#662d91">B</span>
-        </h1>
-        <div class="sub-title">— Butterfly Memories —</div>
+<div class="hero">
+    <h1 class="eb-logo">EB</h1>
+    <div class="main-counters">
+        <div class="counter-item"><span class="counter-num" id="d-group" style="color: var(--emi-orange);">0</span><span class="counter-label">蝴蝶誕生</span></div>
+        <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.3);"></div>
+        <div class="counter-item"><span class="counter-num" id="d-follow" style="color: var(--eb-soft-pink);">0</span><span class="counter-label">與妳相遇</span></div>
     </div>
+</div>
 
-    <div class="main-layout">
-        <div class="left-col">
-            <div class="milestone-grid">
-                <div class="milestone-card">
-                    <div style="font-size: 0.75rem; color: #999;">蝴蝶誕生</div>
-                    <div id="daysGroup" style="font-size: 2.2rem; font-weight: 900; color: var(--emi-deep-orange);">0</div>
-                    <input type="date" id="anniGroup" oninput="save(); updateDays();">
-                </div>
-                <div class="milestone-card">
-                    <div style="font-size: 0.75rem; color: #999;">與妳相遇</div>
-                    <div id="daysFollow" style="font-size: 2.2rem; font-weight: 900; color: #662d91;">0</div>
-                    <input type="date" id="anniFollow" oninput="save(); updateDays();">
-                </div>
-            </div>
+<div class="nav-bar">
+    <button class="nav-btn" onclick="openModal('m-timeline')">🎞️</button>
+    <button class="nav-btn" onclick="openModal('m-plan')">🗓️</button>
+    <button class="nav-btn" onclick="openModal('m-radar')">📊</button>
+    <button class="nav-btn" onclick="openModal('m-admin')" style="background: var(--eb-soft-pink); color: white;">⚙️</button>
+</div>
 
-            <div class="card">
-                <div class="section-title">📊 魅力雷達</div>
-                <select id="radarTarget" onchange="loadRadar()" style="margin-bottom: 10px;">
-                    <option value="emi">EMI 🍊</option>
-                    <option value="bonnie">BONNIE 💜</option>
-                </select>
-                <canvas id="radarChart"></canvas>
-            </div>
+<div id="m-timeline" class="modal">
+    <div class="modal-header"><h2>🎞️ 回憶時光機</h2><button class="nav-btn" onclick="closeModal('m-timeline')">✕</button></div>
+    <div class="content" id="display-timeline"></div>
+</div>
 
-            <div class="card">
-                <div class="section-title">🗓️ 蝴蝶未來行程</div>
-                <input type="date" id="planDate">
-                <input type="text" id="planTitle" placeholder="活動標題...">
-                <label class="file-label">🖼️ 添加配圖 <input type="file" id="planImg" hidden accept="image/*"></label>
-                <button class="btn-eb" onclick="addPlan()">儲存行程</button>
-                <div id="planList" style="margin-top: 20px;"></div>
-            </div>
+<div id="m-plan" class="modal">
+    <div class="modal-header"><h2>🗓️ 蝴蝶行程表</h2><button class="nav-btn" onclick="closeModal('m-plan')">✕</button></div>
+    <div class="content" id="display-plans"></div>
+</div>
+
+<div id="m-radar" class="modal">
+    <div class="modal-header"><h2>📊 魅力觀測</h2><button class="nav-btn" onclick="closeModal('m-radar')">✕</button></div>
+    <div class="content">
+        <select id="radarTarget" onchange="initRadar()"><option value="emi">EMI 🍊</option><option value="bonnie">BONNIE 💜</option></select>
+        <canvas id="radarChart"></canvas>
+    </div>
+</div>
+
+<div id="m-admin" class="modal">
+    <div class="modal-header"><h2>⚙️ 系統控制台</h2><button class="nav-btn" onclick="closeModal('m-admin')">✕</button></div>
+    <div class="content">
+        
+        <div class="setting-section">
+            <h3>📸 背景幻燈片</h3>
+            <input type="file" id="bgUploader" multiple accept="image/*">
         </div>
 
-        <div class="right-col">
-            <div class="card">
-                <div class="section-title">🎞️ 互動時間軸</div>
-                <div style="background: #f8f9fa; padding: 25px; border-radius: 20px; margin-bottom: 30px; border: 1px solid #eee;">
-                    <input type="date" id="tlDate">
-                    <input type="text" id="tlTitle" placeholder="這是一個關於什麼的回憶？">
-                    <textarea id="tlDesc" rows="4" placeholder="詳細記下發生的點滴..."></textarea>
-                    <textarea id="tlMood" rows="2" placeholder="當時的好心情與想法..." style="border-left: 3px solid #662d91; color:#662d91"></textarea>
-                    <label class="file-label">📸 紀錄照片 <input type="file" id="tlImg" hidden accept="image/*"></label>
-                    <button class="btn-eb" onclick="addTimeline()">刻在時間軸上</button>
-                </div>
-                
-                <div id="timelineContainer"></div>
-            </div>
+        <div class="setting-section">
+            <h3>🎂 紀念日設定</h3>
+            <label>蝴蝶誕生</label><input type="date" id="s-group" oninput="saveSystem()">
+            <label>與妳相遇</label><input type="date" id="s-follow" oninput="saveSystem()">
         </div>
+
+        <div class="setting-section">
+            <h3>🎞️ 添加新回憶</h3>
+            <input type="date" id="tlDate"><input type="text" id="tlTitle" placeholder="標題">
+            <textarea id="tlDesc" rows="3" placeholder="具體故事..."></textarea>
+            <textarea id="tlMood" rows="2" placeholder="好的心情紀錄..."></textarea>
+            <input type="file" id="tlImg" accept="image/*">
+            <button class="btn-eb" onclick="addTimeline()">存入時間軸</button>
+        </div>
+
+        <div class="setting-section">
+            <h3>🗓️ 添加新行程</h3>
+            <input type="date" id="pDate"><input type="text" id="pTitle" placeholder="活動名稱">
+            <input type="file" id="pImg" accept="image/*">
+            <button class="btn-eb" onclick="addPlan()">儲存行程</button>
+        </div>
+
+        <button class="btn-eb" style="background: #ff6b6b;" onclick="clearAll()">⚠️ 清空所有數據</button>
     </div>
 </div>
 
 <script>
-    let plans = [], timelineData = [], myRadar;
+    let timelineData = [], plans = [], slides = [], myChart;
 
-    // 🦋 生成背景蝴蝶
-    function createButterflies() {
-        const colors = ['#f37021', '#662d91', '#ffcc99', '#e2dcfc'];
-        const bg = document.getElementById('butterflyBg');
-        for(let i=0; i<15; i++) {
-            const b = document.createElement('div');
-            b.className = 'butterfly';
-            b.innerHTML = '🦋';
-            b.style.left = Math.random() * 100 + '%';
-            b.style.top = Math.random() * 100 + '%';
-            b.style.fontSize = (Math.random() * 20 + 10) + 'px';
-            b.style.color = colors[Math.floor(Math.random() * colors.length)];
-            b.style.animationDelay = (Math.random() * 10) + 's';
-            bg.appendChild(b);
-        }
+    // --- 基礎系統 ---
+    function openModal(id) { 
+        document.getElementById(id).classList.add('open'); 
+        if(id === 'm-radar') initRadar();
     }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
     async function getBase64(file) {
-        return new Promise((res) => {
-            if (!file) res(null);
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => res(reader.result);
+        return new Promise(res => {
+            if(!file) return res(null);
+            const r = new FileReader(); r.readAsDataURL(file);
+            r.onload = () => res(r.result);
         });
     }
 
-    function save() {
-        localStorage.setItem('eb_anniGroup', document.getElementById('anniGroup').value);
-        localStorage.setItem('eb_anniFollow', document.getElementById('anniFollow').value);
-        localStorage.setItem('eb_plans', JSON.stringify(plans));
-        localStorage.setItem('eb_timeline', JSON.stringify(timelineData));
+    // --- 背景與日期 ---
+    document.getElementById('bgUploader').onchange = async function(e) {
+        slides = [];
+        for(let f of e.target.files) { slides.push(await getBase64(f)); }
+        localStorage.setItem('eb_slides', JSON.stringify(slides));
+        location.reload(); 
+    };
+
+    function saveSystem() {
+        localStorage.setItem('eb_g', document.getElementById('s-group').value);
+        localStorage.setItem('eb_f', document.getElementById('s-follow').value);
+        updateDays();
     }
 
-    function load() {
-        document.getElementById('anniGroup').value = localStorage.getItem('eb_anniGroup') || '';
-        document.getElementById('anniFollow').value = localStorage.getItem('eb_anniFollow') || '';
-        plans = JSON.parse(localStorage.getItem('eb_plans')) || [];
-        timelineData = JSON.parse(localStorage.getItem('eb_timeline')) || [];
-        renderPlans(); renderTimeline(); updateDays(); initRadar(); createButterflies();
+    function updateDays() {
+        const g = localStorage.getItem('eb_g'), f = localStorage.getItem('eb_f'), now = new Date();
+        if(g) { document.getElementById('d-group').innerText = Math.floor((now - new Date(g))/86400000); document.getElementById('s-group').value = g; }
+        if(f) { document.getElementById('d-follow').innerText = Math.floor((now - new Date(f))/86400000); document.getElementById('s-follow').value = f; }
+    }
+
+    // --- 數據添加 ---
+    async function addTimeline() {
+        const img = await getBase64(document.getElementById('tlImg').files[0]);
+        const entry = {
+            date: document.getElementById('tlDate').value,
+            title: document.getElementById('tlTitle').value,
+            desc: document.getElementById('tlDesc').value,
+            mood: document.getElementById('tlMood').value,
+            img: img
+        };
+        timelineData.unshift(entry);
+        localStorage.setItem('eb_tl', JSON.stringify(timelineData));
+        alert('回憶已儲存！');
+        renderDisplay();
     }
 
     async function addPlan() {
-        const d = document.getElementById('planDate').value, title = document.getElementById('planTitle').value;
-        const img = await getBase64(document.getElementById('planImg').files[0]);
-        if(d && title) {
-            plans.push({ d, title, img });
-            plans.sort((a,b) => a.d.localeCompare(b.d));
-            save(); renderPlans();
-        }
+        const img = await getBase64(document.getElementById('pImg').files[0]);
+        plans.push({
+            date: document.getElementById('pDate').value,
+            title: document.getElementById('pTitle').value,
+            img: img
+        });
+        plans.sort((a,b) => a.date.localeCompare(b.date));
+        localStorage.setItem('eb_plans', JSON.stringify(plans));
+        alert('行程已儲存！');
+        renderDisplay();
     }
 
-    function renderPlans() {
-        const box = document.getElementById('planList');
-        box.innerHTML = plans.map((p, i) => `
-            <div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid #eee;">
-                <div style="color:var(--emi-deep-orange); font-size:0.8rem; font-weight:bold;">${p.d}</div>
-                <div style="margin-top:5px; font-weight:600;">${p.title}</div>
-                ${p.img ? `<img src="${p.img}" class="item-img" style="max-height:120px">` : ''}
+    // --- 展示渲染 ---
+    function renderDisplay() {
+        const tlBox = document.getElementById('display-timeline');
+        tlBox.innerHTML = timelineData.map((item, i) => `
+            <div class="display-card">
+                <small style="color:var(--eb-soft-pink); font-weight:bold;">${item.date}</small>
+                <h3 style="margin:5px 0;">${item.title}</h3>
+                ${item.img ? `<img src="${item.img}" class="display-img">` : ''}
+                <p style="color:#666; font-size:0.95rem;">${item.desc}</p>
+                ${item.mood ? `<div class="mood-tag">💭 ${item.mood}</div>` : ''}
+                <button onclick="deleteItem('tl', ${i})" style="color:#ccc; border:none; background:none; font-size:0.7rem;">刪除</button>
+            </div>
+        `).join('');
+
+        const pBox = document.getElementById('display-plans');
+        pBox.innerHTML = plans.map((p, i) => `
+            <div class="display-card">
+                <div style="color:var(--emi-orange); font-weight:bold;">${p.date}</div>
+                <div style="font-weight:bold; margin:5px 0;">${p.title}</div>
+                ${p.img ? `<img src="${p.img}" class="display-img" style="max-height:150px; object-fit:cover;">` : ''}
+                <button onclick="deleteItem('p', ${i})" style="color:#ccc; border:none; background:none; font-size:0.7rem;">刪除</button>
             </div>
         `).join('');
     }
 
-    async function addTimeline() {
-        const date = document.getElementById('tlDate').value, title = document.getElementById('tlTitle').value;
-        const desc = document.getElementById('tlDesc').value, mood = document.getElementById('tlMood').value;
-        const img = await getBase64(document.getElementById('tlImg').files[0]);
-        if(date && title) {
-            timelineData.unshift({ date, title, desc, mood, img });
-            save(); renderTimeline();
-            ['tlTitle', 'tlDesc', 'tlMood'].forEach(id => document.getElementById(id).value = '');
-        }
+    function deleteItem(type, i) {
+        if(!confirm('確定要刪除嗎？')) return;
+        if(type==='tl') { timelineData.splice(i,1); localStorage.setItem('eb_tl', JSON.stringify(timelineData)); }
+        else { plans.splice(i,1); localStorage.setItem('eb_plans', JSON.stringify(plans)); }
+        renderDisplay();
     }
 
-    function renderTimeline() {
-        const container = document.getElementById('timelineContainer');
-        container.innerHTML = timelineData.map((item, index) => `
-            <div style="margin-bottom:40px; position:relative;">
-                <div class="tl-tag">${item.date}</div>
-                <div class="tl-title">${item.title}</div>
-                <div class="tl-box">
-                    ${item.img ? `<img src="${item.img}" class="item-img" onclick="window.open(this.src)">` : ''}
-                    <div style="white-space: pre-wrap;">${item.desc}</div>
-                    ${item.mood ? `<div class="tl-mood-quote">💭 ${item.mood}</div>` : ''}
-                </div>
-                <button onclick="delTimeline(${index})" style="background:none; border:none; color:#ccc; font-size:0.7rem; margin-top:10px; cursor:pointer;">刪除此紀錄</button>
-            </div>
-        `).join('') || '<div style="text-align:center; opacity:0.3; padding:40px;">尚未添加任何互動紀錄</div>';
-    }
+    function clearAll() { if(confirm('⚠️ 這將清空所有數據，確定嗎？')) { localStorage.clear(); location.reload(); } }
 
-    function delTimeline(i){ if(confirm('確定刪除？')){timelineData.splice(i,1); save(); renderTimeline();} }
-    function updateDays() {
-        const g = document.getElementById('anniGroup').value, f = document.getElementById('anniFollow').value, now = new Date();
-        if(g) document.getElementById('daysGroup').innerText = Math.floor((now - new Date(g)) / 86400000);
-        if(f) document.getElementById('daysFollow').innerText = Math.floor((now - new Date(f)) / 86400000);
-    }
     function initRadar() {
+        if(myChart) myChart.destroy();
+        const target = document.getElementById('radarTarget').value;
         const ctx = document.getElementById('radarChart').getContext('2d');
-        myRadar = new Chart(ctx, {
+        myChart = new Chart(ctx, {
             type: 'radar',
             data: {
                 labels: ['可愛', '帥氣', '歌聲', '綜藝', '寵粉'],
-                datasets: [{ data: [80, 80, 80, 80, 80], backgroundColor: 'rgba(243, 112, 33, 0.1)', borderColor: '#f37021', borderWidth: 2 }]
-            },
-            options: { scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+                datasets: [{ data: [90, 80, 85, 88, 95], borderColor: target==='emi'?'#f37021':'#662d91', backgroundColor: 'rgba(255,183,197,0.2)' }]
+            }
         });
-        loadRadar();
     }
-    function loadRadar() {
-        const target = document.getElementById('radarTarget').value;
-        const saved = JSON.parse(localStorage.getItem('eb_radar_' + target)) || [80, 80, 80, 80, 80];
-        myRadar.data.datasets[0].data = saved;
-        myRadar.data.datasets[0].borderColor = target === 'emi' ? '#f37021' : '#662d91';
-        myRadar.update();
-    }
-    window.onload = load;
-</script>
 
+    window.onload = () => {
+        timelineData = JSON.parse(localStorage.getItem('eb_tl')) || [];
+        plans = JSON.parse(localStorage.getItem('eb_plans')) || [];
+        const savedSlides = JSON.parse(localStorage.getItem('eb_slides')) || [];
+        if(savedSlides.length > 0) {
+            document.getElementById('slideshow').innerHTML = savedSlides.map((s, i) => `<div class="slide ${i===0?'active':''}" style="background-image: url('${s}')"></div>`).join('');
+            let idx = 0; setInterval(() => {
+                const s = document.querySelectorAll('.slide'); if(s.length<2) return;
+                s[idx].classList.remove('active'); idx = (idx+1)%s.length; s[idx].classList.add('active');
+            }, 5000);
+        }
+        updateDays(); renderDisplay();
+        document.getElementById('tlDate').valueAsDate = new Date();
+        document.getElementById('pDate').valueAsDate = new Date();
+    };
+</script>
 </body>
 </html>
-
-
-
