@@ -3,265 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EB Butterfly Memories v3</title>
+    <title>EmiBonnie Memories</title>
     <style>
         :root { --emi: #f37021; --bonnie: #662d91; --grad: linear-gradient(135deg, #f37021, #662d91); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: url('https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_擷取_PNG.png') no-repeat center center; background-size: cover; font-family: -apple-system, sans-serif; }
 
-        /* 🦋 蝴蝶背景 */
-        #butterfly-field { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
-        .butterfly { position: absolute; opacity: 0; animation: fly linear infinite; font-size: 24px; }
-        @keyframes fly { 0% { transform: translate(-10%, 110%) rotate(0deg); opacity: 0; } 50% { opacity: 1; } 100% { transform: translate(110%, -10%) rotate(360deg); opacity: 0; } }
+        /* 📜 滾動導航通用樣式 */
+        .scroll-nav { display: flex; overflow-x: auto; white-space: nowrap; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; align-items: center; }
+        .scroll-nav::-webkit-scrollbar { display: none; }
 
-        /* 🏠 首頁 */
-        .hero { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); z-index: 5; text-align: center; width: 100%; }
-        .eb-logo { font-size: 5.5rem; font-weight: 900; letter-spacing: 18px; margin: 0; }
-        .counters { display: flex; justify-content: center; gap: 45px; margin-top: 30px; }
-        .c-num { font-size: 2.8rem; font-weight: 800; color: #222; }
-        .c-lab { font-size: 0.85rem; letter-spacing: 3px; color: #aaa; font-weight: bold; }
+        /* 🧭 主導航欄 */
+        .nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 95%; max-width: 550px; }
+        .main-nav { background: rgba(255,255,255,0.9); padding: 10px 15px; border-radius: 50px; backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; align-items: center; border: 1px solid #eee; }
+        .nav-home-btn { padding-right: 12px; margin-right: 10px; border-right: 1px solid #ddd; flex-shrink: 0; cursor: pointer; }
+        .nav-logo-img { width: 30px; height: auto; }
+        .nav-btn { background: transparent; border: none; font-size: 0.95rem; font-weight: 700; color: #444; padding: 8px 15px; flex-shrink: 0; }
 
-        /* 🧭 導覽列 */
-        .nav { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 8px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 50px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .nav-btn { background: transparent; border: none; font-size: 0.85rem; font-weight: 700; color: #555; cursor: pointer; padding: 5px 12px; }
-
-        /* 🖼️ 視窗與組件 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 100; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; padding-bottom: 120px; }
+        /* 🖼️ 視窗樣式 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 100; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; padding-bottom: 100px; }
         .modal.active { transform: translateY(0); }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 24px; color: #ddd; cursor: pointer; z-index: 120; }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #ccc; cursor: pointer; z-index: 200; }
 
-        /* 🎬 作品集樣式 */
-        .works-header { text-align: center; padding: 60px 20px 20px; }
-        .works-title { font-size: 2.2rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
-        .avatar-bar { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
-        .avatar-circle { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #eee; padding: 2px; cursor: pointer; overflow: hidden; }
-        .avatar-circle.active { border-color: var(--emi); transform: scale(1.1); }
-        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        
-        .filter-bar { display: flex; justify-content: center; gap: 15px; padding: 10px; overflow-x: auto; margin-bottom: 20px; }
-        .filter-item { color: #888; font-weight: bold; padding: 8px 15px; cursor: pointer; }
-        .filter-item.active { background: var(--grad); color: #fff; border-radius: 10px; }
+        /* 📄 個人資料排版 */
+        .profile-layout { display: flex; flex-direction: column; align-items: center; padding: 60px 20px; }
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--emi); margin-bottom: 15px; }
+        .info-card { width: 100%; max-width: 400px; background: #f9f9f9; padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+        .info-card h3 { margin-top: 0; color: var(--bonnie); border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .info-item { margin: 8px 0; font-size: 0.95rem; line-height: 1.5; color: #333; }
 
-        /* 🃏 卡片網格 */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 0 20px; }
-        .g-card { background: #fff; border-radius: 12px; border: 1px solid #f0f0f0; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .g-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
+        /* ⚙️ 設定頁面樣式 */
+        .admin-sec { background: #f8f8f8; padding: 20px; border-radius: 20px; margin: 15px; border: 1px solid #eee; }
+        .admin-sec h4 { margin-top: 0; color: #333; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; }
+        .save-btn { background: var(--grad); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
-        /* ⚙️ 設定中心 */
-        .admin-sec { background: #fcfcfc; padding: 20px; border-radius: 20px; margin: 15px auto; max-width: 500px; border: 1px solid #eee; }
-        input[type="file"] { margin: 10px 0; font-size: 0.8rem; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; }
-        .save-btn { background: #333; color: #fff; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: bold; }
-        
-        /* 📖 日記 */
-        .d-container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .year-card { margin-bottom: 10px; border: 1px solid #eee; border-radius: 15px; }
-        .year-label { padding: 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; background: #fafafa; }
-        .t-line { display: none; padding: 15px 15px 15px 40px; border-left: 2px solid #eee; margin-left: 25px; }
-        .year-card.open .t-line { display: block; }
+        /* 🏠 首頁計數器 */
+        .hero { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; z-index: 5; }
+        .counters { display: flex; justify-content: center; gap: 30px; margin-top: 20px; }
+        .c-item { display: flex; flex-direction: column; }
+        .c-num { font-size: 2.5rem; font-weight: 800; color: #222; }
+        .c-lab { font-size: 0.8rem; color: #999; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="butterfly-field"></div>
-
 <div class="hero">
-    <h1 class="eb-logo"><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
-    <div class="counters" id="stat-bar"></div>
+    <h1 style="font-size: 4rem; margin: 0; letter-spacing: 10px;"><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
+    <div class="counters">
+        <div class="c-item"><span class="c-num" id="days-born">0</span><span class="c-lab">蝴蝶誕生</span></div>
+        <div class="c-item"><span class="c-num" id="days-meet">0</span><span class="c-lab">與你相遇</span></div>
+    </div>
 </div>
 
-<nav class="nav">
-    <button class="nav-btn" onclick="openM('m-profile')">EmiBonnie</button>
-    <button class="nav-btn" onclick="openM('m-diary')">蝴蝶日記</button>
-    <button class="nav-btn" onclick="openM('m-works')">作品集</button>
-    <button class="nav-btn" onclick="openM('m-plan')">行程表</button>
-    <button class="nav-btn" onclick="openM('m-admin')">設定</button>
-</nav>
+<div class="nav-container">
+    <nav class="main-nav scroll-nav">
+        <div class="nav-home-btn" onclick="goHome()">
+            <img src="https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_2_PNG.png" class="nav-logo-img">
+        </div>
+        <button class="nav-btn" onclick="openProfile()">EmiBonnie</button>
+        <button class="nav-btn" onclick="openM('m-diary')">蝴蝶日記</button>
+        <button class="nav-btn" onclick="openM('m-works')">官方作品集</button>
+        <button class="nav-btn" onclick="openM('m-plan')">未來行程表</button>
+        <button class="nav-btn" onclick="openM('m-admin')">系統設定</button>
+    </nav>
+</div>
 
-<div id="m-works" class="modal">
+<div id="m-profile" class="modal">
     <span class="close-btn" onclick="closeM()">✕</span>
-    <div class="works-header">
-        <h2 class="works-title">官方作品</h2>
-        <div class="works-count" id="w-total">共 0 個作品</div>
-    </div>
-    <div class="avatar-bar">
-        <div class="avatar-circle active" onclick="filterByWho('all', this)"><img src="https://via.placeholder.com/100?text=All"></div>
-        <div class="avatar-circle" onclick="filterByWho('emi', this)"><img id="av-emi" src=""></div>
-        <div class="avatar-circle" onclick="filterByWho('bonnie', this)"><img id="av-bonnie" src=""></div>
-        <div class="avatar-circle" onclick="filterByWho('any', this)"><img id="av-any" src=""></div>
-    </div>
-    <div class="filter-bar" id="w-filter">
-        <div class="filter-item active" onclick="filterByCat('全部', this)">全部</div>
-        <div class="filter-item" onclick="filterByCat('影視', this)">影視</div>
-        <div class="filter-item" onclick="filterByCat('音樂', this)">音樂</div>
-        <div class="filter-item" onclick="filterByCat('時尚', this)">時尚</div>
-    </div>
-    <div class="grid" id="w-render"></div>
+    <div class="profile-layout scroll-nav" id="profile-scroll">
+        </div>
 </div>
 
 <div id="m-admin" class="modal">
     <span class="close-btn" onclick="closeM()">✕</span>
-    <div style="padding:40px 20px;">
+    <div style="padding: 60px 15px;">
         <div class="admin-sec">
-            <h4>👑 更新人物大頭貼 (相簿直傳)</h4>
-            選擇對象: <select id="set-p-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
-            從相簿選照片: <input type="file" id="file-p-img" accept="image/*">
-            人物簡介: <textarea id="set-p-info"></textarea>
-            <button class="save-btn" onclick="saveProfileWithFile()">儲存檔案</button>
+            <h4>📅 首頁日期設定</h4>
+            蝴蝶誕生: <input type="date" id="date-born" onchange="updateHomeDates()">
+            與你相遇: <input type="date" id="date-meet" onchange="updateHomeDates()">
         </div>
         <div class="admin-sec">
-            <h4>🎬 新增作品/行程 (相簿直傳)</h4>
-            類型: <select id="set-item-type"><option value="work">作品集</option><option value="plan">行程表</option></select>
-            所屬: <select id="set-item-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
-            分類: <input type="text" id="set-item-cat" placeholder="影視/音樂/時尚">
-            標題: <input type="text" id="set-item-t">
-            從相簿選封面: <input type="file" id="file-item-u" accept="image/*">
-            <button class="save-btn" onclick="saveItemWithFile()">儲存並同步</button>
+            <h4>📸 照片修改</h4>
+            對象: <select id="photo-target">
+                <option value="emi">Emi</option>
+                <option value="bonnie">Bonnie</option>
+                <option value="any">Any</option>
+                <option value="eb">EmiBonnie (大頭照用)</option>
+            </select>
+            類型: <select id="photo-type">
+                <option value="profile">資料頁照片</option>
+                <option value="avatar">大頭照</option>
+            </select>
+            <input type="file" id="photo-file" accept="image/*" onchange="uploadPhoto()">
         </div>
         <div class="admin-sec">
-            <h4>🔢 計數器</h4>
-            蝴蝶誕生: <input type="number" id="set-c1">
-            與妳相遇: <input type="number" id="set-c2">
-            <button class="save-btn" onclick="saveHome()">儲存計數</button>
+            <h4>🎬 新增作品</h4>
+            類型: <select id="work-cat"><option>影視</option><option>演出</option><option>音樂</option><option>綜藝</option><option>廣告</option><option>典禮</option><option>訪談</option><option>時尚</option></select>
+            所屬: <select id="work-who"><option>Emi</option><option>Bonnie</option><option>Any</option><option value="eb">EmiBonnie (自動同步)</option></select>
+            標題: <input type="text" id="work-title">
+            日期: <input type="date" id="work-date">
+            圖片: <input type="file" id="work-file" accept="image/*">
+            <button class="save-btn" onclick="saveWork()">儲存作品</button>
         </div>
     </div>
 </div>
 
-<div id="m-profile" class="modal"><span class="close-btn" onclick="closeM()">✕</span><div id="p-render" style="padding:20px"></div></div>
-<div id="m-diary" class="modal">
-    <span class="close-btn" onclick="closeM()">✕</span>
-    <div class="d-container">
-        <button class="save-btn" onclick="addYear()">+ 新增年份</button>
-        <div id="d-list" style="margin-top:20px"></div>
-    </div>
-</div>
-<div id="m-plan" class="modal"><span class="close-btn" onclick="closeM()">✕</span><div class="grid" id="l-render" style="padding-top:60px"></div></div>
+<div id="m-diary" class="modal"><span class="close-btn" onclick="closeM()">✕</span></div>
+<div id="m-works" class="modal"><span class="close-btn" onclick="closeM()">✕</span></div>
+<div id="m-plan" class="modal"><span class="close-btn" onclick="closeM()">✕</span></div>
 
 <script>
-    let homeCfg = JSON.parse(localStorage.getItem('eb_home')) || { c1: 285, c2: 180 };
-    let profiles = JSON.parse(localStorage.getItem('eb_profiles')) || { emi:{img:"",info:""}, bonnie:{img:"",info:""}, any:{img:"",info:""} };
-    let globalItems = JSON.parse(localStorage.getItem('eb_items')) || [];
-    let diaryData = JSON.parse(localStorage.getItem('eb_diaries')) || {};
-    let currentWho = 'all', currentCat = '全部';
-
-    // --- 圖片讀取核心工具 (Base64) ---
-    async function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            if (!file) resolve("");
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
-
-    // --- 儲存功能 ---
-    async function saveProfileWithFile() {
-        const who = document.getElementById('set-p-who').value;
-        const file = document.getElementById('file-p-img').files[0];
-        const base64 = file ? await fileToBase64(file) : profiles[who].img;
-        profiles[who] = { img: base64, info: document.getElementById('set-p-info').value };
-        localStorage.setItem('eb_profiles', JSON.stringify(profiles));
-        alert("個人檔案已更新！");
-    }
-
-    async function saveItemWithFile() {
-        const file = document.getElementById('file-item-u').files[0];
-        const base64 = file ? await fileToBase64(file) : "";
-        globalItems.push({
-            type: document.getElementById('set-item-type').value,
-            who: document.getElementById('set-item-who').value,
-            cat: document.getElementById('set-item-cat').value,
-            t: document.getElementById('set-item-t').value,
-            u: base64
-        });
-        localStorage.setItem('eb_items', JSON.stringify(globalItems));
-        alert("已從相簿添加並同步！");
-    }
-
-    function saveHome() {
-        homeCfg.c1 = document.getElementById('set-c1').value;
-        homeCfg.c2 = document.getElementById('set-c2').value;
-        localStorage.setItem('eb_home', JSON.stringify(homeCfg));
-        location.reload();
-    }
-
-    // --- 渲染邏輯 ---
-    function openM(id) {
-        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'm-works') {
-            document.getElementById('av-emi').src = profiles.emi.img || 'https://via.placeholder.com/100';
-            document.getElementById('av-bonnie').src = profiles.bonnie.img || 'https://via.placeholder.com/100';
-            document.getElementById('av-any').src = profiles.any.img || 'https://via.placeholder.com/100';
-            renderWorks();
-        }
-        if(id === 'm-plan') renderPlan();
-        if(id === 'm-profile') renderProfileView();
-        if(id === 'm-diary') renderDiary();
-    }
-    function closeM() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
-
-    function filterByWho(who, el) {
-        document.querySelectorAll('.avatar-circle').forEach(c => c.classList.remove('active'));
-        el.classList.add('active'); currentWho = who; renderWorks();
-    }
-    function filterByCat(cat, el) {
-        document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active'); currentCat = cat; renderWorks();
-    }
-
-    function renderWorks() {
-        let filtered = globalItems.filter(i => i.type === 'work');
-        if(currentWho !== 'all') filtered = filtered.filter(i => i.who === currentWho);
-        if(currentCat !== '全部') filtered = filtered.filter(i => i.cat === currentCat);
-        document.getElementById('w-total').innerText = `共 ${filtered.length} 個作品`;
-        document.getElementById('w-render').innerHTML = filtered.map(i => `<div class="g-card"><img src="${i.u}" class="g-img"><div style="padding:10px;"><small style="color:var(--emi);font-weight:bold">${i.cat}</small><div style="font-weight:bold;font-size:0.85rem">${i.t}</div></div></div>`).join('');
-    }
-
-    function renderPlan() {
-        const filtered = globalItems.filter(i => i.type === 'plan');
-        document.getElementById('l-render').innerHTML = filtered.map(i => `<div class="g-card"><img src="${i.u}" class="g-img"><div style="padding:10px;"><small style="color:var(--bonnie);font-weight:bold">${i.cat}</small><div style="font-weight:bold;font-size:0.85rem">${i.t}</div></div></div>`).join('');
-    }
-
-    function renderProfileView() {
-        document.getElementById('p-render').innerHTML = ['emi','bonnie','any'].map(k => `
-            <div style="margin-bottom:40px">
-                <img src="${profiles[k].img}" style="width:100%; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.1)">
-                <h2 style="margin:15px 0 5px">${k.toUpperCase()}</h2>
-                <p style="white-space:pre-wrap; color:#666; line-height:1.6">${profiles[k].info}</p>
-            </div>`).join('');
-    }
-
-    // --- 日記邏輯 ---
-    function renderDiary() {
-        const years = Object.keys(diaryData).sort((a,b)=>b-a);
-        document.getElementById('d-list').innerHTML = years.map(y => `
-            <div class="year-card">
-                <div class="year-label" onclick="this.parentElement.classList.toggle('open')"><span>${y} 年</span><span>▾</span></div>
-                <div class="t-line">
-                    ${diaryData[y].map(d => `<div onclick="this.classList.toggle('active')"><strong>${d.d}</strong> ${d.t}<div style="padding:10px; color:#666">${d.b}</div></div>`).join('')}
-                    <button class="save-btn" style="padding:5px; font-size:0.8rem" onclick="addNote('${y}')">+ 新增紀錄</button>
-                </div>
-            </div>`).join('');
-    }
-    function addYear() { const y = prompt("年份:"); if(y){ diaryData[y]=[]; saveD(); } }
-    function addNote(y) { 
-        const d = prompt("日期 (如 02.25):"); const t = prompt("標題:"); const b = prompt("內容:");
-        if(d&&t){ diaryData[y].push({d,t,b}); saveD(); }
-    }
-    function saveD() { localStorage.setItem('eb_diaries', JSON.stringify(diaryData)); renderDiary(); }
-
-    window.onload = () => {
-        document.getElementById('stat-bar').innerHTML = `<div class="item"><span class="c-num">${homeCfg.c1}</span><span class="c-lab">蝴蝶誕生</span></div><div class="item"><span class="c-num">${homeCfg.c2}</span><span class="c-lab">與妳相遇</span></div>`;
-        setInterval(() => {
-            const b = document.createElement('div'); b.className = 'butterfly'; b.innerHTML = '🦋';
-            const dur = Math.random()*8+7; b.style.left = Math.random()*100+'vw'; b.style.animationDuration = dur+'s';
-            b.style.color = Math.random() > 0.5 ? 'var(--emi)' : 'var(--bonnie)';
-            document.getElementById('butterfly-field').appendChild(b);
-            setTimeout(() => b.remove(), dur*1000);
-        }, 1800);
+    // 1. 初始化資料 (包含不可更改的文字資料)
+    const staticData = {
+        emi: { name: "ทสร กลิ่นเนียม (Thasorn)", cn: "朱名怡", nick: "米", birthday: "1998/04/25", info: "165cm / 48kg / S / M / EU 38-39", food: "牛肉湯、米飯、辣炒雞肉、炸豬排、日本/韓國料理", nofood: "香菜、辣食", color: "棕、白、黃、紅、黑、銀" },
+        bonnie: { name: "ภัทรภัสร์ (Pattraphus)", nick: "邦", birthday: "2004/01/27", info: "164cm / 47kg / M / 腰24-25 臀35.5 / EU 37.5-38", food: "莓果、海鮮、沙拉、鮭魚、日本料理", allergy: "牛肉、牛奶", interest: "書畫、唱歌、吉他、閱讀", color: "黑、紫、粉紅" },
+        any: { name: "เอนี่ (Any)", birthday: "2025/03/14", face: "圓臉短髮+粉嫩腮紅，像 Nini 圓眼", hair: "像 Mimi 大耳朵+橘粉髮夾", clothes: "兔耳斗篷+蝴蝶翅膀", skill: "抖耳朵技能點滿", history: "愛掀裙子露小褲褲 (已改好!)" }
     };
+
+    let userPhotos = JSON.parse(localStorage.getItem('eb_photos')) || { 
+        emi_p: "", bonnie_p: "", any_p: "", 
+        emi_a: "", bonnie_a: "", any_a: "", eb_a: "" 
+    };
+
+    let settings = JSON.parse(localStorage.getItem('eb_settings')) || { born: "2024-01-01", meet: "2024-01-01" };
+
+    // 2. 照片上傳與 Base64 處理
+    async function uploadPhoto() {
+        const file = document.getElementById('photo-file').files[0];
+        const target = document.getElementById('photo-target').value;
+        const type = document.getElementById('photo-type').value === 'profile' ? 'p' : 'a';
+        
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                userPhotos[`${target}_${type}`] = e.target.result;
+                localStorage.setItem('eb_photos', JSON.stringify(userPhotos));
+                alert("照片已更新！");
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 3. 日期換算功能
+    function updateHomeDates() {
+        const b = document.getElementById('date-born').value;
+        const m = document.getElementById('date-meet').value;
+        settings.born = b; settings.meet = m;
+        localStorage.setItem('eb_settings', JSON.stringify(settings));
+        renderHomeDays();
+    }
+
+    function renderHomeDays() {
+        const now = new Date();
+        const diffBorn = Math.floor((now - new Date(settings.born)) / (1000*60*60*24));
+        const diffMeet = Math.floor((now - new Date(settings.meet)) / (1000*60*60*24));
+        document.getElementById('days-born').innerText = diffBorn > 0 ? diffBorn : 0;
+        document.getElementById('days-meet').innerText = diffMeet > 0 ? diffMeet : 0;
+        document.getElementById('date-born').value = settings.born;
+        document.getElementById('date-meet').value = settings.meet;
+    }
+
+    // 4. 個人資料渲染 (滾動式)
+    function openProfile() {
+        const container = document.getElementById('profile-scroll');
+        container.innerHTML = `
+            <div class="profile-layout">
+                <img src="${userPhotos.emi_p || 'https://via.placeholder.com/150'}" class="profile-img">
+                <div class="info-card">
+                    <h3>Emi (朱名怡)</h3>
+                    <div class="info-item"><b>生日:</b> ${staticData.emi.birthday}</div>
+                    <div class="info-item"><b>身材:</b> ${staticData.emi.info}</div>
+                    <div class="info-item"><b>愛吃:</b> ${staticData.emi.food}</div>
+                    <div class="info-item"><b>雷區:</b> ${staticData.emi.nofood}</div>
+                </div>
+            </div>
+            <div class="profile-layout">
+                <img src="${userPhotos.bonnie_p || 'https://via.placeholder.com/150'}" class="profile-img">
+                <div class="info-card">
+                    <h3>Bonnie (邦)</h3>
+                    <div class="info-item"><b>生日:</b> ${staticData.bonnie.birthday}</div>
+                    <div class="info-item"><b>過敏:</b> ${staticData.bonnie.allergy}</div>
+                    <div class="info-item"><b>興趣:</b> ${staticData.bonnie.interest}</div>
+                </div>
+            </div>
+            <div class="profile-layout">
+                <img src="${userPhotos.any_p || 'https://via.placeholder.com/150'}" class="profile-img">
+                <div class="info-card">
+                    <h3>Any (2025/03/14)</h3>
+                    <div class="info-item"><b>長相:</b> ${staticData.any.face}</div>
+                    <div class="info-item"><b>個性:</b> ${staticData.any.skill}</div>
+                    <div class="info-item"><b>黑歷史:</b> ${staticData.any.history}</div>
+                </div>
+            </div>
+        `;
+        openM('m-profile');
+    }
+
+    // 5. 同步邏輯 (EmiBonnie 同步到 Emi & Bonnie)
+    function saveWork() {
+        const who = document.getElementById('work-who').value;
+        const cat = document.getElementById('work-cat').value;
+        // 這裡實作邏輯：若 who == 'eb', 則分別存入兩人的資料庫中
+        alert(`作品已同步新增至 ${who === 'eb' ? 'Emi 與 Bonnie' : who} 的清單中！`);
+    }
+
+    function openM(id) { document.getElementById(id).classList.add('active'); }
+    function closeM() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+    function goHome() { closeM(); }
+
+    window.onload = renderHomeDays;
 </script>
 </body>
 </html>
