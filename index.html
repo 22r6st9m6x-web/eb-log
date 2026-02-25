@@ -3,72 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EmiBonnie Memories Eternal - Mobile Pro</title>
+    <title>EmiBonnie Memories Eternal</title>
     <style>
         :root {
             --emi: #f37021; --bonnie: #662d91; --any: #ff85a2;
             --grad: linear-gradient(135deg, #f37021, #662d91);
-            --glass: rgba(255, 255, 255, 0.95);
+            --glass: rgba(255, 255, 255, 0.94);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; color: #333; }
         
-        /* 首頁框框改版：手機卡片感 */
-        .home-hero { position: fixed; top: 12%; width: 100%; text-align: center; z-index: 1; padding: 0 15px; }
-        .main-title { font-size: 3.5rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 25px; }
-        .dday-box { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        /* 首頁大標題：確保使用漸變色 */
+        .home-hero { position: fixed; top: 18%; width: 100%; text-align: center; z-index: 1; padding: 0 20px; }
+        .main-title { 
+            font-size: 4rem; 
+            font-weight: 900; 
+            background: var(--grad); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            margin: 0 0 40px 0; 
+            display: inline-block;
+        }
+
+        /* 原始 D-Day 框框 */
+        .dday-box { display: flex; justify-content: center; gap: 15px; }
         .dday-item {
-            background: #fff; width: 85%; padding: 20px; border-radius: 25px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-left: 8px solid var(--emi);
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); padding: 25px 20px;
+            border-radius: 20px 60px 20px 60px; border: 2px solid transparent;
+            background-image: linear-gradient(white, white), var(--grad);
+            background-origin: border-box; background-clip: padding-box, border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08); min-width: 130px;
         }
-        .dday-item:nth-child(2) { border-left-color: var(--bonnie); }
 
-        /* 底部導航：放大點擊範圍 */
-        .nav-container { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; padding: 15px 10px 30px; background: linear-gradient(transparent, #fff 40%); }
-        .main-nav { background: #333; padding: 8px; border-radius: 35px; display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; }
-        .nav-btn { color: #aaa; padding: 12px 18px; border: none; background: none; font-weight: 800; font-size: 0.9rem; flex-shrink: 0; }
-        .nav-btn.active-tab { color: #fff; background: var(--grad); border-radius: 25px; }
+        /* 導航欄與首頁按鈕 */
+        .nav-container { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 92%; max-width: 650px; }
+        .main-nav { background: var(--glass); padding: 10px; border-radius: 40px; backdrop-filter: blur(30px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; border: 1px solid rgba(255,255,255,0.8); }
+        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 800; color: #666; padding: 12px 18px; flex-shrink: 0; cursor: pointer; }
+        .nav-btn.active-tab { color: var(--emi); transform: scale(1.1); }
 
-        /* 全螢幕模態框 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.4s cubic-bezier(0.1, 0.7, 0.1, 1); overflow-y: auto; padding-bottom: 150px; }
+        /* 分頁設定 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1); overflow-y: auto; padding-bottom: 150px; }
         .modal.active { transform: translateY(0); }
-        .header { position: sticky; top: 0; background: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #eee; }
-
-        /* 拍立得排版 (左往右) */
-        .polaroid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .polaroid {
-            background: #fff; padding: 10px 10px 30px 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: rotate(calc(var(--r) * 1deg)); border: 1px solid #eee;
-        }
-        .polaroid img { width: 100%; height: 140px; object-fit: cover; }
-        .polaroid-label { font-size: 0.7rem; text-align: center; margin-top: 10px; font-weight: 800; color: #555; }
-
-        /* 階梯式時間線 */
-        .timeline-container { position: relative; padding: 20px 10px; }
-        .timeline-line { position: absolute; left: 20px; width: 2px; background: #eee; height: 100%; }
-        .tl-item { position: relative; margin-left: 45px; margin-bottom: 30px; }
-        .tl-card { background: #f9f9f9; padding: 15px; border-radius: 20px; border: 1px solid #eee; }
-        .tl-card img { width: 100%; border-radius: 12px; margin-top: 10px; }
-        .tl-dot { position: absolute; left: -31px; top: 15px; width: 12px; height: 12px; background: var(--grad); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px #eee; }
-
-        /* 日記年鑑：滑動選書 */
-        .diary-shelf { display: flex; gap: 20px; padding: 40px 20px; overflow-x: auto; scroll-snap-type: x mandatory; }
-        .book {
-            min-width: 140px; height: 200px; background: var(--bonnie); color: #fff;
-            border-radius: 5px 15px 15px 5px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: 900; scroll-snap-align: center;
-            box-shadow: 5px 10px 20px rgba(0,0,0,0.2); border-left: 10px solid rgba(0,0,0,0.1);
-        }
-
-        /* 互動詳情頁 */
-        .detail-view { position: fixed; inset: 0; background: #fff; z-index: 2000; display: none; flex-direction: column; }
+        .header { position: sticky; top: 0; background: rgba(255,255,255,0.98); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #f0f0f0; backdrop-filter: blur(10px); }
         
-        /* 按鈕與輸入 */
-        .btn-action { background: var(--grad); color: #fff; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: 800; margin-top: 10px; }
-        .edit-input { width: 100%; border: 1px solid #ddd; padding: 12px; border-radius: 10px; margin: 10px 0; font-size: 1rem; }
-        .upload-btn { background: #f0f0f0; padding: 20px; text-align: center; border-radius: 15px; border: 2px dashed #ccc; margin: 10px 0; }
+        /* 拍立得排版 */
+        .polaroid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .polaroid { background: #fff; padding: 10px 10px 30px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transform: rotate(calc(var(--r) * 1deg)); border: 1px solid #eee; }
+        .polaroid img { width: 100%; height: 150px; object-fit: cover; }
+
+        /* 階梯式排版 */
+        .step-container { position: relative; padding: 20px; }
+        .step-line { position: absolute; left: 50%; width: 2px; background: #eee; height: 100%; transform: translateX(-50%); }
+        .step-item { width: 45%; margin-bottom: 30px; position: relative; }
+        .step-item.left { float: left; text-align: right; }
+        .step-item.right { float: right; text-align: left; }
+        .step-card { background: #fff; padding: 10px; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .step-card img { width: 100%; border-radius: 10px; }
+
+        /* 年鑑日記與新增框 */
+        .book { min-width: 120px; height: 170px; background: var(--bonnie); color: #fff; border-radius: 5px 15px 15px 5px; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 5px 10px 15px rgba(0,0,0,0.1); }
+        .add-box { background: #f9f9f9; padding: 15px; margin: 15px; border-radius: 15px; display: none; }
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 10px; }
+        .btn-action { background: var(--grad); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        /* 詳情頁 */
+        .detail-pop { position: fixed; inset: 0; background: #fff; z-index: 2000; display: none; flex-direction: column; }
     </style>
 </head>
 <body>
@@ -76,266 +76,165 @@
 <div class="home-hero">
     <h1 class="main-title">EmiBonnie</h1>
     <div class="dday-box">
-        <div class="dday-item">
-            <span style="font-weight: 800; color: #888;">蝴蝶誕生</span>
-            <div><span id="d1" style="font-size: 2rem; font-weight: 900; color: var(--emi);">0</span> <small>Days</small></div>
-        </div>
-        <div class="dday-item">
-            <span style="font-weight: 800; color: #888;">與你相遇</span>
-            <div><span id="d2" style="font-size: 2rem; font-weight: 900; color: var(--bonnie);">0</span> <small>Days</small></div>
-        </div>
+        <div class="dday-item"><div>蝴蝶誕生</div><span id="d1" style="font-size:2.5rem; font-weight:900; color:var(--emi);">0</span><small> Days</small></div>
+        <div class="dday-item"><div>與你相遇</div><span id="d2" style="font-size:2.5rem; font-weight:900; color:var(--bonnie);">0</span><small> Days</small></div>
     </div>
 </div>
 
 <div class="nav-container">
     <nav class="main-nav">
+        <div style="padding:0 15px; font-size:1.5rem; cursor:pointer;" onclick="closeAll()">🦋</div>
         <button class="nav-btn" onclick="openM('m-profile', this)">名牌編輯</button>
-        <button class="nav-btn" onclick="openM('m-works', this)">作品拍立得</button>
+        <button class="nav-btn" onclick="openM('m-works', this)">官方作品</button>
         <button class="nav-btn" onclick="openM('m-timeline', this)">成長軌跡</button>
         <button class="nav-btn" onclick="openM('m-coll', this)">珍藏圖庫</button>
-        <button class="nav-btn" onclick="openM('m-diary', this)">年鑑日記</button>
-        <button class="nav-btn" onclick="openM('m-admin', this)" style="color:var(--emi)">管理中心</button>
+        <button class="nav-btn" onclick="openM('m-diary', this)">翻頁日記</button>
     </nav>
 </div>
 
-<div id="m-profile" class="modal">
-    <div class="header"><span style="font-weight:900;">蝴蝶名牌介紹與修改</span><span onclick="closeAll()">✕</span></div>
-    <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
-        <button class="nav-btn" style="color:var(--emi)" onclick="renderProfile('emi')">Emi</button>
-        <button class="nav-btn" style="color:var(--bonnie)" onclick="renderProfile('bonnie')">Bonnie</button>
-        <button class="nav-btn" style="color:var(--any)" onclick="renderProfile('any')">Any</button>
-    </div>
-    <div id="p-render" style="padding:20px;"></div>
-</div>
-
 <div id="m-works" class="modal">
-    <div class="header"><span style="font-weight:900;">官方作品集</span><span onclick="closeAll()">✕</span></div>
+    <div class="header"><b>官方作品 (拍立得)</b><span onclick="toggleAdd('add-w')">＋ 新增</span><span onclick="closeAll()">✕</span></div>
+    <div id="add-w" class="add-box">
+        <input type="text" id="w-n" placeholder="標題">
+        <input type="date" id="w-d">
+        <textarea id="w-t" placeholder="內容"></textarea>
+        <input type="file" id="w-f" accept="image/*">
+        <button class="btn-action" onclick="addItem('works', 'w')">發布作品</button>
+    </div>
     <div class="polaroid-grid" id="w-render"></div>
 </div>
 
 <div id="m-timeline" class="modal">
-    <div class="header"><span style="font-weight:900;">成長軌跡</span><span onclick="closeAll()">✕</span></div>
-    <div class="timeline-container">
-        <div class="timeline-line"></div>
-        <div id="tl-render"></div>
+    <div class="header"><b>成長軌跡</b><span onclick="toggleAdd('add-tl')">＋ 新增</span><span onclick="closeAll()">✕</span></div>
+    <div id="add-tl" class="add-box">
+        <input type="text" id="tl-n" placeholder="標題">
+        <input type="date" id="tl-d">
+        <textarea id="tl-t" placeholder="細節"></textarea>
+        <input type="file" id="tl-f" accept="image/*">
+        <button class="btn-action" onclick="addItem('timeline', 'tl')">新增軌跡</button>
     </div>
+    <div class="step-container"><div class="step-line"></div><div id="tl-render"></div></div>
 </div>
 
 <div id="m-coll" class="modal">
-    <div class="header"><span style="font-weight:900;">珍藏圖庫</span><span onclick="closeAll()">✕</span></div>
-    <div class="timeline-container">
-        <div class="timeline-line"></div>
-        <div id="coll-render"></div>
+    <div class="header"><b>珍藏圖庫</b><span onclick="toggleAdd('add-cl')">＋ 新增</span><span onclick="closeAll()">✕</span></div>
+    <div id="add-cl" class="add-box">
+        <input type="text" id="cl-n" placeholder="主題">
+        <input type="date" id="cl-d">
+        <textarea id="cl-t" placeholder="描述"></textarea>
+        <input type="file" id="cl-f" accept="image/*">
+        <button class="btn-action" onclick="addItem('colls', 'cl')">存入圖庫</button>
     </div>
+    <div class="step-container"><div class="step-line"></div><div id="cl-render"></div></div>
 </div>
 
 <div id="m-diary" class="modal">
-    <div class="header"><span style="font-weight:900;">翻頁日記年鑑</span><span onclick="closeAll()">✕</span></div>
-    <div class="diary-shelf" id="diary-shelf"></div>
-    <div id="diary-pages" style="display:none; padding:20px;">
-        <button onclick="backToShelf()" style="border:none; background:none; font-weight:800; color:var(--emi); margin-bottom:20px;">← 返回書架</button>
-        <div id="pages-render"></div>
+    <div class="header"><b>翻頁日記</b><span onclick="toggleAdd('add-dy')">＋ 寫日記</span><span onclick="closeAll()">✕</span></div>
+    <div id="add-dy" class="add-box">
+        <input type="text" id="dy-n" placeholder="日記主題">
+        <input type="date" id="dy-d">
+        <textarea id="dy-t" placeholder="心情內容..."></textarea>
+        <input type="file" id="dy-f" accept="image/*">
+        <button class="btn-action" onclick="addItem('diaries', 'dy')">封存日記</button>
+    </div>
+    <div class="diary-shelf" id="shelf-render"></div>
+    <div id="diary-list" style="display:none; padding:20px;">
+        <button onclick="backToShelf()" style="border:none; background:none; color:var(--emi); font-weight:bold;">← 返回書架</button>
+        <div id="pages-render" style="margin-top:20px;"></div>
     </div>
 </div>
 
-<div id="m-admin" class="modal">
-    <div class="header"><span style="font-weight:900;">記憶添加中心</span><span onclick="closeAll()">✕</span></div>
-    <div style="padding:20px;">
-        <div style="background:#f9f9f9; padding:20px; border-radius:20px;">
-            <h3>添加照片記憶</h3>
-            分類：<select id="adm-type" class="edit-input">
-                <option value="works">官方作品 (拍立得)</option>
-                <option value="timeline">成長軌跡 (時間線)</option>
-                <option value="colls">珍藏圖庫 (時間線)</option>
-                <option value="diaries">私密日記 (年鑑本)</option>
-            </select>
-            標題：<input type="text" id="adm-name" class="edit-input">
-            日期：<input type="date" id="adm-date" class="edit-input">
-            詳情：<textarea id="adm-txt" class="edit-input" rows="4"></textarea>
-            上傳照片：
-            <div class="upload-btn" onclick="document.getElementById('adm-file').click()">
-                <span id="file-status">點擊開啟相簿</span>
-                <input type="file" id="adm-file" hidden accept="image/*" onchange="document.getElementById('file-status').innerText='已選取照片'">
-            </div>
-            <button class="btn-action" onclick="handleNew()">發布記憶</button>
-        </div>
+<div id="m-profile" class="modal">
+    <div class="header"><b>蝴蝶名牌修改</b><span onclick="closeAll()">✕</span></div>
+    <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
+        <button class="nav-btn" onclick="renderProfile('emi')">Emi</button>
+        <button class="nav-btn" onclick="renderProfile('bonnie')">Bonnie</button>
+        <button class="nav-btn" onclick="renderProfile('any')">Any</button>
     </div>
+    <div id="p-render" style="padding:20px;"></div>
 </div>
 
-<div id="detail-view" class="detail-view">
-    <div class="header"><span id="det-title" style="font-weight:900;">詳情</span><span onclick="closeDetail()">✕</span></div>
-    <div style="overflow-y:auto; padding:20px;">
-        <img id="det-img" style="width:100%; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
-        <p id="det-date" style="color:#aaa; margin-top:15px; font-weight:800;"></p>
-        <p id="det-txt" style="line-height:1.8; font-size:1.1rem;"></p>
-        <button class="btn-action" style="background:#ff4757; margin-top:40px;" id="det-del-btn">刪除此記憶</button>
+<div id="detail-pop" class="detail-pop">
+    <div class="header"><b id="det-n">詳情</b><span onclick="this.parentElement.parentElement.style.display='none'">✕</span></div>
+    <div style="padding:20px; overflow-y:auto;">
+        <img id="det-i" style="width:100%; border-radius:15px;">
+        <p id="det-d" style="color:#aaa;"></p>
+        <p id="det-t" style="line-height:1.7; white-space: pre-wrap;"></p>
+        <button class="btn-action" style="background:#ff4757; margin-top:30px;" id="det-del">刪除此內容</button>
     </div>
 </div>
 
 <script>
-    // 資料庫初始化
-    let db = JSON.parse(localStorage.getItem('eb_v10_mobile')) || {
-        profiles: { 
-            emi: { bio: "Emi 是充滿活力的橘色蝴蝶。", img: "" }, 
-            bonnie: { bio: "Bonnie 是優雅神祕的紫色蝴蝶。", img: "" }, 
-            any: { bio: "Any 是甜美可人的粉色蝴蝶。", img: "" } 
-        },
+    let db = JSON.parse(localStorage.getItem('eb_v12_final')) || {
+        profiles: { emi: { bio: "橘色蝴蝶介紹...", img: "" }, bonnie: { bio: "紫色蝴蝶介紹...", img: "" }, any: { bio: "粉色蝴蝶介紹...", img: "" } },
         settings: { born: "2024-01-01", meet: "2024-05-20" },
-        timeline: [], works: [], colls: [], diaries: [], plans: []
+        timeline: [], works: [], colls: [], diaries: []
     };
 
-    const save = () => { localStorage.setItem('eb_v10_mobile', JSON.stringify(db)); renderHome(); };
+    const save = () => { localStorage.setItem('eb_v12_final', JSON.stringify(db)); renderHome(); };
     const toBase64 = f => new Promise(r => { if(!f) r(""); else { const rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(f); } });
 
-    // 1. 名牌介紹與撰寫功能
+    function toggleAdd(id) { const el = document.getElementById(id); el.style.display = el.style.display==='block' ? 'none' : 'block'; }
+    async function addItem(type, pre) {
+        const n=document.getElementById(pre+'-n').value, d=document.getElementById(pre+'-d').value, t=document.getElementById(pre+'-t').value, f=document.getElementById(pre+'-f').files[0];
+        if(!n || !d) return alert("請填寫標題與日期");
+        db[type].unshift({ id: Date.now(), n, date: d, t, i: await toBase64(f) });
+        db[type].sort((a,b) => new Date(b.date) - new Date(a.date));
+        save(); toggleAdd('add-'+pre); openM(document.querySelector('.modal.active').id);
+    }
+
+    function showDet(type, id) {
+        const item = db[type].find(x => x.id === id);
+        document.getElementById('det-n').innerText = item.n;
+        document.getElementById('det-d').innerText = item.date;
+        document.getElementById('det-t').innerText = item.t;
+        document.getElementById('det-i').src = item.i || "";
+        document.getElementById('det-del').onclick = () => { if(confirm("確定刪除？")){ db[type]=db[type].filter(x=>x.id!==id); save(); document.getElementById('detail-pop').style.display='none'; openM(document.querySelector('.modal.active').id); } };
+        document.getElementById('detail-pop').style.display = 'flex';
+    }
+
     async function renderProfile(who) {
         const p = db.profiles[who];
-        document.getElementById('p-render').innerHTML = `
-            <div style="text-align:center;">
-                <img src="${p.img || 'https://via.placeholder.com/150'}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:4px solid var(--${who});">
-                <div class="upload-btn" style="padding:10px; font-size:0.8rem;" onclick="document.getElementById('p-img-in').click()">更換頭像
-                    <input type="file" id="p-img-in" hidden accept="image/*" onchange="updatePImg('${who}')">
-                </div>
-                <h2 style="color:var(--${who}); margin:10px 0;">${who.toUpperCase()}</h2>
-                <textarea id="p-bio-in" class="edit-input" rows="5" placeholder="輸入個人簡介...">${p.bio}</textarea>
-                <button class="btn-action" onclick="saveP('${who}')">儲存名牌內容</button>
-            </div>`;
+        document.getElementById('p-render').innerHTML = `<div style="text-align:center;"><img src="${p.img || ''}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:4px solid var(--${who});"><input type="file" id="p-img" accept="image/*" onchange="upPImg('${who}')" style="margin-top:10px;"><textarea id="p-bio" rows="4" style="margin-top:15px;">${p.bio}</textarea><button class="btn-action" onclick="saveP('${who}')">儲存修改</button></div>`;
     }
+    async function upPImg(who) { const f = document.getElementById('p-img').files[0]; if(f) { db.profiles[who].img = await toBase64(f); save(); renderProfile(who); } }
+    function saveP(who) { db.profiles[who].bio = document.getElementById('p-bio').value; save(); alert("儲存成功"); }
 
-    async function updatePImg(who) {
-        const file = document.getElementById('p-img-in').files[0];
-        if(file) { db.profiles[who].img = await toBase64(file); save(); renderProfile(who); }
-    }
-
-    function saveP(who) {
-        db.profiles[who].bio = document.getElementById('p-bio-in').value;
-        save(); alert("名牌已更新！");
-    }
-
-    // 2. 拍立得渲染 (左往右)
     function renderWorks() {
-        const container = document.getElementById('w-render');
-        container.innerHTML = db.works.map(w => `
-            <div class="polaroid" style="--r:${Math.random()*6-3}" onclick="showDetail('works', ${w.id})">
-                <img src="${w.i}">
-                <div class="polaroid-label">${w.n}</div>
-            </div>
-        `).join('') || "<p style='padding:20px; color:#ccc;'>尚無作品</p>";
+        document.getElementById('w-render').innerHTML = db.works.map(w => `<div class="polaroid" style="--r:${Math.random()*6-3}" onclick="showDet('works', ${w.id})"><img src="${w.i}"><div style="text-align:center;font-weight:bold;font-size:0.75rem;margin-top:10px;">${w.n}<br><small>${w.date}</small></div></div>`).join('');
     }
-
-    // 3. 階梯式渲染 (軌跡/珍藏)
     function renderStep(type, target) {
-        const container = document.getElementById(target);
-        container.innerHTML = db[type].map(item => `
-            <div class="tl-item" onclick="showDetail('${type}', ${item.id})">
-                <div class="tl-dot"></div>
-                <div class="tl-card">
-                    <b style="font-size:0.8rem; color:var(--emi);">${item.date}</b>
-                    <div style="font-weight:800; margin:5px 0;">${item.n}</div>
-                    ${item.i ? `<img src="${item.i}">` : ''}
-                </div>
-            </div>
-        `).join('') || "<p style='padding:20px; color:#ccc;'>等待添加回憶</p>";
+        document.getElementById(target).innerHTML = db[type].map((item, i) => `<div class="step-item ${i%2===0?'left':'right'}" onclick="showDet('${type}', ${item.id})"><div class="step-card"><b>${item.n}</b><br><small>${item.date}</small>${item.i?`<img src="${item.i}">`:''}</div></div>`).join('') + `<div style="clear:both;"></div>`;
     }
-
-    // 4. 年鑑日記系統
     function renderDiary() {
-        const shelf = document.getElementById('diary-shelf');
         const years = [...new Set(db.diaries.map(d => d.date.substring(0,4)))].sort().reverse();
-        shelf.innerHTML = years.map(y => `<div class="book" onclick="openBook('${y}')">${y}年</div>`).join('') || "<p>尚無年鑑</p>";
+        document.getElementById('shelf-render').innerHTML = years.map(y => `<div class="book" onclick="openBook('${y}')">${y}年</div>`).join('');
     }
-
-    function openBook(year) {
-        document.getElementById('diary-shelf').style.display = 'none';
-        document.getElementById('diary-pages').style.display = 'block';
-        const list = db.diaries.filter(d => d.date.startsWith(year));
-        document.getElementById('pages-render').innerHTML = list.map(d => `
-            <div class="tl-card" style="margin-bottom:15px;" onclick="showDetail('diaries', ${d.id})">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <b>${d.date}</b>
-                    <span style="font-size:0.8rem; background:#eee; padding:2px 8px; border-radius:10px;">閱讀日記</span>
-                </div>
-                <div style="margin-top:10px; color:#666;">${d.n}</div>
-            </div>
-        `).join('');
+    function openBook(y) {
+        document.getElementById('shelf-render').style.display='none'; document.getElementById('diary-list').style.display='block';
+        document.getElementById('pages-render').innerHTML = db.diaries.filter(d => d.date.startsWith(y)).map(d => `<div class="step-card" style="margin-bottom:10px;" onclick="showDet('diaries', ${d.id})"><b>${d.date}</b><br>${d.n}</div>`).join('');
     }
+    function backToShelf() { document.getElementById('shelf-render').style.display='flex'; document.getElementById('diary-list').style.display='none'; }
 
-    function backToShelf() {
-        document.getElementById('diary-shelf').style.display = 'flex';
-        document.getElementById('diary-pages').style.display = 'none';
-    }
-
-    // 詳情與刪除
-    function showDetail(type, id) {
-        const item = db[type].find(x => x.id === id);
-        if(!item) return;
-        document.getElementById('det-title').innerText = item.n || "記憶詳情";
-        document.getElementById('det-date').innerText = item.date;
-        document.getElementById('det-txt').innerText = item.t;
-        document.getElementById('det-img').src = item.i || "";
-        document.getElementById('det-img').style.display = item.i ? "block" : "none";
-        document.getElementById('det-del-btn').onclick = () => {
-            if(confirm("確定刪除這段記憶嗎？")) {
-                db[type] = db[type].filter(x => x.id !== id);
-                save(); closeDetail(); openM(getModalId(type));
-            }
-        };
-        document.getElementById('detail-view').style.display = 'flex';
-    }
-
-    function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
-    function getModalId(type) {
-        const map = { works: 'm-works', timeline: 'm-timeline', colls: 'm-coll', diaries: 'm-diary' };
-        return map[type];
-    }
-
-    // 發布功能
-    async function handleNew() {
-        const type = document.getElementById('adm-type').value;
-        const img = await toBase64(document.getElementById('adm-file').files[0]);
-        const name = document.getElementById('adm-name').value;
-        const date = document.getElementById('adm-date').value;
-        const txt = document.getElementById('adm-txt').value;
-
-        if(!name || !date) return alert("標題與日期為必填！");
-
-        db[type].unshift({ id: Date.now(), n: name, date: date, t: txt, i: img });
-        db[type].sort((a,b) => new Date(b.date) - new Date(a.date));
-        save();
-        alert("記憶已收藏！");
-        // 清空輸入
-        document.getElementById('adm-name').value = "";
-        document.getElementById('adm-txt').value = "";
-        document.getElementById('file-status').innerText = "點擊開啟相簿";
-    }
-
-    // 基礎開關邏輯
     function openM(id, btn) {
-        closeAll();
-        document.getElementById(id).classList.add('active');
+        closeAll(); document.getElementById(id).classList.add('active');
         if(btn) btn.classList.add('active-tab');
-        if(id === 'm-profile') renderProfile('emi');
-        if(id === 'm-works') renderWorks();
-        if(id === 'm-timeline') renderStep('timeline', 'tl-render');
-        if(id === 'm-coll') renderStep('colls', 'coll-render');
-        if(id === 'm-diary') { backToShelf(); renderDiary(); }
+        if(id==='m-works') renderWorks();
+        if(id==='m-timeline') renderStep('timeline', 'tl-render');
+        if(id==='m-coll') renderStep('colls', 'cl-render');
+        if(id==='m-diary') { backToShelf(); renderDiary(); }
+        if(id==='m-profile') renderProfile('emi');
     }
-
-    function closeAll() {
-        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab'));
-        closeDetail();
-    }
-
+    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab')); }
     function renderHome() {
         const calc = d => Math.floor((new Date() - new Date(d)) / 86400000);
         document.getElementById('d1').innerText = Math.max(0, calc(db.settings.born));
         document.getElementById('d2').innerText = Math.max(0, calc(db.settings.meet));
     }
-
     window.onload = renderHome;
 </script>
 </body>
 </html>
+
 
 
