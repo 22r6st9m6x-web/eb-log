@@ -3,255 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EB Butterfly Log - Console</title>
+    <title>EB | Butterfly Log</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
-            --eb-soft-pink: #ffb7c5;
-            --eb-gradient: linear-gradient(135deg, #f37021 0%, #662d91 100%);
-            --emi-orange: #f37021;
-            --bonnie-purple: #662d91;
+            --pink: #ffb7c5;
+            --orange: #f37021;
+            --purple: #662d91;
+            --glass: rgba(255, 255, 255, 0.8);
         }
         
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: -apple-system, sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; }
 
-        /* 🖼️ 背景幻燈片 */
-        #slideshow { position: fixed; width: 100%; height: 100%; z-index: 1; }
-        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease-in-out; }
+        /* 🖼️ 背景幻燈片與特效層 */
+        #slideshow { position: fixed; inset: 0; z-index: 1; }
+        .slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 2.5s ease; }
         .slide.active { opacity: 1; }
-        .overlay { position: fixed; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 2; }
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, rgba(255,255,255,0.4) 100%); z-index: 2; pointer-events: none; }
 
-        /* 🌸 主頁：EB 與 雙計時器 */
-        .hero { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -60%); z-index: 3; text-align: center; width: 100%; }
-        .eb-logo { font-size: 5.5rem; font-weight: 800; letter-spacing: 15px; color: var(--eb-soft-pink); margin: 0; text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .main-counters { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 20px; color: white; }
-        .counter-num { font-size: 2.8rem; font-weight: 900; display: block; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .counter-label { font-size: 0.8rem; letter-spacing: 2px; opacity: 0.9; }
+        #butterfly-layer { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+        .butterfly { position: absolute; opacity: 0; animation: butterfly-fly 15s linear infinite; font-size: 20px; }
+        @keyframes butterfly-fly {
+            0% { transform: translate(-10%, 100%) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translate(110%, -10%) rotate(360deg); opacity: 0; }
+        }
 
-        /* 📱 底部導航 */
-        .nav-bar { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 20px; background: rgba(255,255,255,0.15); padding: 12px 25px; border-radius: 40px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }
-        .nav-btn { width: 45px; height: 45px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; border: none; }
+        /* 🌸 主頁：EB 與 紀念日 */
+        .hero { position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%); z-index: 5; text-align: center; width: 100%; pointer-events: none; }
+        .eb-logo { 
+            font-size: 6rem; font-weight: 800; letter-spacing: 15px; color: var(--pink); margin: 0;
+            filter: drop-shadow(0 4px 10px rgba(255,183,197,0.5));
+            animation: breathe 4s ease-in-out infinite;
+        }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-        /* 🪟 全屏功能彈窗 (僅顯示) */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; }
-        .modal.open { transform: translateY(0); }
-        .modal-header { position: sticky; top: 0; background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; z-index: 10; }
+        .main-counters { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 30px; }
+        .counter-item { display: flex; flex-direction: column; align-items: center; }
+        .counter-num { font-size: 2.8rem; font-weight: 900; line-height: 1; margin-bottom: 8px; }
+        .counter-label { font-size: 0.75rem; letter-spacing: 3px; color: #666; font-weight: 600; }
+
+        /* 📱 底部優化導航 */
+        .nav-bar { 
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); 
+            z-index: 100; display: flex; gap: 10px; background: var(--glass); 
+            padding: 8px; border-radius: 40px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .nav-btn { 
+            background: transparent; border: none; padding: 12px 22px; font-size: 0.95rem; 
+            font-weight: 600; color: #555; cursor: pointer; border-radius: 30px; transition: all 0.3s;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.5); }
+        .nav-btn.admin { background: var(--pink); color: white; box-shadow: 0 4px 12px rgba(255,183,197,0.4); }
+
+        /* 🪟 模態窗口渲染優化 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 200; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 1, 0.23, 1); overflow-y: auto; }
+        .modal.active { transform: translateY(0); }
+        .modal-header { position: sticky; top: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #f0f0f0; }
+        .close-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #f5f5f5; font-size: 1.2rem; cursor: pointer; color: #999; }
         .content { padding: 20px; max-width: 600px; margin: 0 auto; }
 
-        /* ⚙️ 設定中心專用樣式 */
-        .setting-section { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 25px; }
-        .setting-section h3 { font-size: 1rem; color: var(--bonnie-purple); margin-top: 0; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
-        .btn-eb { background: var(--eb-gradient); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        /* 內視窗組件 */
+        .section-box { background: #f9f9fb; border-radius: 24px; padding: 20px; margin-bottom: 25px; border: 1px solid #f0f0f5; }
+        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 14px; border: 1px solid #eee; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--pink); }
+        .btn-submit { background: linear-gradient(135deg, var(--orange), var(--purple)); color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-weight: 700; cursor: pointer; font-size: 1rem; }
         
-        /* 展示用組件 */
-        .display-card { border-bottom: 1px solid #eee; padding: 20px 0; }
-        .display-img { width: 100%; border-radius: 12px; margin: 10px 0; }
-        .mood-tag { background: #fff0f3; color: #662d91; padding: 10px; border-radius: 10px; font-style: italic; font-size: 0.9rem; margin-top: 8px; }
+        .card { border-bottom: 1px solid #f0f0f0; padding: 25px 0; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-img { width: 100%; border-radius: 20px; margin: 15px 0; object-fit: cover; }
     </style>
 </head>
 <body>
 
-<div id="slideshow"><div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1494972308255-023c550c8188?q=80&w=2070')"></div></div>
-<div class="overlay"></div>
+<div id="slideshow"></div>
+<div class="vignette"></div>
+<div id="butterfly-layer"></div>
 
 <div class="hero">
     <h1 class="eb-logo">EB</h1>
     <div class="main-counters">
-        <div class="counter-item"><span class="counter-num" id="d-group" style="color: var(--emi-orange);">0</span><span class="counter-label">蝴蝶誕生</span></div>
-        <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.3);"></div>
-        <div class="counter-item"><span class="counter-num" id="d-follow" style="color: var(--eb-soft-pink);">0</span><span class="counter-label">與妳相遇</span></div>
+        <div class="counter-item">
+            <span class="counter-num" id="d-group" style="color: var(--orange);">0</span>
+            <span class="counter-label">蝴蝶誕生</span>
+        </div>
+        <div style="width: 1px; height: 40px; background: rgba(0,0,0,0.1);"></div>
+        <div class="counter-item">
+            <span class="counter-num" id="d-follow" style="color: var(--pink);">0</span>
+            <span class="counter-label">與妳相遇</span>
+        </div>
     </div>
 </div>
 
-<div class="nav-bar">
-    <button class="nav-btn" onclick="openModal('m-timeline')">🎞️</button>
-    <button class="nav-btn" onclick="openModal('m-plan')">🗓️</button>
-    <button class="nav-btn" onclick="openModal('m-radar')">📊</button>
-    <button class="nav-btn" onclick="openModal('m-admin')" style="background: var(--eb-soft-pink); color: white;">⚙️</button>
-</div>
+<nav class="nav-bar">
+    <button class="nav-btn" onclick="toggleModal('m-timeline')">回憶</button>
+    <button class="nav-btn" onclick="toggleModal('m-plan')">行程</button>
+    <button class="nav-btn" onclick="toggleModal('m-radar')">魅力</button>
+    <button class="nav-btn admin" onclick="toggleModal('m-admin')">設定</button>
+</nav>
 
 <div id="m-timeline" class="modal">
-    <div class="modal-header"><h2>🎞️ 回憶時光機</h2><button class="nav-btn" onclick="closeModal('m-timeline')">✕</button></div>
-    <div class="content" id="display-timeline"></div>
+    <div class="modal-header"><h2>回憶時光機</h2><button class="close-btn" onclick="toggleModal('m-timeline')">✕</button></div>
+    <div class="content" id="list-timeline"></div>
 </div>
 
 <div id="m-plan" class="modal">
-    <div class="modal-header"><h2>🗓️ 蝴蝶行程表</h2><button class="nav-btn" onclick="closeModal('m-plan')">✕</button></div>
-    <div class="content" id="display-plans"></div>
+    <div class="modal-header"><h2>蝴蝶行程表</h2><button class="close-btn" onclick="toggleModal('m-plan')">✕</button></div>
+    <div class="content" id="list-plans"></div>
 </div>
 
 <div id="m-radar" class="modal">
-    <div class="modal-header"><h2>📊 魅力觀測</h2><button class="nav-btn" onclick="closeModal('m-radar')">✕</button></div>
+    <div class="modal-header"><h2>魅力觀測</h2><button class="close-btn" onclick="toggleModal('m-radar')">✕</button></div>
     <div class="content">
-        <select id="radarTarget" onchange="initRadar()"><option value="emi">EMI 🍊</option><option value="bonnie">BONNIE 💜</option></select>
-        <canvas id="radarChart"></canvas>
+        <select id="radarTarget" onchange="initRadarChart()"><option value="emi">EMI 🍊</option><option value="bonnie">BONNIE 💜</option></select>
+        <div style="padding: 20px; background: #fff; border-radius: 20px;"><canvas id="radarChart"></canvas></div>
     </div>
 </div>
 
 <div id="m-admin" class="modal">
-    <div class="modal-header"><h2>⚙️ 系統控制台</h2><button class="nav-btn" onclick="closeModal('m-admin')">✕</button></div>
+    <div class="modal-header"><h2>系統設定</h2><button class="close-btn" onclick="toggleModal('m-admin')">✕</button></div>
     <div class="content">
-        
-        <div class="setting-section">
-            <h3>📸 背景幻燈片</h3>
-            <input type="file" id="bgUploader" multiple accept="image/*">
+        <div class="section-box">
+            <label>📸 更換背景照片 (可多選)</label>
+            <input type="file" id="up-bg" multiple accept="image/*">
         </div>
-
-        <div class="setting-section">
-            <h3>🎂 紀念日設定</h3>
-            <label>蝴蝶誕生</label><input type="date" id="s-group" oninput="saveSystem()">
-            <label>與妳相遇</label><input type="date" id="s-follow" oninput="saveSystem()">
+        <div class="section-box">
+            <label>🎂 紀念日設定</label>
+            <input type="date" id="in-group" oninput="saveSystem()">
+            <input type="date" id="in-follow" oninput="saveSystem()">
         </div>
-
-        <div class="setting-section">
-            <h3>🎞️ 添加新回憶</h3>
-            <input type="date" id="tlDate"><input type="text" id="tlTitle" placeholder="標題">
-            <textarea id="tlDesc" rows="3" placeholder="具體故事..."></textarea>
-            <textarea id="tlMood" rows="2" placeholder="好的心情紀錄..."></textarea>
-            <input type="file" id="tlImg" accept="image/*">
-            <button class="btn-eb" onclick="addTimeline()">存入時間軸</button>
+        <div class="section-box">
+            <label>✍️ 新增回憶</label>
+            <input type="date" id="in-tl-date"><input type="text" id="in-tl-title" placeholder="回憶主題">
+            <textarea id="in-tl-desc" rows="3" placeholder="具體細節..."></textarea>
+            <input type="file" id="in-tl-img">
+            <button class="btn-submit" onclick="addData('timeline')">保存到時間軸</button>
         </div>
-
-        <div class="setting-section">
-            <h3>🗓️ 添加新行程</h3>
-            <input type="date" id="pDate"><input type="text" id="pTitle" placeholder="活動名稱">
-            <input type="file" id="pImg" accept="image/*">
-            <button class="btn-eb" onclick="addPlan()">儲存行程</button>
+        <div class="section-box">
+            <label>📍 新增行程</label>
+            <input type="date" id="in-p-date"><input type="text" id="in-p-title" placeholder="活動標題">
+            <input type="file" id="in-p-img">
+            <button class="btn-submit" onclick="addData('plan')">儲存行程</button>
         </div>
-
-        <button class="btn-eb" style="background: #ff6b6b;" onclick="clearAll()">⚠️ 清空所有數據</button>
+        <button onclick="if(confirm('清空數據？')) {localStorage.clear();location.reload();}" style="color: #ff4d4d; border:none; background:none; width:100%; padding:20px; cursor:pointer;">⚠️ 清空所有資料</button>
     </div>
 </div>
 
 <script>
-    let timelineData = [], plans = [], slides = [], myChart;
+    let db = { tl: [], plans: [], slides: [] }, radar;
 
-    // --- 基礎系統 ---
-    function openModal(id) { 
-        document.getElementById(id).classList.add('open'); 
-        if(id === 'm-radar') initRadar();
-    }
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    // --- 核心工具 ---
+    const toggleModal = (id) => document.getElementById(id).classList.toggle('active');
+    const getBase64 = (file) => new Promise(res => { if(!file) return res(null); const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result); });
 
-    async function getBase64(file) {
-        return new Promise(res => {
-            if(!file) return res(null);
-            const r = new FileReader(); r.readAsDataURL(file);
-            r.onload = () => res(r.result);
-        });
-    }
-
-    // --- 背景與日期 ---
-    document.getElementById('bgUploader').onchange = async function(e) {
-        slides = [];
-        for(let f of e.target.files) { slides.push(await getBase64(f)); }
-        localStorage.setItem('eb_slides', JSON.stringify(slides));
-        location.reload(); 
-    };
-
+    // --- 系統功能 ---
     function saveSystem() {
-        localStorage.setItem('eb_g', document.getElementById('s-group').value);
-        localStorage.setItem('eb_f', document.getElementById('s-follow').value);
-        updateDays();
+        localStorage.setItem('eb_g', document.getElementById('in-group').value);
+        localStorage.setItem('eb_f', document.getElementById('in-follow').value);
+        renderHome();
     }
 
-    function updateDays() {
+    async function addData(type) {
+        if(type === 'timeline') {
+            const img = await getBase64(document.getElementById('in-tl-img').files[0]);
+            db.tl.unshift({ date: document.getElementById('in-tl-date').value, title: document.getElementById('in-tl-title').value, desc: document.getElementById('in-tl-desc').value, img });
+            localStorage.setItem('eb_tl', JSON.stringify(db.tl));
+        } else {
+            const img = await getBase64(document.getElementById('in-p-img').files[0]);
+            db.plans.push({ date: document.getElementById('in-p-date').value, title: document.getElementById('in-p-title').value, img });
+            db.plans.sort((a,b) => a.date.localeCompare(b.date));
+            localStorage.setItem('eb_p', JSON.stringify(db.plans));
+        }
+        alert('存儲成功 ✨'); renderLists();
+    }
+
+    function renderHome() {
         const g = localStorage.getItem('eb_g'), f = localStorage.getItem('eb_f'), now = new Date();
-        if(g) { document.getElementById('d-group').innerText = Math.floor((now - new Date(g))/86400000); document.getElementById('s-group').value = g; }
-        if(f) { document.getElementById('d-follow').innerText = Math.floor((now - new Date(f))/86400000); document.getElementById('s-follow').value = f; }
+        if(g) { document.getElementById('d-group').innerText = Math.floor((now - new Date(g))/86400000); document.getElementById('in-group').value = g; }
+        if(f) { document.getElementById('d-follow').innerText = Math.floor((now - new Date(f))/86400000); document.getElementById('in-follow').value = f; }
     }
 
-    // --- 數據添加 ---
-    async function addTimeline() {
-        const img = await getBase64(document.getElementById('tlImg').files[0]);
-        const entry = {
-            date: document.getElementById('tlDate').value,
-            title: document.getElementById('tlTitle').value,
-            desc: document.getElementById('tlDesc').value,
-            mood: document.getElementById('tlMood').value,
-            img: img
-        };
-        timelineData.unshift(entry);
-        localStorage.setItem('eb_tl', JSON.stringify(timelineData));
-        alert('回憶已儲存！');
-        renderDisplay();
+    function renderLists() {
+        document.getElementById('list-timeline').innerHTML = db.tl.map((i, idx) => `
+            <div class="card">
+                <small style="color:var(--pink); font-weight:700;">${i.date}</small>
+                <h3 style="margin:8px 0;">${i.title}</h3>
+                ${i.img ? `<img src="${i.img}" class="card-img">` : ''}
+                <p style="color:#666; font-size:0.95rem; line-height:1.6;">${i.desc}</p>
+                <button onclick="del('tl',${idx})" style="border:none; background:none; color:#ddd; font-size:0.7rem; cursor:pointer;">刪除</button>
+            </div>`).join('');
+
+        document.getElementById('list-plans').innerHTML = db.plans.map((i, idx) => `
+            <div class="card">
+                <div style="color:var(--orange); font-weight:700;">${i.date}</div>
+                <h3 style="margin:8px 0;">${i.title}</h3>
+                ${i.img ? `<img src="${i.img}" class="card-img">` : ''}
+                <button onclick="del('p',${idx})" style="border:none; background:none; color:#ddd; font-size:0.7rem; cursor:pointer;">刪除</button>
+            </div>`).join('');
     }
 
-    async function addPlan() {
-        const img = await getBase64(document.getElementById('pImg').files[0]);
-        plans.push({
-            date: document.getElementById('pDate').value,
-            title: document.getElementById('pTitle').value,
-            img: img
-        });
-        plans.sort((a,b) => a.date.localeCompare(b.date));
-        localStorage.setItem('eb_plans', JSON.stringify(plans));
-        alert('行程已儲存！');
-        renderDisplay();
-    }
+    function del(type, i) { if(type==='tl'){db.tl.splice(i,1);localStorage.setItem('eb_tl', JSON.stringify(db.tl));}else{db.plans.splice(i,1);localStorage.setItem('eb_p',JSON.stringify(db.plans));} renderLists(); }
 
-    // --- 展示渲染 ---
-    function renderDisplay() {
-        const tlBox = document.getElementById('display-timeline');
-        tlBox.innerHTML = timelineData.map((item, i) => `
-            <div class="display-card">
-                <small style="color:var(--eb-soft-pink); font-weight:bold;">${item.date}</small>
-                <h3 style="margin:5px 0;">${item.title}</h3>
-                ${item.img ? `<img src="${item.img}" class="display-img">` : ''}
-                <p style="color:#666; font-size:0.95rem;">${item.desc}</p>
-                ${item.mood ? `<div class="mood-tag">💭 ${item.mood}</div>` : ''}
-                <button onclick="deleteItem('tl', ${i})" style="color:#ccc; border:none; background:none; font-size:0.7rem;">刪除</button>
-            </div>
-        `).join('');
-
-        const pBox = document.getElementById('display-plans');
-        pBox.innerHTML = plans.map((p, i) => `
-            <div class="display-card">
-                <div style="color:var(--emi-orange); font-weight:bold;">${p.date}</div>
-                <div style="font-weight:bold; margin:5px 0;">${p.title}</div>
-                ${p.img ? `<img src="${p.img}" class="display-img" style="max-height:150px; object-fit:cover;">` : ''}
-                <button onclick="deleteItem('p', ${i})" style="color:#ccc; border:none; background:none; font-size:0.7rem;">刪除</button>
-            </div>
-        `).join('');
-    }
-
-    function deleteItem(type, i) {
-        if(!confirm('確定要刪除嗎？')) return;
-        if(type==='tl') { timelineData.splice(i,1); localStorage.setItem('eb_tl', JSON.stringify(timelineData)); }
-        else { plans.splice(i,1); localStorage.setItem('eb_plans', JSON.stringify(plans)); }
-        renderDisplay();
-    }
-
-    function clearAll() { if(confirm('⚠️ 這將清空所有數據，確定嗎？')) { localStorage.clear(); location.reload(); } }
-
-    function initRadar() {
-        if(myChart) myChart.destroy();
-        const target = document.getElementById('radarTarget').value;
+    function initRadarChart() {
+        if(radar) radar.destroy();
         const ctx = document.getElementById('radarChart').getContext('2d');
-        myChart = new Chart(ctx, {
+        const target = document.getElementById('radarTarget').value;
+        radar = new Chart(ctx, {
             type: 'radar',
             data: {
                 labels: ['可愛', '帥氣', '歌聲', '綜藝', '寵粉'],
-                datasets: [{ data: [90, 80, 85, 88, 95], borderColor: target==='emi'?'#f37021':'#662d91', backgroundColor: 'rgba(255,183,197,0.2)' }]
-            }
+                datasets: [{ data: [90, 85, 95, 80, 98], borderColor: target==='emi'?'#f37021':'#662d91', backgroundColor: 'rgba(255,183,197,0.1)', borderWidth: 2 }]
+            },
+            options: { plugins: { legend: { display: false } } }
         });
     }
 
-    window.onload = () => {
-        timelineData = JSON.parse(localStorage.getItem('eb_tl')) || [];
-        plans = JSON.parse(localStorage.getItem('eb_plans')) || [];
-        const savedSlides = JSON.parse(localStorage.getItem('eb_slides')) || [];
-        if(savedSlides.length > 0) {
-            document.getElementById('slideshow').innerHTML = savedSlides.map((s, i) => `<div class="slide ${i===0?'active':''}" style="background-image: url('${s}')"></div>`).join('');
-            let idx = 0; setInterval(() => {
+    // --- 背景與動畫 ---
+    document.getElementById('up-bg').onchange = async function(e) {
+        db.slides = [];
+        for(let f of e.target.files) db.slides.push(await getBase64(f));
+        localStorage.setItem('eb_slides', JSON.stringify(db.slides));
+        location.reload();
+    };
+
+    function startSlides() {
+        const box = document.getElementById('slideshow');
+        const saved = JSON.parse(localStorage.getItem('eb_slides')) || [];
+        if(!saved.length) box.innerHTML = `<div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1494972308255-023c550c8188?q=80&w=2000')"></div>`;
+        else {
+            box.innerHTML = saved.map((s,i) => `<div class="slide ${i===0?'active':''}" style="background-image:url('${s}')"></div>`).join('');
+            let cur = 0; setInterval(() => {
                 const s = document.querySelectorAll('.slide'); if(s.length<2) return;
-                s[idx].classList.remove('active'); idx = (idx+1)%s.length; s[idx].classList.add('active');
-            }, 5000);
+                s[cur].classList.remove('active'); cur = (cur+1)%s.length; s[cur].classList.add('active');
+            }, 6000);
         }
-        updateDays(); renderDisplay();
-        document.getElementById('tlDate').valueAsDate = new Date();
-        document.getElementById('pDate').valueAsDate = new Date();
+    }
+
+    function startButterflies() {
+        const layer = document.getElementById('butterfly-layer');
+        setInterval(() => {
+            const b = document.createElement('div');
+            b.className = 'butterfly';
+            b.innerHTML = '🦋';
+            b.style.left = Math.random() * 100 + 'vw';
+            b.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            b.style.color = Math.random() > 0.5 ? '#ffb7c5' : '#f37021';
+            layer.appendChild(b);
+            setTimeout(() => b.remove(), 15000);
+        }, 4000);
+    }
+
+    window.onload = () => {
+        db.tl = JSON.parse(localStorage.getItem('eb_tl')) || [];
+        db.plans = JSON.parse(localStorage.getItem('eb_p')) || [];
+        renderHome(); renderLists(); startSlides(); startButterflies();
+        document.getElementById('in-tl-date').valueAsDate = new Date();
+        document.getElementById('in-p-date').valueAsDate = new Date();
     };
 </script>
 </body>
