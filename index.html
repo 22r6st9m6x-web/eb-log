@@ -3,87 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EB Butterfly Memories</title>
+    <title>EB Butterfly Memories v3</title>
     <style>
-        :root { 
-            --emi: #f37021; --bonnie: #662d91; --any: #ff8fab;
-            --bg: #fdfdfd; --card: #ffffff; --text: #333; --light: #999;
-        }
-        
+        :root { --emi: #f37021; --bonnie: #662d91; --grad: linear-gradient(135deg, #f37021, #662d91); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: -apple-system, "PingFang TC", sans-serif; color: var(--text); }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; }
 
-        /* 🦋 背景特效 */
-        #butterfly-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
-        .butterfly { position: absolute; opacity: 0; animation: fly linear infinite; font-size: 20px; }
-        @keyframes fly {
-            0% { transform: translate(-10%, 110%) rotate(0deg) scale(0.5); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translate(110%, -10%) rotate(360deg) scale(1.2); opacity: 0; }
-        }
+        /* 🦋 蝴蝶背景 */
+        #butterfly-field { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+        .butterfly { position: absolute; opacity: 0; animation: fly linear infinite; font-size: 24px; }
+        @keyframes fly { 0% { transform: translate(-10%, 110%) rotate(0deg); opacity: 0; } 50% { opacity: 1; } 100% { transform: translate(110%, -10%) rotate(360deg); opacity: 0; } }
 
-        /* 🏠 主視角 */
+        /* 🏠 首頁 */
         .hero { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); z-index: 5; text-align: center; width: 100%; }
-        .eb-logo { font-size: 5rem; font-weight: 900; letter-spacing: 15px; margin: 0; pointer-events: none; }
-        .e { color: var(--emi); } .b { color: var(--bonnie); }
+        .eb-logo { font-size: 5.5rem; font-weight: 900; letter-spacing: 18px; margin: 0; }
+        .counters { display: flex; justify-content: center; gap: 45px; margin-top: 30px; }
+        .c-num { font-size: 2.8rem; font-weight: 800; color: #222; }
+        .c-lab { font-size: 0.85rem; letter-spacing: 3px; color: #aaa; font-weight: bold; }
 
-        /* 🧭 導覽列 (優化磨砂感) */
-        .nav-bar { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 8px; background: rgba(255,255,255,0.7); padding: 10px 15px; border-radius: 50px; backdrop-filter: blur(15px); box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.5); }
-        .nav-btn { background: transparent; border: none; font-size: 0.85rem; font-weight: 600; color: #555; cursor: pointer; padding: 8px 12px; transition: 0.3s; white-space: nowrap; }
-        .nav-btn:active { transform: scale(0.9); opacity: 0.7; }
+        /* 🧭 導覽列 */
+        .nav { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 8px; background: rgba(255,255,255,0.9); padding: 12px 20px; border-radius: 50px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .nav-btn { background: transparent; border: none; font-size: 0.85rem; font-weight: 700; color: #555; cursor: pointer; padding: 5px 12px; }
 
-        /* 🖼️ 模態框通用樣式 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 100; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; padding-bottom: 120px; }
+        /* 🖼️ 視窗與組件 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 100; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; padding-bottom: 120px; }
         .modal.active { transform: translateY(0); }
-        .header { position: sticky; top: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; z-index: 110; }
-        .close-icon { font-size: 24px; cursor: pointer; color: #ccc; }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 24px; color: #ddd; cursor: pointer; z-index: 120; }
 
-        /* 👑 個人檔案區 */
-        .tab-row { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #fff; position: sticky; top: 65px; z-index: 105; }
-        .t-btn { padding: 8px 20px; border-radius: 20px; border: none; font-weight: bold; font-size: 0.9rem; background: #f5f5f5; color: #888; }
-        .t-btn.active.emi { background: var(--emi); color: #fff; }
-        .t-btn.active.bonnie { background: var(--bonnie); color: #fff; }
-        .t-btn.active.any { background: var(--any); color: #fff; }
+        /* 🎬 作品集樣式 */
+        .works-header { text-align: center; padding: 60px 20px 20px; }
+        .works-title { font-size: 2.2rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        .avatar-bar { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
+        .avatar-circle { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #eee; padding: 2px; cursor: pointer; overflow: hidden; }
+        .avatar-circle.active { border-color: var(--emi); transform: scale(1.1); }
+        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         
-        .p-card { max-width: 900px; margin: 0 auto; padding: 20px; display: flex; flex-wrap: wrap; gap: 30px; animation: fadeIn 0.5s; }
-        .p-img { flex: 1; min-width: 300px; height: 450px; border-radius: 24px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-        .p-img img { width: 100%; height: 100%; object-fit: cover; }
-        .p-info { flex: 1.2; min-width: 300px; }
-        .p-info h2 { font-size: 1.8rem; margin: 0 0 15px 0; }
-        .p-data { white-space: pre-wrap; line-height: 1.8; color: #555; font-size: 1rem; }
+        .filter-bar { display: flex; justify-content: center; gap: 15px; padding: 10px; overflow-x: auto; margin-bottom: 20px; }
+        .filter-item { color: #888; font-weight: bold; padding: 8px 15px; cursor: pointer; }
+        .filter-item.active { background: var(--grad); color: #fff; border-radius: 10px; }
 
-        /* 📖 蝴蝶日記 (時間軸優化) */
-        .diary-box { max-width: 650px; margin: 0 auto; padding: 20px; }
-        .y-wrap { margin-bottom: 15px; border-radius: 18px; border: 1px solid #f0f0f0; background: #fff; }
-        .y-head { padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 800; }
-        .d-line { display: none; padding: 10px 20px 20px 45px; border-left: 2px solid #f0f0f0; margin-left: 35px; position: relative; }
-        .y-wrap.open .d-line { display: block; animation: slideDown 0.3s; }
-        .d-item { position: relative; margin-bottom: 25px; cursor: pointer; }
-        .d-dot { position: absolute; left: -54px; top: 6px; width: 12px; height: 12px; background: #fff; border: 3px solid var(--emi); border-radius: 50%; }
-        .d-title { font-weight: bold; margin-bottom: 4px; transition: 0.2s; }
-        .d-body { display: none; padding: 12px; background: #fcf8f5; border-radius: 10px; margin-top: 8px; font-size: 0.9rem; border-left: 4px solid var(--emi); }
-        .d-item.active .d-body { display: block; }
+        /* 🃏 卡片網格 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 0 20px; }
+        .g-card { background: #fff; border-radius: 12px; border: 1px solid #f0f0f0; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .g-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
 
-        /* 🖋️ 輸入彈窗 */
-        #pop-form { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .form-card { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #eee; border-radius: 12px; background: #f9f9f9; outline: none; }
-        .submit { background: #333; color: #fff; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; margin-top: 10px; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        /* ⚙️ 設定中心 */
+        .admin-sec { background: #fcfcfc; padding: 20px; border-radius: 20px; margin: 15px auto; max-width: 500px; border: 1px solid #eee; }
+        input[type="file"] { margin: 10px 0; font-size: 0.8rem; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; }
+        .save-btn { background: #333; color: #fff; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: bold; }
+        
+        /* 📖 日記 */
+        .d-container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .year-card { margin-bottom: 10px; border: 1px solid #eee; border-radius: 15px; }
+        .year-label { padding: 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; background: #fafafa; }
+        .t-line { display: none; padding: 15px 15px 15px 40px; border-left: 2px solid #eee; margin-left: 25px; }
+        .year-card.open .t-line { display: block; }
     </style>
 </head>
 <body>
 
-<div id="butterfly-layer"></div>
+<div id="butterfly-field"></div>
 
 <div class="hero">
-    <h1 class="eb-logo"><span class="e">E</span><span class="b">B</span></h1>
-    <p style="letter-spacing: 5px; color: #aaa; font-size: 0.8rem;">BUTTERFLY MEMORIES</p>
+    <h1 class="eb-logo"><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
+    <div class="counters" id="stat-bar"></div>
 </div>
 
-<nav class="nav-bar">
+<nav class="nav">
     <button class="nav-btn" onclick="openM('m-profile')">EmiBonnie</button>
     <button class="nav-btn" onclick="openM('m-diary')">蝴蝶日記</button>
     <button class="nav-btn" onclick="openM('m-works')">作品集</button>
@@ -91,142 +78,191 @@
     <button class="nav-btn" onclick="openM('m-admin')">設定</button>
 </nav>
 
-<div id="m-profile" class="modal">
-    <div class="header"><h3>檔案圖鑑</h3><span class="close-icon" onclick="closeM()">✕</span></div>
-    <div class="tab-row">
-        <button class="t-btn active emi" onclick="renderProfile('emi', this)">Emi</button>
-        <button class="t-btn bonnie" onclick="renderProfile('bonnie', this)">Bonnie</button>
-        <button class="t-btn any" onclick="renderProfile('any', this)">Any</button>
+<div id="m-works" class="modal">
+    <span class="close-btn" onclick="closeM()">✕</span>
+    <div class="works-header">
+        <h2 class="works-title">官方作品</h2>
+        <div class="works-count" id="w-total">共 0 個作品</div>
     </div>
-    <div id="p-view"></div>
-</div>
-
-<div id="m-diary" class="modal">
-    <div class="header">
-        <div style="display:flex; align-items:center; gap:10px;"><h3>蝴蝶日記</h3><button onclick="addYear()" style="border:none; background:var(--emi); color:#fff; border-radius:50%; width:24px; height:24px; cursor:pointer;">+</button></div>
-        <span class="close-icon" onclick="closeM()">✕</span>
+    <div class="avatar-bar">
+        <div class="avatar-circle active" onclick="filterByWho('all', this)"><img src="https://via.placeholder.com/100?text=All"></div>
+        <div class="avatar-circle" onclick="filterByWho('emi', this)"><img id="av-emi" src=""></div>
+        <div class="avatar-circle" onclick="filterByWho('bonnie', this)"><img id="av-bonnie" src=""></div>
+        <div class="avatar-circle" onclick="filterByWho('any', this)"><img id="av-any" src=""></div>
     </div>
-    <div class="diary-box" id="d-list"></div>
+    <div class="filter-bar" id="w-filter">
+        <div class="filter-item active" onclick="filterByCat('全部', this)">全部</div>
+        <div class="filter-item" onclick="filterByCat('影視', this)">影視</div>
+        <div class="filter-item" onclick="filterByCat('音樂', this)">音樂</div>
+        <div class="filter-item" onclick="filterByCat('時尚', this)">時尚</div>
+    </div>
+    <div class="grid" id="w-render"></div>
 </div>
 
 <div id="m-admin" class="modal">
-    <div class="header"><h3>系統設定</h3><span class="close-icon" onclick="closeM()">✕</span></div>
-    <div style="padding:25px; max-width:500px; margin:0 auto;">
-        <div style="background:#f9f9f9; padding:20px; border-radius:20px; margin-bottom:20px;">
-            <h4 style="margin-top:0;">🖋️ 編輯角色檔案</h4>
-            <select id="edit-who" onchange="loadEdit()"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
-            <input type="text" id="edit-n" placeholder="全名">
-            <input type="text" id="edit-u" placeholder="照片 URL">
-            <textarea id="edit-i" placeholder="詳細資料..." style="height:150px;"></textarea>
-            <button class="submit" onclick="saveEdit()">儲存檔案更新</button>
+    <span class="close-btn" onclick="closeM()">✕</span>
+    <div style="padding:40px 20px;">
+        <div class="admin-sec">
+            <h4>👑 更新人物大頭貼 (相簿直傳)</h4>
+            選擇對象: <select id="set-p-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
+            從相簿選照片: <input type="file" id="file-p-img" accept="image/*">
+            人物簡介: <textarea id="set-p-info"></textarea>
+            <button class="save-btn" onclick="saveProfileWithFile()">儲存檔案</button>
         </div>
-        <p style="text-align:center; font-size:0.75rem; color:#ccc;">資料僅儲存於此裝置的瀏覽器中</p>
+        <div class="admin-sec">
+            <h4>🎬 新增作品/行程 (相簿直傳)</h4>
+            類型: <select id="set-item-type"><option value="work">作品集</option><option value="plan">行程表</option></select>
+            所屬: <select id="set-item-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
+            分類: <input type="text" id="set-item-cat" placeholder="影視/音樂/時尚">
+            標題: <input type="text" id="set-item-t">
+            從相簿選封面: <input type="file" id="file-item-u" accept="image/*">
+            <button class="save-btn" onclick="saveItemWithFile()">儲存並同步</button>
+        </div>
+        <div class="admin-sec">
+            <h4>🔢 計數器</h4>
+            蝴蝶誕生: <input type="number" id="set-c1">
+            與妳相遇: <input type="number" id="set-c2">
+            <button class="save-btn" onclick="saveHome()">儲存計數</button>
+        </div>
     </div>
 </div>
 
-<div id="pop-form" onclick="if(event.target==this)this.style.display='none'">
-    <div class="form-card">
-        <h3 id="pop-title" style="margin-top:0;">新增紀錄</h3>
-        <input type="text" id="pop-d" placeholder="日期 (例如 02.25)">
-        <input type="text" id="pop-t" placeholder="標題">
-        <textarea id="pop-b" placeholder="寫下回憶..." style="height:120px;"></textarea>
-        <button class="submit" onclick="saveDiary()">確認並同步</button>
+<div id="m-profile" class="modal"><span class="close-btn" onclick="closeM()">✕</span><div id="p-render" style="padding:20px"></div></div>
+<div id="m-diary" class="modal">
+    <span class="close-btn" onclick="closeM()">✕</span>
+    <div class="d-container">
+        <button class="save-btn" onclick="addYear()">+ 新增年份</button>
+        <div id="d-list" style="margin-top:20px"></div>
     </div>
 </div>
-
-<div id="m-works" class="modal"><div class="header"><h3>官方作品</h3><span class="close-icon" onclick="closeM()">✕</span></div></div>
-<div id="m-plan" class="modal"><div class="header"><h3>行程表</h3><span class="close-icon" onclick="closeM()">✕</span></div></div>
+<div id="m-plan" class="modal"><span class="close-btn" onclick="closeM()">✕</span><div class="grid" id="l-render" style="padding-top:60px"></div></div>
 
 <script>
-    // --- 核心資料 ---
-    let profiles = JSON.parse(localStorage.getItem('eb_profiles')) || {
-        emi: { name: "Emi 朱名怡", img: "", info: "暱稱: mimi\n生日: 1998.04.25\n品牌: IMM ANOTHER" },
-        bonnie: { name: "Bonnie 邦", img: "", info: "暱稱: nini\n生日: 2004.01.27\n品牌: VURVBKK" },
-        any: { name: "Anyเอนี่", img: "", info: "生日: 2025.03.14\n特徵: 圓臉短髮" }
-    };
-    let diaries = JSON.parse(localStorage.getItem('eb_diaries')) || { "2026": [] };
-    let curYear = "";
+    let homeCfg = JSON.parse(localStorage.getItem('eb_home')) || { c1: 285, c2: 180 };
+    let profiles = JSON.parse(localStorage.getItem('eb_profiles')) || { emi:{img:"",info:""}, bonnie:{img:"",info:""}, any:{img:"",info:""} };
+    let globalItems = JSON.parse(localStorage.getItem('eb_items')) || [];
+    let diaryData = JSON.parse(localStorage.getItem('eb_diaries')) || {};
+    let currentWho = 'all', currentCat = '全部';
 
-    // --- 視窗控制 ---
-    function openM(id) {
-        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'm-profile') renderProfile('emi', document.querySelector('.t-btn.emi'));
-        if(id === 'm-diary') renderDiaries();
-        if(id === 'm-admin') loadEdit();
-    }
-    function closeM() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
-
-    // --- 角色檔案 ---
-    function renderProfile(who, btn) {
-        document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const d = profiles[who];
-        document.getElementById('p-view').innerHTML = `
-            <div class="p-card">
-                <div class="p-img"><img src="${d.img || 'https://via.placeholder.com/400x600?text=No+Photo'}" onerror="this.src='https://via.placeholder.com/400x600?text=Error'"></div>
-                <div class="p-info"><h2>${d.name}</h2><div class="p-data">${d.info}</div></div>
-            </div>`;
-    }
-
-    function loadEdit() {
-        const who = document.getElementById('edit-who').value;
-        document.getElementById('edit-n').value = profiles[who].name;
-        document.getElementById('edit-u').value = profiles[who].img;
-        document.getElementById('edit-i').value = profiles[who].info;
-    }
-
-    function saveEdit() {
-        const who = document.getElementById('edit-who').value;
-        profiles[who] = { name: document.getElementById('edit-n').value, img: document.getElementById('edit-u').value, info: document.getElementById('edit-i').value };
-        localStorage.setItem('eb_profiles', JSON.stringify(profiles));
-        alert('檔案已更新');
-    }
-
-    // --- 蝴蝶日記 ---
-    function renderDiaries() {
-        const list = document.getElementById('d-list');
-        list.innerHTML = '';
-        Object.keys(diaries).sort((a,b)=>b-a).forEach(y => {
-            const wrap = document.createElement('div');
-            wrap.className = 'y-wrap';
-            const items = diaries[y].map((item, i) => `
-                <div class="d-item" onclick="this.classList.toggle('active')">
-                    <div class="d-dot"></div>
-                    <div style="font-size:0.75rem; color:#aaa;">${item.d}</div>
-                    <div class="d-title">${item.t}</div>
-                    <div class="d-body">${item.b}</div>
-                </div>`).join('');
-            wrap.innerHTML = `
-                <div class="y-head" onclick="this.parentElement.classList.toggle('open')"><span>${y} 年</span><span>▾</span></div>
-                <div class="d-line">${items} <button onclick="openEntry('${y}')" class="submit" style="background:#eee; color:#666; font-size:0.75rem; padding:8px;">+ 新增 ${y} 紀錄</button></div>`;
-            list.appendChild(wrap);
+    // --- 圖片讀取核心工具 (Base64) ---
+    async function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            if (!file) resolve("");
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
         });
     }
 
-    function addYear() { const y = prompt("輸入年份:"); if(y && !diaries[y]){ diaries[y]=[]; saveD(); } }
-    function openEntry(y) { curYear = y; document.getElementById('pop-title').innerText = y + " 新紀錄"; document.getElementById('pop-form').style.display='flex'; }
-    function saveDiary() {
-        const d = document.getElementById('pop-d').value, t = document.getElementById('pop-t').value, b = document.getElementById('pop-b').value;
-        if(!d || !t) return;
-        diaries[curYear].push({ d, t, b });
-        saveD();
-        document.getElementById('pop-form').style.display='none';
-        document.getElementById('pop-d').value=''; document.getElementById('pop-t').value=''; document.getElementById('pop-b').value='';
+    // --- 儲存功能 ---
+    async function saveProfileWithFile() {
+        const who = document.getElementById('set-p-who').value;
+        const file = document.getElementById('file-p-img').files[0];
+        const base64 = file ? await fileToBase64(file) : profiles[who].img;
+        profiles[who] = { img: base64, info: document.getElementById('set-p-info').value };
+        localStorage.setItem('eb_profiles', JSON.stringify(profiles));
+        alert("個人檔案已更新！");
     }
-    function saveD() { localStorage.setItem('eb_diaries', JSON.stringify(diaries)); renderDiaries(); }
 
-    // --- 蝴蝶特效 ---
-    setInterval(() => {
-        const layer = document.getElementById('butterfly-layer');
-        const b = document.createElement('div'); b.className = 'butterfly'; b.innerHTML = '🦋';
-        const dur = Math.random() * 8 + 8;
-        b.style.left = Math.random() * 100 + 'vw';
-        b.style.animationDuration = dur + 's';
-        b.style.color = [ '#f37021', '#662d91', '#ff8fab' ][Math.floor(Math.random()*3)];
-        layer.appendChild(b);
-        setTimeout(() => b.remove(), dur * 1000);
-    }, 2000);
+    async function saveItemWithFile() {
+        const file = document.getElementById('file-item-u').files[0];
+        const base64 = file ? await fileToBase64(file) : "";
+        globalItems.push({
+            type: document.getElementById('set-item-type').value,
+            who: document.getElementById('set-item-who').value,
+            cat: document.getElementById('set-item-cat').value,
+            t: document.getElementById('set-item-t').value,
+            u: base64
+        });
+        localStorage.setItem('eb_items', JSON.stringify(globalItems));
+        alert("已從相簿添加並同步！");
+    }
+
+    function saveHome() {
+        homeCfg.c1 = document.getElementById('set-c1').value;
+        homeCfg.c2 = document.getElementById('set-c2').value;
+        localStorage.setItem('eb_home', JSON.stringify(homeCfg));
+        location.reload();
+    }
+
+    // --- 渲染邏輯 ---
+    function openM(id) {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'm-works') {
+            document.getElementById('av-emi').src = profiles.emi.img || 'https://via.placeholder.com/100';
+            document.getElementById('av-bonnie').src = profiles.bonnie.img || 'https://via.placeholder.com/100';
+            document.getElementById('av-any').src = profiles.any.img || 'https://via.placeholder.com/100';
+            renderWorks();
+        }
+        if(id === 'm-plan') renderPlan();
+        if(id === 'm-profile') renderProfileView();
+        if(id === 'm-diary') renderDiary();
+    }
+    function closeM() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+
+    function filterByWho(who, el) {
+        document.querySelectorAll('.avatar-circle').forEach(c => c.classList.remove('active'));
+        el.classList.add('active'); currentWho = who; renderWorks();
+    }
+    function filterByCat(cat, el) {
+        document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active'); currentCat = cat; renderWorks();
+    }
+
+    function renderWorks() {
+        let filtered = globalItems.filter(i => i.type === 'work');
+        if(currentWho !== 'all') filtered = filtered.filter(i => i.who === currentWho);
+        if(currentCat !== '全部') filtered = filtered.filter(i => i.cat === currentCat);
+        document.getElementById('w-total').innerText = `共 ${filtered.length} 個作品`;
+        document.getElementById('w-render').innerHTML = filtered.map(i => `<div class="g-card"><img src="${i.u}" class="g-img"><div style="padding:10px;"><small style="color:var(--emi);font-weight:bold">${i.cat}</small><div style="font-weight:bold;font-size:0.85rem">${i.t}</div></div></div>`).join('');
+    }
+
+    function renderPlan() {
+        const filtered = globalItems.filter(i => i.type === 'plan');
+        document.getElementById('l-render').innerHTML = filtered.map(i => `<div class="g-card"><img src="${i.u}" class="g-img"><div style="padding:10px;"><small style="color:var(--bonnie);font-weight:bold">${i.cat}</small><div style="font-weight:bold;font-size:0.85rem">${i.t}</div></div></div>`).join('');
+    }
+
+    function renderProfileView() {
+        document.getElementById('p-render').innerHTML = ['emi','bonnie','any'].map(k => `
+            <div style="margin-bottom:40px">
+                <img src="${profiles[k].img}" style="width:100%; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.1)">
+                <h2 style="margin:15px 0 5px">${k.toUpperCase()}</h2>
+                <p style="white-space:pre-wrap; color:#666; line-height:1.6">${profiles[k].info}</p>
+            </div>`).join('');
+    }
+
+    // --- 日記邏輯 ---
+    function renderDiary() {
+        const years = Object.keys(diaryData).sort((a,b)=>b-a);
+        document.getElementById('d-list').innerHTML = years.map(y => `
+            <div class="year-card">
+                <div class="year-label" onclick="this.parentElement.classList.toggle('open')"><span>${y} 年</span><span>▾</span></div>
+                <div class="t-line">
+                    ${diaryData[y].map(d => `<div onclick="this.classList.toggle('active')"><strong>${d.d}</strong> ${d.t}<div style="padding:10px; color:#666">${d.b}</div></div>`).join('')}
+                    <button class="save-btn" style="padding:5px; font-size:0.8rem" onclick="addNote('${y}')">+ 新增紀錄</button>
+                </div>
+            </div>`).join('');
+    }
+    function addYear() { const y = prompt("年份:"); if(y){ diaryData[y]=[]; saveD(); } }
+    function addNote(y) { 
+        const d = prompt("日期 (如 02.25):"); const t = prompt("標題:"); const b = prompt("內容:");
+        if(d&&t){ diaryData[y].push({d,t,b}); saveD(); }
+    }
+    function saveD() { localStorage.setItem('eb_diaries', JSON.stringify(diaryData)); renderDiary(); }
+
+    window.onload = () => {
+        document.getElementById('stat-bar').innerHTML = `<div class="item"><span class="c-num">${homeCfg.c1}</span><span class="c-lab">蝴蝶誕生</span></div><div class="item"><span class="c-num">${homeCfg.c2}</span><span class="c-lab">與妳相遇</span></div>`;
+        setInterval(() => {
+            const b = document.createElement('div'); b.className = 'butterfly'; b.innerHTML = '🦋';
+            const dur = Math.random()*8+7; b.style.left = Math.random()*100+'vw'; b.style.animationDuration = dur+'s';
+            b.style.color = Math.random() > 0.5 ? 'var(--emi)' : 'var(--bonnie)';
+            document.getElementById('butterfly-field').appendChild(b);
+            setTimeout(() => b.remove(), dur*1000);
+        }, 1800);
+    };
 </script>
 </body>
 </html>
+
