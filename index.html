@@ -3,264 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EB | Butterfly Log</title>
+    <title>EB Butterfly Memories</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
-            --pink: #ffb7c5;
-            --orange: #f37021;
-            --purple: #662d91;
-            --glass: rgba(255, 255, 255, 0.8);
+            --emi-orange: #f37021;
+            --bonnie-purple: #662d91;
+            --any-pink: #ff8fab;
+            --pure-white: #ffffff;
         }
         
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--pure-white); font-family: -apple-system, "PingFang TC", sans-serif; }
 
-        /* 🖼️ 背景幻燈片與特效層 */
+        /* 背景與特效層 */
         #slideshow { position: fixed; inset: 0; z-index: 1; }
         .slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 2.5s ease; }
         .slide.active { opacity: 1; }
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, rgba(255,255,255,0.4) 100%); z-index: 2; pointer-events: none; }
-
+        .white-overlay { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.7); z-index: 2; pointer-events: none; }
         #butterfly-layer { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
-        .butterfly { position: absolute; opacity: 0; animation: butterfly-fly 15s linear infinite; font-size: 20px; }
+        .butterfly { position: absolute; opacity: 0; animation: butterfly-fly linear infinite; user-select: none; }
         @keyframes butterfly-fly {
-            0% { transform: translate(-10%, 100%) rotate(0deg); opacity: 0; }
+            0% { transform: translate(-10%, 110%) rotate(0deg) scale(0.5); opacity: 0; }
             10% { opacity: 0.6; }
             90% { opacity: 0.6; }
-            100% { transform: translate(110%, -10%) rotate(360deg); opacity: 0; }
+            100% { transform: translate(110%, -10%) rotate(360deg) scale(1.2); opacity: 0; }
         }
 
-        /* 🌸 主頁：EB 與 紀念日 */
-        .hero { position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%); z-index: 5; text-align: center; width: 100%; pointer-events: none; }
-        .eb-logo { 
-            font-size: 6rem; font-weight: 800; letter-spacing: 15px; color: var(--pink); margin: 0;
-            filter: drop-shadow(0 4px 10px rgba(255,183,197,0.5));
-            animation: breathe 4s ease-in-out infinite;
-        }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        /* 主頁中央標題 */
+        .hero { position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%); z-index: 5; text-align: center; width: 100%; }
+        .eb-logo { font-size: 6rem; font-weight: 800; letter-spacing: 5px; margin: 0; }
+        .e-char { color: var(--emi-orange); }
+        .b-char { color: var(--bonnie-purple); }
+        .sub-title { font-size: 0.8rem; letter-spacing: 8px; color: #aaa; margin-top: -10px; text-transform: uppercase; }
+        .main-counters { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 40px; }
+        .counter-num { font-size: 2.5rem; font-weight: 900; line-height: 1; margin-bottom: 8px; color: #333; }
+        .counter-label { font-size: 0.7rem; letter-spacing: 2px; color: #999; font-weight: 600; }
 
-        .main-counters { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 30px; }
-        .counter-item { display: flex; flex-direction: column; align-items: center; }
-        .counter-num { font-size: 2.8rem; font-weight: 900; line-height: 1; margin-bottom: 8px; }
-        .counter-label { font-size: 0.75rem; letter-spacing: 3px; color: #666; font-weight: 600; }
+        /* 導航欄 */
+        .nav-bar { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 20px; background: rgba(255,255,255,0.9); padding: 12px 25px; border-radius: 50px; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
+        .nav-btn { background: transparent; border: none; font-size: 0.95rem; font-weight: 600; color: #777; cursor: pointer; transition: 0.3s; }
 
-        /* 📱 底部優化導航 */
-        .nav-bar { 
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); 
-            z-index: 100; display: flex; gap: 10px; background: var(--glass); 
-            padding: 8px; border-radius: 40px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        .nav-btn { 
-            background: transparent; border: none; padding: 12px 22px; font-size: 0.95rem; 
-            font-weight: 600; color: #555; cursor: pointer; border-radius: 30px; transition: all 0.3s;
-        }
-        .nav-btn:hover { background: rgba(255,255,255,0.5); }
-        .nav-btn.admin { background: var(--pink); color: white; box-shadow: 0 4px 12px rgba(255,183,197,0.4); }
-
-        /* 🪟 模態窗口渲染優化 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 200; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 1, 0.23, 1); overflow-y: auto; }
+        /* 模態視窗 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 200; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; }
         .modal.active { transform: translateY(0); }
-        .modal-header { position: sticky; top: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #f0f0f0; }
-        .close-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #f5f5f5; font-size: 1.2rem; cursor: pointer; color: #999; }
-        .content { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .modal-header { position: sticky; top: 0; background: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f9f9f9; z-index: 10; }
+        .close-btn { border: none; background: #eee; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
 
-        /* 內視窗組件 */
-        .section-box { background: #f9f9fb; border-radius: 24px; padding: 20px; margin-bottom: 25px; border: 1px solid #f0f0f5; }
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 14px; border: 1px solid #eee; font-size: 16px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--pink); }
-        .btn-submit { background: linear-gradient(135deg, var(--orange), var(--purple)); color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        /* 行程表樣式 */
+        .calendar-nav { display: flex; align-items: center; gap: 10px; padding: 12px 20px; background: #fffaf9; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; }
+        .filter-tag { padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; background: #eee; color: #666; transition: 0.2s; }
+        .filter-tag.active[data-type="all"] { background: #333; color: white; }
+        .filter-tag.active[data-type="emi"] { background: var(--emi-orange); color: white; }
+        .filter-tag.active[data-type="any"] { background: var(--any-pink); color: white; }
+        .filter-tag.active[data-type="bonnie"] { background: var(--bonnie-purple); color: white; }
         
-        .card { border-bottom: 1px solid #f0f0f0; padding: 25px 0; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card-img { width: 100%; border-radius: 20px; margin: 15px 0; object-fit: cover; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #eee; padding: 1px; }
+        .weekday { background: #fdfdfd; text-align: center; font-size: 0.8rem; color: #888; padding: 10px 0; font-weight: bold; }
+        .day-cell { min-height: 110px; background: #fff; padding: 5px; position: relative; }
+        .day-num { font-size: 0.75rem; color: #333; margin-bottom: 5px; font-weight: bold; }
+        
+        /* 行程標籤色彩 */
+        .event-tag { font-size: 0.7rem; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; line-height: 1.2; border-left: 3px solid; }
+        .event-tag.emi { border-color: var(--emi-orange); background: rgba(243, 112, 33, 0.08); color: #d35400; }
+        .event-tag.bonnie { border-color: var(--bonnie-purple); background: rgba(102, 45, 145, 0.08); color: #4a235a; }
+        .event-tag.any { border-color: var(--any-pink); background: rgba(255, 143, 171, 0.12); color: #b3365b; }
+        .event-loc { font-size: 0.6rem; opacity: 0.7; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .content { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section-box { background: #fbfbfb; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #f0f0f0; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #eee; font-size: 1rem; }
+        .btn-submit { background: linear-gradient(to right, var(--emi-orange), var(--bonnie-purple)); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="slideshow"></div>
-<div class="vignette"></div>
+<div class="white-overlay"></div>
 <div id="butterfly-layer"></div>
 
 <div class="hero">
-    <h1 class="eb-logo">EB</h1>
+    <h1 class="eb-logo"><span class="e-char">E</span><span class="b-char">B</span></h1>
+    <div class="sub-title">— Butterfly Memories —</div>
     <div class="main-counters">
-        <div class="counter-item">
-            <span class="counter-num" id="d-group" style="color: var(--orange);">0</span>
-            <span class="counter-label">蝴蝶誕生</span>
-        </div>
-        <div style="width: 1px; height: 40px; background: rgba(0,0,0,0.1);"></div>
-        <div class="counter-item">
-            <span class="counter-num" id="d-follow" style="color: var(--pink);">0</span>
-            <span class="counter-label">與妳相遇</span>
-        </div>
+        <div class="counter-item"><span class="counter-num" id="d-group">0</span><span class="counter-label">蝴蝶誕生</span></div>
+        <div style="width: 1px; height: 30px; background: #eee;"></div>
+        <div class="counter-item"><span class="counter-num" id="d-follow">0</span><span class="counter-label">與妳相遇</span></div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <button class="nav-btn" onclick="toggleModal('m-timeline')">回憶</button>
-    <button class="nav-btn" onclick="toggleModal('m-plan')">行程</button>
-    <button class="nav-btn" onclick="toggleModal('m-radar')">魅力</button>
-    <button class="nav-btn admin" onclick="toggleModal('m-admin')">設定</button>
+    <button class="nav-btn" onclick="toggleM('m-timeline')">回憶</button>
+    <button class="nav-btn" onclick="toggleM('m-plan')">行程</button>
+    <button class="nav-btn admin" onclick="toggleM('m-admin')">設定</button>
 </nav>
 
-<div id="m-timeline" class="modal">
-    <div class="modal-header"><h2>回憶時光機</h2><button class="close-btn" onclick="toggleModal('m-timeline')">✕</button></div>
-    <div class="content" id="list-timeline"></div>
-</div>
-
 <div id="m-plan" class="modal">
-    <div class="modal-header"><h2>蝴蝶行程表</h2><button class="close-btn" onclick="toggleModal('m-plan')">✕</button></div>
-    <div class="content" id="list-plans"></div>
-</div>
-
-<div id="m-radar" class="modal">
-    <div class="modal-header"><h2>魅力觀測</h2><button class="close-btn" onclick="toggleModal('m-radar')">✕</button></div>
-    <div class="content">
-        <select id="radarTarget" onchange="initRadarChart()"><option value="emi">EMI 🍊</option><option value="bonnie">BONNIE 💜</option></select>
-        <div style="padding: 20px; background: #fff; border-radius: 20px;"><canvas id="radarChart"></canvas></div>
+    <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:15px;">
+            <h3>蝴蝶行程表</h3>
+            <div style="font-size: 1.1rem; color: var(--emi-orange); font-weight: bold;">2026年 2月</div>
+        </div>
+        <button class="close-btn" onclick="toggleM('m-plan')">✕</button>
     </div>
+    <div class="calendar-nav">
+        <span style="font-size:0.75rem; color:#999;">篩選:</span>
+        <div class="filter-tag active" data-type="all" onclick="setFilter('all', this)">全部</div>
+        <div class="filter-tag" data-type="emi" onclick="setFilter('emi', this)">Emi</div>
+        <div class="filter-tag" data-type="any" onclick="setFilter('any', this)">Any (粉紅)</div>
+        <div class="filter-tag" data-type="bonnie" onclick="setFilter('bonnie', this)">Bonnie</div>
+    </div>
+    <div class="calendar-grid" id="calendar-body"></div>
 </div>
 
 <div id="m-admin" class="modal">
-    <div class="modal-header"><h2>系統設定</h2><button class="close-btn" onclick="toggleModal('m-admin')">✕</button></div>
+    <div class="modal-header"><h3>設定中心</h3><button class="close-btn" onclick="toggleM('m-admin')">✕</button></div>
     <div class="content">
         <div class="section-box">
-            <label>📸 更換背景照片 (可多選)</label>
+            <label>🖼️ 背景管理</label>
             <input type="file" id="up-bg" multiple accept="image/*">
         </div>
         <div class="section-box">
             <label>🎂 紀念日設定</label>
-            <input type="date" id="in-group" oninput="saveSystem()">
-            <input type="date" id="in-follow" oninput="saveSystem()">
+            蝴蝶誕生：<input type="date" id="in-g" oninput="saveSys()">
+            與妳相遇：<input type="date" id="in-f" oninput="saveSys()">
         </div>
         <div class="section-box">
-            <label>✍️ 新增回憶</label>
-            <input type="date" id="in-tl-date"><input type="text" id="in-tl-title" placeholder="回憶主題">
-            <textarea id="in-tl-desc" rows="3" placeholder="具體細節..."></textarea>
-            <input type="file" id="in-tl-img">
-            <button class="btn-submit" onclick="addData('timeline')">保存到時間軸</button>
+            <label>🗓️ 新增行程</label>
+            日期：<input type="date" id="p-d">
+            對象：<select id="p-who">
+                <option value="emi">Emi 🧡</option>
+                <option value="any">Any (粉紅玩偶) 🌸</option>
+                <option value="bonnie">Bonnie 💜</option>
+            </select>
+            標題：<input type="text" id="p-t" placeholder="活動標題">
+            地點：<input type="text" id="p-loc" placeholder="活動地點">
+            <button class="btn-submit" onclick="add('p')">儲存行程</button>
         </div>
-        <div class="section-box">
-            <label>📍 新增行程</label>
-            <input type="date" id="in-p-date"><input type="text" id="in-p-title" placeholder="活動標題">
-            <input type="file" id="in-p-img">
-            <button class="btn-submit" onclick="addData('plan')">儲存行程</button>
-        </div>
-        <button onclick="if(confirm('清空數據？')) {localStorage.clear();location.reload();}" style="color: #ff4d4d; border:none; background:none; width:100%; padding:20px; cursor:pointer;">⚠️ 清空所有資料</button>
     </div>
 </div>
 
 <script>
-    let db = { tl: [], plans: [], slides: [] }, radar;
+    let db = { p: [] }, currentFilter = 'all';
 
-    // --- 核心工具 ---
-    const toggleModal = (id) => document.getElementById(id).classList.toggle('active');
-    const getBase64 = (file) => new Promise(res => { if(!file) return res(null); const r = new FileReader(); r.readAsDataURL(file); r.onload = () => res(r.result); });
+    const toggleM = (id) => {
+        document.getElementById(id).classList.toggle('active');
+        if(id === 'm-plan') renderCalendar();
+    };
 
-    // --- 系統功能 ---
-    function saveSystem() {
-        localStorage.setItem('eb_g', document.getElementById('in-group').value);
-        localStorage.setItem('eb_f', document.getElementById('in-follow').value);
+    function setFilter(type, el) {
+        currentFilter = type;
+        document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderCalendar();
+    }
+
+    function saveSys() {
+        localStorage.setItem('eb_g', document.getElementById('in-g').value);
+        localStorage.setItem('eb_f', document.getElementById('in-f').value);
         renderHome();
     }
 
-    async function addData(type) {
-        if(type === 'timeline') {
-            const img = await getBase64(document.getElementById('in-tl-img').files[0]);
-            db.tl.unshift({ date: document.getElementById('in-tl-date').value, title: document.getElementById('in-tl-title').value, desc: document.getElementById('in-tl-desc').value, img });
-            localStorage.setItem('eb_tl', JSON.stringify(db.tl));
-        } else {
-            const img = await getBase64(document.getElementById('in-p-img').files[0]);
-            db.plans.push({ date: document.getElementById('in-p-date').value, title: document.getElementById('in-p-title').value, img });
-            db.plans.sort((a,b) => a.date.localeCompare(b.date));
-            localStorage.setItem('eb_p', JSON.stringify(db.plans));
+    function add(type) {
+        const d = document.getElementById('p-d').value;
+        const w = document.getElementById('p-who').value;
+        const t = document.getElementById('p-t').value;
+        const l = document.getElementById('p-loc').value;
+        if(!d || !t) return alert('請填寫完整資訊');
+        db.p.push({ date: d, who: w, title: t, loc: l });
+        localStorage.setItem('eb_p', JSON.stringify(db.p));
+        alert('行程已儲存 ✨');
+        renderCalendar();
+    }
+
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-body');
+        grid.innerHTML = '';
+        ['日','一','二','三','四','五','六'].forEach(w => grid.innerHTML += `<div class="weekday">${w}</div>`);
+        for(let i = 1; i <= 28; i++) {
+            const dateStr = `2026-02-${i.toString().padStart(2, '0')}`;
+            let events = db.p.filter(e => e.date === dateStr);
+            if(currentFilter !== 'all') events = events.filter(e => e.who === currentFilter);
+            let eventHtml = events.map(ev => `
+                <div class="event-tag ${ev.who}">
+                    <span class="event-loc">📍 ${ev.loc || '活動'}</span>
+                    <strong>${ev.title}</strong>
+                </div>
+            `).join('');
+            grid.innerHTML += `<div class="day-cell"><div class="day-num">${i}</div>${eventHtml}</div>`;
         }
-        alert('存儲成功 ✨'); renderLists();
     }
 
     function renderHome() {
         const g = localStorage.getItem('eb_g'), f = localStorage.getItem('eb_f'), now = new Date();
-        if(g) { document.getElementById('d-group').innerText = Math.floor((now - new Date(g))/86400000); document.getElementById('in-group').value = g; }
-        if(f) { document.getElementById('d-follow').innerText = Math.floor((now - new Date(f))/86400000); document.getElementById('in-follow').value = f; }
-    }
-
-    function renderLists() {
-        document.getElementById('list-timeline').innerHTML = db.tl.map((i, idx) => `
-            <div class="card">
-                <small style="color:var(--pink); font-weight:700;">${i.date}</small>
-                <h3 style="margin:8px 0;">${i.title}</h3>
-                ${i.img ? `<img src="${i.img}" class="card-img">` : ''}
-                <p style="color:#666; font-size:0.95rem; line-height:1.6;">${i.desc}</p>
-                <button onclick="del('tl',${idx})" style="border:none; background:none; color:#ddd; font-size:0.7rem; cursor:pointer;">刪除</button>
-            </div>`).join('');
-
-        document.getElementById('list-plans').innerHTML = db.plans.map((i, idx) => `
-            <div class="card">
-                <div style="color:var(--orange); font-weight:700;">${i.date}</div>
-                <h3 style="margin:8px 0;">${i.title}</h3>
-                ${i.img ? `<img src="${i.img}" class="card-img">` : ''}
-                <button onclick="del('p',${idx})" style="border:none; background:none; color:#ddd; font-size:0.7rem; cursor:pointer;">刪除</button>
-            </div>`).join('');
-    }
-
-    function del(type, i) { if(type==='tl'){db.tl.splice(i,1);localStorage.setItem('eb_tl', JSON.stringify(db.tl));}else{db.plans.splice(i,1);localStorage.setItem('eb_p',JSON.stringify(db.plans));} renderLists(); }
-
-    function initRadarChart() {
-        if(radar) radar.destroy();
-        const ctx = document.getElementById('radarChart').getContext('2d');
-        const target = document.getElementById('radarTarget').value;
-        radar = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['可愛', '帥氣', '歌聲', '綜藝', '寵粉'],
-                datasets: [{ data: [90, 85, 95, 80, 98], borderColor: target==='emi'?'#f37021':'#662d91', backgroundColor: 'rgba(255,183,197,0.1)', borderWidth: 2 }]
-            },
-            options: { plugins: { legend: { display: false } } }
-        });
-    }
-
-    // --- 背景與動畫 ---
-    document.getElementById('up-bg').onchange = async function(e) {
-        db.slides = [];
-        for(let f of e.target.files) db.slides.push(await getBase64(f));
-        localStorage.setItem('eb_slides', JSON.stringify(db.slides));
-        location.reload();
-    };
-
-    function startSlides() {
-        const box = document.getElementById('slideshow');
-        const saved = JSON.parse(localStorage.getItem('eb_slides')) || [];
-        if(!saved.length) box.innerHTML = `<div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1494972308255-023c550c8188?q=80&w=2000')"></div>`;
-        else {
-            box.innerHTML = saved.map((s,i) => `<div class="slide ${i===0?'active':''}" style="background-image:url('${s}')"></div>`).join('');
-            let cur = 0; setInterval(() => {
-                const s = document.querySelectorAll('.slide'); if(s.length<2) return;
-                s[cur].classList.remove('active'); cur = (cur+1)%s.length; s[cur].classList.add('active');
-            }, 6000);
-        }
-    }
-
-    function startButterflies() {
-        const layer = document.getElementById('butterfly-layer');
-        setInterval(() => {
-            const b = document.createElement('div');
-            b.className = 'butterfly';
-            b.innerHTML = '🦋';
-            b.style.left = Math.random() * 100 + 'vw';
-            b.style.animationDuration = (Math.random() * 10 + 10) + 's';
-            b.style.color = Math.random() > 0.5 ? '#ffb7c5' : '#f37021';
-            layer.appendChild(b);
-            setTimeout(() => b.remove(), 15000);
-        }, 4000);
+        if(g) { document.getElementById('d-group').innerText = Math.floor((now - new Date(g))/86400000); document.getElementById('in-g').value = g; }
+        if(f) { document.getElementById('d-follow').innerText = Math.floor((now - new Date(f))/86400000); document.getElementById('in-f').value = f; }
     }
 
     window.onload = () => {
-        db.tl = JSON.parse(localStorage.getItem('eb_tl')) || [];
-        db.plans = JSON.parse(localStorage.getItem('eb_p')) || [];
-        renderHome(); renderLists(); startSlides(); startButterflies();
-        document.getElementById('in-tl-date').valueAsDate = new Date();
-        document.getElementById('in-p-date').valueAsDate = new Date();
+        db.p = JSON.parse(localStorage.getItem('eb_p')) || [];
+        renderHome();
+        setInterval(() => {
+            const layer = document.getElementById('butterfly-layer');
+            const b = document.createElement('div');
+            b.className = 'butterfly'; b.innerHTML = '🦋';
+            const duration = Math.random() * 8 + 10;
+            b.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            b.style.left = Math.random() * 100 + 'vw';
+            b.style.animationDuration = duration + 's';
+            const colors = [ 'var(--emi-orange)', 'var(--bonnie-purple)', 'var(--any-pink)' ];
+            b.style.color = colors[Math.floor(Math.random()*colors.length)];
+            layer.appendChild(b);
+            setTimeout(() => b.remove(), duration * 1000);
+        }, 1200);
     };
 </script>
 </body>
