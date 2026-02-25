@@ -2,293 +2,168 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>EmiBonnie Memories</title>
 
 <style>
 :root{
---emi:#f37021;
---bonnie:#662d91;
---grad:linear-gradient(135deg,#f37021,#662d91);
+    --emi:#f37021;
+    --bonnie:#662d91;
+    --grad:linear-gradient(135deg,#f37021,#662d91);
 }
 
 body{
-margin:0;
-font-family:-apple-system;
-background:#fff;
-overflow-x:hidden;
+    margin:0; font-family:-apple-system, "PingFang TC", sans-serif;
+    /* 使用妳提供的背景圖 */
+    background: url('https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_擷取_PNG.png') no-repeat center center;
+    background-size: cover; background-attachment: fixed;
+    height: 100vh; overflow: hidden;
 }
 
-h2{margin-top:0}
+/* 🏠 首頁計數器樣式：水平並列 */
+.hero { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; z-index: 5; }
+.eb-logo { font-size: 5rem; font-weight: 800; margin: 0; letter-spacing: 10px; }
+.counters { display: flex; justify-content: center; gap: 40px; margin-top: 20px; }
+.c-item { display: flex; flex-direction: column; align-items: center; }
+.c-num { font-size: 2.8rem; font-weight: 800; color: #222; line-height: 1; }
+.c-lab { font-size: 0.85rem; color: #999; font-weight: bold; margin-top: 8px; letter-spacing: 2px; }
 
-.nav{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-background:#fff;
-padding:10px 20px;
-border-radius:50px;
-box-shadow:0 10px 30px rgba(0,0,0,.1);
-display:flex;
-gap:15px;
-z-index:1000;
-}
+/* 🧭 導航欄 */
+.nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 550px; z-index: 1000; }
+.nav { background: rgba(255,255,255,0.9); padding: 10px 15px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,.1); border: 1px solid #eee; backdrop-filter: blur(10px); display: flex; align-items: center; overflow-x: auto; white-space: nowrap; }
+.nav::-webkit-scrollbar { display: none; }
 
-button{
-border:none;
-background:var(--grad);
-color:#fff;
-padding:8px 14px;
-border-radius:20px;
-cursor:pointer;
-}
+.nav-logo-btn { padding-right: 12px; margin-right: 10px; border-right: 1px solid #ddd; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; }
+.nav-logo-img { width: 30px; height: auto; }
+.nav-btn { border: none; background: transparent; color: #444; padding: 8px 15px; font-weight: bold; font-size: 0.95rem; cursor: pointer; flex-shrink: 0; }
 
-.modal{
-position:fixed;
-inset:0;
-background:#fff;
-transform:translateY(100%);
-transition:.4s;
-overflow:auto;
-padding:40px 20px 120px;
-z-index:500;
-}
+/* 🖼️ 視窗與彈窗內容 */
+.modal { position: fixed; inset: 0; background: #fff; transform: translateY(100%); transition: .4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; padding: 60px 20px 120px; z-index: 500; }
+.modal.active { transform: translateY(0); }
+.close-x { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #ccc; cursor: pointer; z-index: 600; }
 
-.modal.active{transform:translateY(0);}
+/* 📄 作品與行程卡片樣式 */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+.card { background: #f9f9f9; border-radius: 15px; overflow: hidden; border: 1px solid #eee; }
+.card img { width: 100%; height: 150px; object-fit: cover; }
+.card-content { padding: 10px; font-size: 0.9rem; }
 
-.profile{
-display:flex;
-flex-direction:column;
-align-items:center;
-margin-bottom:40px;
-}
-
-.profile img{
-width:120px;
-height:120px;
-border-radius:50%;
-object-fit:cover;
-margin-bottom:10px;
-}
-
-.card{
-background:#f7f7f7;
-padding:15px;
-border-radius:15px;
-margin-bottom:15px;
-}
-
-.hero{
-text-align:center;
-margin-top:120px;
-}
-
-.counter{
-font-size:28px;
-font-weight:bold;
-}
-
-input,select{
-width:100%;
-padding:8px;
-margin-bottom:10px;
-border-radius:8px;
-border:1px solid #ddd;
-}
+/* ⚙️ 設定表單 */
+.admin-box { background: #f5f5f5; padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; font-size: 1rem; }
+.save-btn { background: var(--grad); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
 </style>
 </head>
 <body>
 
 <div class="hero">
-<h1><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
-<div class="counter">蝴蝶誕生 <span id="d1">0</span> 天</div>
-<div class="counter">與你相遇 <span id="d2">0</span> 天</div>
+    <h1 class="eb-logo"><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
+    <div class="counters">
+        <div class="c-item"><span class="c-num" id="d1">0</span><span class="c-lab">蝴蝶誕生</span></div>
+        <div class="c-item"><span class="c-num" id="d2">0</span><span class="c-lab">與你相遇</span></div>
+    </div>
 </div>
 
-<div class="nav">
-<button onclick="openProfile()">資料</button>
-<button onclick="openWorks()">作品</button>
-<button onclick="openPlans()">行程</button>
-<button onclick="openAdmin()">設定</button>
+<div class="nav-container">
+    <div class="nav">
+        <div class="nav-logo-btn" onclick="closeAll()"><img src="https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_2_PNG.png" class="nav-logo-img"></div>
+        <button class="nav-btn" onclick="openProfile()">EmiBonnie</button>
+        <button class="nav-btn" onclick="openWorks()">官方作品集</button>
+        <button class="nav-btn" onclick="openPlans()">未來行程表</button>
+        <button class="nav-btn" onclick="openAdmin()">系統設定</button>
+    </div>
 </div>
 
-<!-- 個人資料 -->
-<div id="profile" class="modal"></div>
-
-<!-- 作品 -->
-<div id="works" class="modal"></div>
-
-<!-- 行程 -->
-<div id="plans" class="modal"></div>
-
-<!-- 設定 -->
-<div id="admin" class="modal"></div>
+<div id="profile" class="modal"><span class="close-x" onclick="closeAll()">✕</span><div id="p-content"></div></div>
+<div id="works" class="modal"><span class="close-x" onclick="closeAll()">✕</span><div id="w-content"></div></div>
+<div id="plans" class="modal"><span class="close-x" onclick="closeAll()">✕</span><div id="pl-content"></div></div>
+<div id="admin" class="modal"><span class="close-x" onclick="closeAll()">✕</span><div id="a-content"></div></div>
 
 <script>
-
-/* ================= 固定資料 ================= */
-
-const staticData={
-emi:{
-name:"ทสร กลิ่นเนียม (Thasorn Klinnium)",
-nick:"Mimi / P’Mi / P’Emi / 米",
-birthday:"1998-04-25",
-height:"165cm",
-weight:"48kg",
-brand:"IMM ANOTHER"
-},
-bonnie:{
-name:"ภัทรภัสร์ โบรัศตะสุวรรณ (Pattraphus Borattasuwan)",
-nick:"Nini / 邦",
-birthday:"2004-01-27",
-height:"164cm",
-weight:"47kg",
-brand:"VURVBKK"
-},
-any:{
-name:"Any Klinniumborattasuwan",
-birthday:"2025-03-14"
-}
+/* ================= 靜態與資料庫資料 ================= */
+const staticInfo = {
+    emi: `<b>Thasorn Klinnium</b><br>中文名：朱名怡<br>暱稱：Mimi / 米<br>生日：1998/04/25<br>📏 165cm / 48kg<br>🎨 棕、白、黃、紅`,
+    bonnie: `<b>Pattraphus Borattasuwan</b><br>暱稱：Nini / 邦<br>生日：2004/01/27<br>📏 164cm / 47kg<br>🎨 黑、紫、粉紅`,
+    any: `<b>Any</b><br>生日：2025/03/14<br>📍 圓臉短髮，像 Nini 圓眼<br>✨ 抖耳朵技能點滿<br>🤫 黑歷史：曾經愛掀裙子`
 };
 
-/* ================= 資料庫 ================= */
-
-let db=JSON.parse(localStorage.getItem("eb_db"))||{
-photos:{profile:{},avatar:{}},
-works:{all:[],emi:[],bonnie:[],any:[]},
-plans:{emi:[],bonnie:[],any:[]},
-settings:{born:"2024-01-01",meet:"2024-01-01"}
+let db = JSON.parse(localStorage.getItem("eb_final_v1")) || {
+    photos: { emi:"", bonnie:"", any:"" },
+    settings: { born: "2024-01-01", meet: "2024-01-01" },
+    works: [], plans: []
 };
 
-function saveDB(){
-localStorage.setItem("eb_db",JSON.stringify(db));
+function save() { localStorage.setItem("eb_final_v1", JSON.stringify(db)); }
+
+/* ================= 計算天數與更新首頁 ================= */
+function calcDays(d) {
+    const diff = new Date() - new Date(d);
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-/* ================= 首頁 ================= */
-
-function calcDays(d){
-return Math.floor((new Date()-new Date(d))/86400000);
+function updateHome() {
+    document.getElementById("d1").innerText = Math.max(0, calcDays(db.settings.born));
+    document.getElementById("d2").innerText = Math.max(0, calcDays(db.settings.meet));
 }
 
-function renderHome(){
-document.getElementById("d1").innerText=calcDays(db.settings.born);
-document.getElementById("d2").innerText=calcDays(db.settings.meet);
+/* ================= 各頁面渲染邏輯 ================= */
+
+function openProfile() {
+    let h = "";
+    ["emi","bonnie","any"].forEach(id => {
+        h += `<div style="text-align:center; margin-bottom:40px;">
+            <img src="${db.photos[id] || 'https://via.placeholder.com/150'}" style="width:140px; height:140px; border-radius:50%; object-fit:cover; border:3px solid #eee;">
+            <div style="background:#f9f9f9; padding:20px; border-radius:20px; margin-top:15px; width:100%; max-width:400px; display:inline-block; text-align:left;">
+                <h2 style="color:var(--emi); margin-top:0;">${id.toUpperCase()}</h2>${staticInfo[id]}
+            </div>
+        </div>`;
+    });
+    document.getElementById("p-content").innerHTML = h;
+    show("profile");
 }
 
-renderHome();
-
-/* ================= 個人頁 ================= */
-
-function openProfile(){
-let html="";
-["emi","bonnie","any"].forEach(p=>{
-html+=`
-<div class="profile">
-<img src="${db.photos.profile[p]||'https://via.placeholder.com/120'}">
-<div class="card">
-<h2>${staticData[p].name}</h2>
-生日：${staticData[p].birthday}
-</div>
-</div>
-`;
-});
-document.getElementById("profile").innerHTML=html;
-open("profile");
+function openAdmin() {
+    let h = `<h2>系統設定</h2>
+    <div class="admin-box">
+        <h4>📅 日期設定</h4>
+        蝴蝶誕生 <input type="date" value="${db.settings.born}" id="set-born">
+        與你相遇 <input type="date" value="${db.settings.meet}" id="set-meet">
+        <button class="save-btn" onclick="saveDates()">儲存日期</button>
+    </div>
+    <div class="admin-box">
+        <h4>📸 照片修改</h4>
+        對象：<select id="set-p-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
+        <input type="file" accept="image/*" onchange="handleImg(this)">
+    </div>`;
+    document.getElementById("a-content").innerHTML = h;
+    show("admin");
 }
 
-/* ================= 作品 ================= */
-
-function openWorks(){
-let html="<h2>全部作品</h2>";
-db.works.all
-.sort((a,b)=>new Date(b.date)-new Date(a.date))
-.forEach(w=>{
-html+=`
-<div class="card">
-<img src="${w.img}" width="100%">
-<b>${w.title}</b><br>
-${w.date}
-</div>`;
-});
-document.getElementById("works").innerHTML=html;
-open("works");
+/* ================= 處理與輔助函數 ================= */
+async function handleImg(input) {
+    const file = input.files[0];
+    const who = document.getElementById("set-p-who").value;
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = e => { db.photos[who] = e.target.result; save(); alert("更新成功！"); };
+        reader.readAsDataURL(file);
+    }
 }
 
-function addWork(data){
-let w={id:Date.now(),...data};
-db.works.all.push(w);
-if(data.owner==="EmiBonnie"){
-db.works.emi.push(w);
-db.works.bonnie.push(w);
-}else{
-db.works[data.owner].push(w);
-}
-saveDB();
+function saveDates() {
+    db.settings.born = document.getElementById("set-born").value;
+    db.settings.meet = document.getElementById("set-meet").value;
+    save(); updateHome(); alert("日期已更新");
 }
 
-/* ================= 行程 ================= */
+function show(id) { document.getElementById(id).classList.add("active"); }
+function closeAll() { document.querySelectorAll(".modal").forEach(m => m.classList.remove("active")); }
 
-function openPlans(){
-let html="<h2>行程</h2>";
-["emi","bonnie","any"].forEach(p=>{
-db.plans[p]
-.sort((a,b)=>new Date(a.time)-new Date(b.time))
-.forEach(pl=>{
-html+=`
-<div class="card">
-<img src="${pl.img}" width="100%">
-<b>${pl.title}</b><br>
-${pl.time}
-</div>`;
-});
-});
-document.getElementById("plans").innerHTML=html;
-open("plans");
-}
-
-function addPlan(data){
-let p={id:Date.now(),...data};
-if(data.owner==="EmiBonnie"){
-db.plans.emi.push(p);
-db.plans.bonnie.push(p);
-}else{
-db.plans[data.owner].push(p);
-}
-saveDB();
-}
-
-/* ================= 設定 ================= */
-
-function openAdmin(){
-let pass=prompt("輸入管理密碼");
-if(pass!=="eb2024")return alert("錯誤");
-let html=`
-<h2>日期設定</h2>
-蝴蝶誕生<input type="date" value="${db.settings.born}" onchange="db.settings.born=this.value;saveDB();renderHome();">
-與你相遇<input type="date" value="${db.settings.meet}" onchange="db.settings.meet=this.value;saveDB();renderHome();">
-`;
-document.getElementById("admin").innerHTML=html;
-open("admin");
-}
-
-/* ================= 共用 ================= */
-
-function open(id){
-document.getElementById(id).classList.add("active");
-}
-
-function closeAll(){
-document.querySelectorAll(".modal").forEach(m=>m.classList.remove("active"));
-}
-
-document.body.addEventListener("click",e=>{
-if(e.target.classList.contains("modal"))closeAll();
-});
-
+updateHome();
 </script>
 </body>
 </html>
+
 
 
