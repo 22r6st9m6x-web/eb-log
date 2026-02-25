@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+8<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EB Butterfly Log</title>
+    <style>
+        :root { 
+            --emi-orange: #ffcc99; /* 柔和陽光橘 */
+            --bonnie-purple: #e2dcfc; /* 薰衣草霧紫 */
+            --eb-gradient: linear-gradient(135deg, #ffcc99 0%, #e2dcfc 100%);
+            --bg-dark: #1e1e20; 
+        }
+        body { font-family: -apple-system, sans-serif; background-color: var(--bg-dark); color: #f0f0f0; margin: 0; padding-bottom: 50px; overflow-x: hidden; }
+        
+        /* 蝴蝶浮水印背景 */
+        body::before {
+            content: "🦋"; font-size: 250px; position: fixed; top: 20%; left: 50%; transform: translateX(-50%); opacity: 0.03; pointer-events: none;
+        }
+
+        .container { padding: 25px; position: relative; z-index: 1; }
+        
+        /* EB 標題 */
+        .eb-logo { text-align: center; font-size: 2rem; font-weight: bold; background: var(--eb-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; letter-spacing: 2px; }
+        .eb-symbol { text-align: center; color: var(--bonnie-purple); font-size: 0.8rem; margin-bottom: 25px; letter-spacing: 5px; opacity: 0.8; }
+
+        .card { background: rgba(45, 45, 50, 0.8); backdrop-filter: blur(10px); border-radius: 24px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .section-title { font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--emi-orange); }
+
+        /* 雙翅膀布局 (Emi & Bonnie) */
+        .wing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .wing { padding: 12px; border-radius: 18px; background: rgba(255,255,255,0.02); }
+        .wing-emi { border-left: 4px solid var(--emi-orange); }
+        .wing-bonnie { border-right: 4px solid var(--bonnie-purple); text-align: right; }
+
+        input, textarea { width: 100%; padding: 12px; margin: 6px 0; border-radius: 12px; border: none; background: #38383c; color: white; font-size: 14px; box-sizing: border-box; }
+        
+        /* 按鈕：漸層蝴蝶色 */
+        .btn-eb { background: var(--eb-gradient); color: #333; border: none; padding: 14px; border-radius: 15px; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1rem; box-shadow: 0 4px 15px rgba(255,204,153,0.3); }
+
+        /* 計時器樣式 */
+        #timer { text-align: center; font-size: 2.8rem; font-family: 'Avenir', sans-serif; font-weight: 200; margin: 15px 0; color: #fff; letter-spacing: 2px; }
+        .butterfly-icon { display: block; text-align: center; font-size: 1.5rem; margin-bottom: -10px; }
+
+        .record-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-top: 12px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="eb-logo">E B</div>
+    <div class="eb-symbol">—— BUTTERFLY LOG ——</div>
+
+    <div class="card">
+        <div class="section-title">🦋 蝴蝶檔案</div>
+        <div class="wing-grid">
+            <div class="wing wing-emi">
+                <small style="color:var(--emi-orange)">Emi 🍊</small>
+                <input type="text" id="name1" placeholder="Emi" oninput="save()">
+                <input type="date" id="bday1" oninput="save()">
+            </div>
+            <div class="wing wing-bonnie">
+                <small style="color:var(--bonnie-purple)">Bonnie 💜</small>
+                <input type="text" id="name2" placeholder="Bonnie" oninput="save()" style="text-align:right">
+                <input type="date" id="bday2" oninput="save()" style="text-align:right">
+            </div>
+        </div>
+        <textarea id="bio" placeholder="關於她們的蝴蝶故事..." oninput="save()" style="margin-top:15px;"></textarea>
+    </div>
+
+    <div class="card">
+        <div class="section-title">✨ 閃光收藏</div>
+        <input type="text" id="mName" placeholder="收藏品/活動名稱">
+        <input type="number" id="mPrice" placeholder="花費金額">
+        <button class="btn-eb" onclick="addItem()">記錄這一刻</button>
+        <div id="list"></div>
+    </div>
+
+    <div class="card">
+        <span class="butterfly-icon">🦋</span>
+        <div id="timer">00:00:00</div>
+        <button class="btn-eb" id="tBtn" onclick="runTimer()" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--bonnie-purple);">開啟蝴蝶時光</button>
+        <button onclick="resTimer()" style="background:none; color:#555; border:none; width:100%; margin-top:10px; font-size:12px;">重設所有時間</button>
+    </div>
+</div>
+
+<script>
+    function save() {
+        localStorage.setItem('eb_n1', document.getElementById('name1').value);
+        localStorage.setItem('eb_n2', document.getElementById('name2').value);
+        localStorage.setItem('eb_b1', document.getElementById('bday1').value);
+        localStorage.setItem('eb_b2', document.getElementById('bday2').value);
+        localStorage.setItem('eb_bio', document.getElementById('bio').value);
+    }
+
+    function load() {
+        document.getElementById('name1').value = localStorage.getItem('eb_n1') || '';
+        document.getElementById('name2').value = localStorage.getItem('eb_n2') || '';
+        document.getElementById('bday1').value = localStorage.getItem('eb_b1') || '';
+        document.getElementById('bday2').value = localStorage.getItem('eb_b2') || '';
+        document.getElementById('bio').value = localStorage.getItem('eb_bio') || '';
+        render();
+    }
+
+    let items = JSON.parse(localStorage.getItem('eb_items')) || [];
+    function addItem() {
+        const n = document.getElementById('mName').value;
+        const p = document.getElementById('mPrice').value;
+        if(n) {
+            items.unshift({n, p, d: new Date().toLocaleDateString()});
+            localStorage.setItem('eb_items', JSON.stringify(items));
+            render();
+            document.getElementById('mName').value = '';
+            document.getElementById('mPrice').value = '';
+        }
+    }
+
+    function render() {
+        document.getElementById('list').innerHTML = items.map(i => 
+            `<div class="record-item"><span><b>${i.n}</b><br><small style="color:#777">${i.d}</small></span><span style="color:var(--emi-orange)">${i.p?'$'+i.p:''}</span></div>`
+        ).join('');
+    }
+
+    let T;
+    let s = parseInt(localStorage.getItem('eb_s')) || 0;
+    function upT() {
+        let h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60;
+        document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+    }
+    function runTimer() {
+        const b = document.getElementById('tBtn');
+        if(b.innerText === "開啟蝴蝶時光") {
+            b.innerText = "暫停時光"; b.style.borderColor = "var(--emi-orange)";
+            T = setInterval(()=>{ s++; upT(); localStorage.setItem('eb_s', s); }, 1000);
+        } else {
+            b.innerText = "開啟蝴蝶時光"; b.style.borderColor = "var(--bonnie-purple)";
+            clearInterval(T);
+        }
+    }
+    function resTimer() { if(confirm("確定要重設蝴蝶時光嗎？")){ s=0; localStorage.setItem('eb_s',0); upT(); } }
+
+    window.onload = load;
+    upT();
+</script>
+</body>
+</html>
+
