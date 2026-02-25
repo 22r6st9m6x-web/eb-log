@@ -1,219 +1,294 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EmiBonnie Memories</title>
-    <style>
-        :root { --emi: #f37021; --bonnie: #662d91; --grad: linear-gradient(135deg, #f37021, #662d91); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: url('https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_擷取_PNG.png') no-repeat center center; background-size: cover; font-family: -apple-system, sans-serif; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EmiBonnie Memories</title>
 
-        /* 📜 滾動導航通用樣式 */
-        .scroll-nav { display: flex; overflow-x: auto; white-space: nowrap; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; align-items: center; }
-        .scroll-nav::-webkit-scrollbar { display: none; }
+<style>
+:root{
+--emi:#f37021;
+--bonnie:#662d91;
+--grad:linear-gradient(135deg,#f37021,#662d91);
+}
 
-        /* 🧭 主導航欄 */
-        .nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 95%; max-width: 550px; }
-        .main-nav { background: rgba(255,255,255,0.9); padding: 10px 15px; border-radius: 50px; backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; align-items: center; border: 1px solid #eee; }
-        .nav-home-btn { padding-right: 12px; margin-right: 10px; border-right: 1px solid #ddd; flex-shrink: 0; cursor: pointer; }
-        .nav-logo-img { width: 30px; height: auto; }
-        .nav-btn { background: transparent; border: none; font-size: 0.95rem; font-weight: 700; color: #444; padding: 8px 15px; flex-shrink: 0; }
+body{
+margin:0;
+font-family:-apple-system;
+background:#fff;
+overflow-x:hidden;
+}
 
-        /* 🖼️ 視窗樣式 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 100; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; padding-bottom: 100px; }
-        .modal.active { transform: translateY(0); }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #ccc; cursor: pointer; z-index: 200; }
+h2{margin-top:0}
 
-        /* 📄 個人資料排版 */
-        .profile-layout { display: flex; flex-direction: column; align-items: center; padding: 60px 20px; }
-        .profile-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--emi); margin-bottom: 15px; }
-        .info-card { width: 100%; max-width: 400px; background: #f9f9f9; padding: 20px; border-radius: 20px; margin-bottom: 20px; }
-        .info-card h3 { margin-top: 0; color: var(--bonnie); border-bottom: 2px solid #eee; padding-bottom: 5px; }
-        .info-item { margin: 8px 0; font-size: 0.95rem; line-height: 1.5; color: #333; }
+.nav{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#fff;
+padding:10px 20px;
+border-radius:50px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+display:flex;
+gap:15px;
+z-index:1000;
+}
 
-        /* ⚙️ 設定頁面樣式 */
-        .admin-sec { background: #f8f8f8; padding: 20px; border-radius: 20px; margin: 15px; border: 1px solid #eee; }
-        .admin-sec h4 { margin-top: 0; color: #333; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; }
-        .save-btn { background: var(--grad); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; }
+button{
+border:none;
+background:var(--grad);
+color:#fff;
+padding:8px 14px;
+border-radius:20px;
+cursor:pointer;
+}
 
-        /* 🏠 首頁計數器 */
-        .hero { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; z-index: 5; }
-        .counters { display: flex; justify-content: center; gap: 30px; margin-top: 20px; }
-        .c-item { display: flex; flex-direction: column; }
-        .c-num { font-size: 2.5rem; font-weight: 800; color: #222; }
-        .c-lab { font-size: 0.8rem; color: #999; font-weight: bold; }
-    </style>
+.modal{
+position:fixed;
+inset:0;
+background:#fff;
+transform:translateY(100%);
+transition:.4s;
+overflow:auto;
+padding:40px 20px 120px;
+z-index:500;
+}
+
+.modal.active{transform:translateY(0);}
+
+.profile{
+display:flex;
+flex-direction:column;
+align-items:center;
+margin-bottom:40px;
+}
+
+.profile img{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:10px;
+}
+
+.card{
+background:#f7f7f7;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+}
+
+.hero{
+text-align:center;
+margin-top:120px;
+}
+
+.counter{
+font-size:28px;
+font-weight:bold;
+}
+
+input,select{
+width:100%;
+padding:8px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+</style>
 </head>
 <body>
 
 <div class="hero">
-    <h1 style="font-size: 4rem; margin: 0; letter-spacing: 10px;"><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
-    <div class="counters">
-        <div class="c-item"><span class="c-num" id="days-born">0</span><span class="c-lab">蝴蝶誕生</span></div>
-        <div class="c-item"><span class="c-num" id="days-meet">0</span><span class="c-lab">與你相遇</span></div>
-    </div>
+<h1><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
+<div class="counter">蝴蝶誕生 <span id="d1">0</span> 天</div>
+<div class="counter">與你相遇 <span id="d2">0</span> 天</div>
 </div>
 
-<div class="nav-container">
-    <nav class="main-nav scroll-nav">
-        <div class="nav-home-btn" onclick="goHome()">
-            <img src="https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_2_PNG.png" class="nav-logo-img">
-        </div>
-        <button class="nav-btn" onclick="openProfile()">EmiBonnie</button>
-        <button class="nav-btn" onclick="openM('m-diary')">蝴蝶日記</button>
-        <button class="nav-btn" onclick="openM('m-works')">官方作品集</button>
-        <button class="nav-btn" onclick="openM('m-plan')">未來行程表</button>
-        <button class="nav-btn" onclick="openM('m-admin')">系統設定</button>
-    </nav>
+<div class="nav">
+<button onclick="openProfile()">資料</button>
+<button onclick="openWorks()">作品</button>
+<button onclick="openPlans()">行程</button>
+<button onclick="openAdmin()">設定</button>
 </div>
 
-<div id="m-profile" class="modal">
-    <span class="close-btn" onclick="closeM()">✕</span>
-    <div class="profile-layout scroll-nav" id="profile-scroll">
-        </div>
-</div>
+<!-- 個人資料 -->
+<div id="profile" class="modal"></div>
 
-<div id="m-admin" class="modal">
-    <span class="close-btn" onclick="closeM()">✕</span>
-    <div style="padding: 60px 15px;">
-        <div class="admin-sec">
-            <h4>📅 首頁日期設定</h4>
-            蝴蝶誕生: <input type="date" id="date-born" onchange="updateHomeDates()">
-            與你相遇: <input type="date" id="date-meet" onchange="updateHomeDates()">
-        </div>
-        <div class="admin-sec">
-            <h4>📸 照片修改</h4>
-            對象: <select id="photo-target">
-                <option value="emi">Emi</option>
-                <option value="bonnie">Bonnie</option>
-                <option value="any">Any</option>
-                <option value="eb">EmiBonnie (大頭照用)</option>
-            </select>
-            類型: <select id="photo-type">
-                <option value="profile">資料頁照片</option>
-                <option value="avatar">大頭照</option>
-            </select>
-            <input type="file" id="photo-file" accept="image/*" onchange="uploadPhoto()">
-        </div>
-        <div class="admin-sec">
-            <h4>🎬 新增作品</h4>
-            類型: <select id="work-cat"><option>影視</option><option>演出</option><option>音樂</option><option>綜藝</option><option>廣告</option><option>典禮</option><option>訪談</option><option>時尚</option></select>
-            所屬: <select id="work-who"><option>Emi</option><option>Bonnie</option><option>Any</option><option value="eb">EmiBonnie (自動同步)</option></select>
-            標題: <input type="text" id="work-title">
-            日期: <input type="date" id="work-date">
-            圖片: <input type="file" id="work-file" accept="image/*">
-            <button class="save-btn" onclick="saveWork()">儲存作品</button>
-        </div>
-    </div>
-</div>
+<!-- 作品 -->
+<div id="works" class="modal"></div>
 
-<div id="m-diary" class="modal"><span class="close-btn" onclick="closeM()">✕</span></div>
-<div id="m-works" class="modal"><span class="close-btn" onclick="closeM()">✕</span></div>
-<div id="m-plan" class="modal"><span class="close-btn" onclick="closeM()">✕</span></div>
+<!-- 行程 -->
+<div id="plans" class="modal"></div>
+
+<!-- 設定 -->
+<div id="admin" class="modal"></div>
 
 <script>
-    // 1. 初始化資料 (包含不可更改的文字資料)
-    const staticData = {
-        emi: { name: "ทสร กลิ่นเนียม (Thasorn)", cn: "朱名怡", nick: "米", birthday: "1998/04/25", info: "165cm / 48kg / S / M / EU 38-39", food: "牛肉湯、米飯、辣炒雞肉、炸豬排、日本/韓國料理", nofood: "香菜、辣食", color: "棕、白、黃、紅、黑、銀" },
-        bonnie: { name: "ภัทรภัสร์ (Pattraphus)", nick: "邦", birthday: "2004/01/27", info: "164cm / 47kg / M / 腰24-25 臀35.5 / EU 37.5-38", food: "莓果、海鮮、沙拉、鮭魚、日本料理", allergy: "牛肉、牛奶", interest: "書畫、唱歌、吉他、閱讀", color: "黑、紫、粉紅" },
-        any: { name: "เอนี่ (Any)", birthday: "2025/03/14", face: "圓臉短髮+粉嫩腮紅，像 Nini 圓眼", hair: "像 Mimi 大耳朵+橘粉髮夾", clothes: "兔耳斗篷+蝴蝶翅膀", skill: "抖耳朵技能點滿", history: "愛掀裙子露小褲褲 (已改好!)" }
-    };
 
-    let userPhotos = JSON.parse(localStorage.getItem('eb_photos')) || { 
-        emi_p: "", bonnie_p: "", any_p: "", 
-        emi_a: "", bonnie_a: "", any_a: "", eb_a: "" 
-    };
+/* ================= 固定資料 ================= */
 
-    let settings = JSON.parse(localStorage.getItem('eb_settings')) || { born: "2024-01-01", meet: "2024-01-01" };
+const staticData={
+emi:{
+name:"ทสร กลิ่นเนียม (Thasorn Klinnium)",
+nick:"Mimi / P’Mi / P’Emi / 米",
+birthday:"1998-04-25",
+height:"165cm",
+weight:"48kg",
+brand:"IMM ANOTHER"
+},
+bonnie:{
+name:"ภัทรภัสร์ โบรัศตะสุวรรณ (Pattraphus Borattasuwan)",
+nick:"Nini / 邦",
+birthday:"2004-01-27",
+height:"164cm",
+weight:"47kg",
+brand:"VURVBKK"
+},
+any:{
+name:"Any Klinniumborattasuwan",
+birthday:"2025-03-14"
+}
+};
 
-    // 2. 照片上傳與 Base64 處理
-    async function uploadPhoto() {
-        const file = document.getElementById('photo-file').files[0];
-        const target = document.getElementById('photo-target').value;
-        const type = document.getElementById('photo-type').value === 'profile' ? 'p' : 'a';
-        
-        if(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                userPhotos[`${target}_${type}`] = e.target.result;
-                localStorage.setItem('eb_photos', JSON.stringify(userPhotos));
-                alert("照片已更新！");
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+/* ================= 資料庫 ================= */
 
-    // 3. 日期換算功能
-    function updateHomeDates() {
-        const b = document.getElementById('date-born').value;
-        const m = document.getElementById('date-meet').value;
-        settings.born = b; settings.meet = m;
-        localStorage.setItem('eb_settings', JSON.stringify(settings));
-        renderHomeDays();
-    }
+let db=JSON.parse(localStorage.getItem("eb_db"))||{
+photos:{profile:{},avatar:{}},
+works:{all:[],emi:[],bonnie:[],any:[]},
+plans:{emi:[],bonnie:[],any:[]},
+settings:{born:"2024-01-01",meet:"2024-01-01"}
+};
 
-    function renderHomeDays() {
-        const now = new Date();
-        const diffBorn = Math.floor((now - new Date(settings.born)) / (1000*60*60*24));
-        const diffMeet = Math.floor((now - new Date(settings.meet)) / (1000*60*60*24));
-        document.getElementById('days-born').innerText = diffBorn > 0 ? diffBorn : 0;
-        document.getElementById('days-meet').innerText = diffMeet > 0 ? diffMeet : 0;
-        document.getElementById('date-born').value = settings.born;
-        document.getElementById('date-meet').value = settings.meet;
-    }
+function saveDB(){
+localStorage.setItem("eb_db",JSON.stringify(db));
+}
 
-    // 4. 個人資料渲染 (滾動式)
-    function openProfile() {
-        const container = document.getElementById('profile-scroll');
-        container.innerHTML = `
-            <div class="profile-layout">
-                <img src="${userPhotos.emi_p || 'https://via.placeholder.com/150'}" class="profile-img">
-                <div class="info-card">
-                    <h3>Emi (朱名怡)</h3>
-                    <div class="info-item"><b>生日:</b> ${staticData.emi.birthday}</div>
-                    <div class="info-item"><b>身材:</b> ${staticData.emi.info}</div>
-                    <div class="info-item"><b>愛吃:</b> ${staticData.emi.food}</div>
-                    <div class="info-item"><b>雷區:</b> ${staticData.emi.nofood}</div>
-                </div>
-            </div>
-            <div class="profile-layout">
-                <img src="${userPhotos.bonnie_p || 'https://via.placeholder.com/150'}" class="profile-img">
-                <div class="info-card">
-                    <h3>Bonnie (邦)</h3>
-                    <div class="info-item"><b>生日:</b> ${staticData.bonnie.birthday}</div>
-                    <div class="info-item"><b>過敏:</b> ${staticData.bonnie.allergy}</div>
-                    <div class="info-item"><b>興趣:</b> ${staticData.bonnie.interest}</div>
-                </div>
-            </div>
-            <div class="profile-layout">
-                <img src="${userPhotos.any_p || 'https://via.placeholder.com/150'}" class="profile-img">
-                <div class="info-card">
-                    <h3>Any (2025/03/14)</h3>
-                    <div class="info-item"><b>長相:</b> ${staticData.any.face}</div>
-                    <div class="info-item"><b>個性:</b> ${staticData.any.skill}</div>
-                    <div class="info-item"><b>黑歷史:</b> ${staticData.any.history}</div>
-                </div>
-            </div>
-        `;
-        openM('m-profile');
-    }
+/* ================= 首頁 ================= */
 
-    // 5. 同步邏輯 (EmiBonnie 同步到 Emi & Bonnie)
-    function saveWork() {
-        const who = document.getElementById('work-who').value;
-        const cat = document.getElementById('work-cat').value;
-        // 這裡實作邏輯：若 who == 'eb', 則分別存入兩人的資料庫中
-        alert(`作品已同步新增至 ${who === 'eb' ? 'Emi 與 Bonnie' : who} 的清單中！`);
-    }
+function calcDays(d){
+return Math.floor((new Date()-new Date(d))/86400000);
+}
 
-    function openM(id) { document.getElementById(id).classList.add('active'); }
-    function closeM() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
-    function goHome() { closeM(); }
+function renderHome(){
+document.getElementById("d1").innerText=calcDays(db.settings.born);
+document.getElementById("d2").innerText=calcDays(db.settings.meet);
+}
 
-    window.onload = renderHomeDays;
+renderHome();
+
+/* ================= 個人頁 ================= */
+
+function openProfile(){
+let html="";
+["emi","bonnie","any"].forEach(p=>{
+html+=`
+<div class="profile">
+<img src="${db.photos.profile[p]||'https://via.placeholder.com/120'}">
+<div class="card">
+<h2>${staticData[p].name}</h2>
+生日：${staticData[p].birthday}
+</div>
+</div>
+`;
+});
+document.getElementById("profile").innerHTML=html;
+open("profile");
+}
+
+/* ================= 作品 ================= */
+
+function openWorks(){
+let html="<h2>全部作品</h2>";
+db.works.all
+.sort((a,b)=>new Date(b.date)-new Date(a.date))
+.forEach(w=>{
+html+=`
+<div class="card">
+<img src="${w.img}" width="100%">
+<b>${w.title}</b><br>
+${w.date}
+</div>`;
+});
+document.getElementById("works").innerHTML=html;
+open("works");
+}
+
+function addWork(data){
+let w={id:Date.now(),...data};
+db.works.all.push(w);
+if(data.owner==="EmiBonnie"){
+db.works.emi.push(w);
+db.works.bonnie.push(w);
+}else{
+db.works[data.owner].push(w);
+}
+saveDB();
+}
+
+/* ================= 行程 ================= */
+
+function openPlans(){
+let html="<h2>行程</h2>";
+["emi","bonnie","any"].forEach(p=>{
+db.plans[p]
+.sort((a,b)=>new Date(a.time)-new Date(b.time))
+.forEach(pl=>{
+html+=`
+<div class="card">
+<img src="${pl.img}" width="100%">
+<b>${pl.title}</b><br>
+${pl.time}
+</div>`;
+});
+});
+document.getElementById("plans").innerHTML=html;
+open("plans");
+}
+
+function addPlan(data){
+let p={id:Date.now(),...data};
+if(data.owner==="EmiBonnie"){
+db.plans.emi.push(p);
+db.plans.bonnie.push(p);
+}else{
+db.plans[data.owner].push(p);
+}
+saveDB();
+}
+
+/* ================= 設定 ================= */
+
+function openAdmin(){
+let pass=prompt("輸入管理密碼");
+if(pass!=="eb2024")return alert("錯誤");
+let html=`
+<h2>日期設定</h2>
+蝴蝶誕生<input type="date" value="${db.settings.born}" onchange="db.settings.born=this.value;saveDB();renderHome();">
+與你相遇<input type="date" value="${db.settings.meet}" onchange="db.settings.meet=this.value;saveDB();renderHome();">
+`;
+document.getElementById("admin").innerHTML=html;
+open("admin");
+}
+
+/* ================= 共用 ================= */
+
+function open(id){
+document.getElementById(id).classList.add("active");
+}
+
+function closeAll(){
+document.querySelectorAll(".modal").forEach(m=>m.classList.remove("active"));
+}
+
+document.body.addEventListener("click",e=>{
+if(e.target.classList.contains("modal"))closeAll();
+});
+
 </script>
 </body>
 </html>
+
 
