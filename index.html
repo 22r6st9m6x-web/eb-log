@@ -3,194 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EmiBonnie Memories - Ultimate</title>
+    <title>EmiBonnie Memories</title>
     <style>
-        :root { 
-            --emi: #f37021; --bonnie: #662d91; 
+        :root {
+            --emi: #f37021;
+            --bonnie: #662d91;
             --grad: linear-gradient(135deg, #f37021, #662d91);
-            --glass: rgba(255, 255, 255, 0.8);
+            --glass: rgba(255, 255, 255, 0.9);
         }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            font-family: -apple-system, "Noto Sans TC", sans-serif;
-            background: #fdfdfd; overflow-x: hidden;
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            background: url('https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_擷取_PNG.png') no-repeat center center;
+            background-size: cover; font-family: -apple-system, "PingFang TC", sans-serif;
         }
 
-        /* 🦋 蝴蝶背景動畫 */
-        .butterfly-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-        .fly-bf { position: absolute; opacity: 0.25; filter: blur(4px); animation: float 20s infinite ease-in-out; width: 100px; }
-        @keyframes float {
-            0%, 100% { transform: translate(0,0) rotate(0deg); }
-            33% { transform: translate(50px, -80px) rotate(15deg); }
-            66% { transform: translate(-30px, 40px) rotate(-10deg); }
+        /* ✨ 首頁樣式 */
+        .hero { position: fixed; top: 35%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; }
+        .eb-logo { font-size: 5rem; font-weight: 800; margin: 0; letter-spacing: 12px; }
+        .counters { display: flex; justify-content: center; gap: 45px; margin-top: 25px; }
+        .c-num { font-size: 3rem; font-weight: 800; color: #222; }
+        .c-lab { font-size: 0.8rem; color: #888; font-weight: 600; margin-top: 10px; letter-spacing: 2px; }
+
+        /* 🧭 導航欄 */
+        .nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 95%; max-width: 600px; }
+        .main-nav { 
+            background: var(--glass); padding: 12px; border-radius: 50px; 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; align-items: center; overflow-x: auto;
         }
+        .main-nav::-webkit-scrollbar { display: none; }
+        .nav-logo-btn { padding-right: 15px; margin-right: 12px; border-right: 1.5px solid #eee; flex-shrink: 0; cursor: pointer; }
+        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 700; color: #444; padding: 10px 15px; flex-shrink: 0; }
 
-        /* 🏠 首頁樣式 */
-        .hero { text-align: center; padding: 80px 20px 40px; }
-        .eb-logo { font-size: 5rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
-        .counters { display: flex; justify-content: center; gap: 40px; margin-top: 30px; }
-        .c-num { font-size: 2.2rem; font-weight: 800; color: #333; display: block; }
-        .c-lab { font-size: 0.75rem; color: #999; font-weight: bold; }
-
-        /* 🧭 膠囊導航欄 */
-        .nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; }
-        .main-nav { background: var(--glass); backdrop-filter: blur(15px); padding: 10px 20px; border-radius: 50px; display: flex; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #eee; align-items: center; }
-        .nav-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
-        .nav-btn { border: none; background: #f0f0f0; padding: 8px 16px; border-radius: 20px; font-weight: 600; color: #555; cursor: pointer; transition: 0.3s; }
-        .nav-btn.active { background: var(--grad); color: #fff; }
-
-        /* 🖼️ 模態視窗通用樣式 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 2000; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; }
+        /* 🖼️ 視窗與通用元件 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.5s cubic-bezier(0.3, 1, 0.3, 1); overflow-y: auto; padding-bottom: 120px; }
         .modal.active { transform: translateY(0); }
-        .close-btn { position: sticky; top: 20px; left: 90%; font-size: 24px; cursor: pointer; z-index: 10; color: #ccc; }
+        .header { position: sticky; top: 0; background: #fff; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 600; border-bottom: 1px solid #f0f0f0; }
+        .m-title { font-size: 1.3rem; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* 🎬 作品集 & 日曆卡片 */
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-        .item-card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .item-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #f9f9f9; }
-        .item-info { padding: 15px; }
+        /* 🎁 周邊收藏網格 */
+        .coll-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .coll-card { background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid #f0f0f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .coll-img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
+        .coll-info { padding: 12px; }
+        .coll-name { font-weight: bold; font-size: 0.95rem; margin-bottom: 5px; color: #333; }
+        .coll-tag { font-size: 0.75rem; color: var(--bonnie); background: #f8f4ff; padding: 2px 8px; border-radius: 5px; display: inline-block; }
 
-        /* ⚙️ 設定頁面表單 */
-        .admin-sec { background: #f9f9f9; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; }
-        .save-btn { background: var(--grad); color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
-        /* 📅 日曆格子 */
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #eee; }
-        .cal-cell { min-height: 100px; border-right: 1px solid #eee; border-bottom: 1px solid #eee; padding: 5px; }
-        .event-tag { font-size: 0.7rem; padding: 3px; border-radius: 4px; margin-bottom: 2px; border-left: 3px solid var(--emi); background: #fff5ed; }
+        /* ✍️ 通用表單樣式 */
+        .form-group { background: #f9f9f9; padding: 20px; border-radius: 25px; margin: 15px; }
+        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; font-size: 1rem; background: #fff; }
+        .btn-main { background: var(--grad); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="butterfly-bg">
-    <img src="https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_擷取_PNG.png" class="fly-bf" style="top:10%; left:5%;">
-    <img src="https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_擷取_PNG.png" class="fly-bf" style="top:50%; right:5%; filter:hue-rotate(260deg) blur(6px); animation-delay: -5s;">
-</div>
-
 <div class="hero">
-    <h1 class="eb-logo">EB</h1>
-    <div style="letter-spacing: 5px; color: #aaa; font-size: 0.8rem;">BUTTERFLY MEMORIES</div>
+    <h1 class="eb-logo"><span style="color:var(--emi)">E</span><span style="color:var(--bonnie)">B</span></h1>
     <div class="counters">
-        <div class="c-item"><span class="c-num" id="d-born">0</span><span class="c-lab">蝴蝶誕生</span></div>
-        <div class="c-item"><span class="c-num" id="d-meet">0</span><span class="c-lab">與你相遇</span></div>
+        <div class="c-item"><span class="c-num" id="d1">0</span><span class="c-lab">蝴蝶誕生</span></div>
+        <div class="c-item"><span class="c-num" id="d2">0</span><span class="c-lab">與你相遇</span></div>
     </div>
 </div>
 
 <div class="nav-container">
     <nav class="main-nav">
-        <img src="" id="nav-eb-avatar" class="nav-avatar">
-        <button class="nav-btn" onclick="openM('m-works')">作品集</button>
-        <button class="nav-btn" onclick="openM('m-plan')">行程表</button>
-        <button class="nav-btn" onclick="openM('m-admin')">設定</button>
+        <div class="nav-logo-btn" onclick="closeAll()"><img src="https://api.typedream.com/v0/document/public/ac92594a-86c2-466d-b3b0-f0907e5f3088_2_PNG.png" style="width:30px"></div>
+        <button class="nav-btn" onclick="openM('m-coll')">周邊收藏</button>
+        <button class="nav-btn" onclick="openM('m-diary')">蝴蝶日記</button>
+        <button class="nav-btn" onclick="openM('m-plans')">行程表</button>
+        <button class="nav-btn" onclick="openM('m-admin')">管理</button>
     </nav>
 </div>
 
-<div id="m-works" class="modal">
-    <span class="close-btn" onclick="closeM()">✕</span>
-    <div style="padding: 20px;">
-        <h2>官方作品集</h2>
-        <div id="works-list" class="card-grid"></div>
-    </div>
+<div id="m-coll" class="modal">
+    <div class="header"><span class="m-title">周邊收藏館</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
+    <div class="coll-grid" id="coll-list"></div>
 </div>
 
-<div id="m-plan" class="modal">
-    <span class="close-btn" onclick="closeM()">✕</span>
-    <div style="padding: 20px;">
-        <h2>未來行程表</h2>
-        <div id="plan-calendar" class="cal-grid"></div>
-    </div>
+<div id="m-diary" class="modal">
+    <div class="header"><span class="m-title">蝴蝶日記</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
+    <div id="diary-list"></div>
+</div>
+
+<div id="m-plans" class="modal">
+    <div class="header"><span class="m-title">2026年 2月</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
+    <div style="display:grid; grid-template-columns: repeat(7,1fr); gap:1px; background:#eee; margin:15px; border-radius:15px; overflow:hidden;" id="cal-render"></div>
 </div>
 
 <div id="m-admin" class="modal">
-    <span class="close-btn" onclick="closeM()">✕</span>
-    <div style="padding: 40px 20px;">
-        <div class="admin-sec">
-            <h4>📅 首頁日期設定</h4>
-            蝴蝶誕生: <input type="date" id="set-born" onchange="saveSettings()">
-            與你相遇: <input type="date" id="set-meet" onchange="saveSettings()">
-        </div>
-        
-        <div class="admin-sec">
-            <h4>🎬 新增作品 (自動同步)</h4>
-            類型: <select id="w-type"><option>影視</option><option>音樂</option><option>綜藝</option><option>廣告</option></select>
-            所屬: <select id="w-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="eb">EmiBonnie (同步)</option></select>
-            標題: <input type="text" id="w-title">
-            日期: <input type="date" id="w-date">
-            圖片: <input type="file" id="w-img">
-            <button class="save-btn" onclick="addData('work')">儲存作品</button>
-        </div>
+    <div class="header"><span class="m-title">系統管理中心</span><span onclick="closeAll()" style="font-size:24px">✕</span></div>
+    
+    <div class="form-group">
+        <h4>🎁 新增收藏</h4>
+        <input type="text" id="coll-name" placeholder="周邊名稱 (例：首場見面會小卡)">
+        <select id="coll-type"><option>官方周邊</option><option>應援物</option><option>自製週邊</option></select>
+        <input type="file" id="coll-img" accept="image/*">
+        <button class="btn-main" onclick="addColl()">加入清單</button>
+    </div>
 
-        <div class="admin-sec">
-            <h4>📅 新增行程 (年月日時分)</h4>
-            所屬: <select id="p-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="eb">EmiBonnie (同步)</option></select>
-            標題: <input type="text" id="p-title">
-            時間: <input type="datetime-local" id="p-time">
-            <button class="save-btn" onclick="addData('plan')">儲存行程</button>
-        </div>
+    <div class="form-group">
+        <h4>✍️ 寫日記</h4>
+        <textarea id="diary-text" placeholder="紀錄此刻的心情..." rows="3"></textarea>
+        <input type="file" id="diary-img" accept="image/*">
+        <button class="btn-main" onclick="addDiary()">儲存日記</button>
     </div>
 </div>
 
 <script>
-    // 1. 初始化資料結構
-    let db = JSON.parse(localStorage.getItem('eb_db')) || {
-        works: [], plans: [], settings: { born: '2024-01-01', meet: '2024-01-01' },
-        photos: { eb_a: '' }
+    let db = JSON.parse(localStorage.getItem('eb_v6_full')) || {
+        settings: { born: "2024-01-01", meet: "2024-01-01" },
+        diaries: [],
+        colls: [
+            { name: "EmiBonnie 官方立牌", type: "官方周邊", img: "" }
+        ],
+        plans: [{ day: 1, title: "BD Party", who: "purple" }]
     };
 
-    // 2. 自動同步邏輯核心
-    function addData(mode) {
-        if (mode === 'work') {
-            const who = document.getElementById('w-who').value;
-            const item = {
-                type: document.getElementById('w-type').value,
-                title: document.getElementById('w-title').value,
-                date: document.getElementById('w-date').value,
-                who: who
-            };
-            // 自動同步邏輯：如果是 eb，則會顯示在 emi 和 bonnie 的篩選中
-            db.works.push(item);
-        } else {
-            const who = document.getElementById('p-who').value;
-            db.plans.push({
-                who: who,
-                title: document.getElementById('p-title').value,
-                time: document.getElementById('p-time').value
-            });
+    function save() { localStorage.setItem('eb_v6_full', JSON.stringify(db)); }
+
+    // 周邊功能
+    async function addColl() {
+        const name = document.getElementById('coll-name').value;
+        const type = document.getElementById('coll-type').value;
+        const file = document.getElementById('coll-img').files[0];
+        let img = "";
+        if(file) img = await toBase64(file);
+        if(name) {
+            db.colls.unshift({ name, type, img });
+            save(); alert("已入庫！"); renderColls();
         }
-        saveDB();
-        alert("資料已同步儲存！");
     }
 
-    // 3. 日期計算邏輯
-    function refreshHome() {
-        const now = new Date();
-        const b = new Date(db.settings.born);
-        const m = new Date(db.settings.meet);
-        document.getElementById('d-born').innerText = Math.floor((now - b)/(1000*60*60*24));
-        document.getElementById('d-meet').innerText = Math.floor((now - m)/(1000*60*60*24));
-        document.getElementById('set-born').value = db.settings.born;
-        document.getElementById('set-meet').value = db.settings.meet;
+    function renderColls() {
+        document.getElementById('coll-list').innerHTML = db.colls.map(c => `
+            <div class="coll-card">
+                <img src="${c.img || 'https://via.placeholder.com/150'}" class="coll-img">
+                <div class="coll-info">
+                    <div class="coll-name">${c.name}</div>
+                    <div class="coll-tag">${c.type}</div>
+                </div>
+            </div>
+        `).join('');
     }
 
-    // 4. 通用功能
-    function saveSettings() {
-        db.settings.born = document.getElementById('set-born').value;
-        db.settings.meet = document.getElementById('set-meet').value;
-        saveDB();
-        refreshHome();
+    // 日記功能
+    async function addDiary() {
+        const text = document.getElementById('diary-text').value;
+        const file = document.getElementById('diary-img').files[0];
+        let img = "";
+        if(file) img = await toBase64(file);
+        if(text) {
+            db.diaries.unshift({ date: new Date().toLocaleDateString(), text, img });
+            save(); alert("已紀錄！"); renderDiaries();
+        }
     }
 
-    function saveDB() { localStorage.setItem('eb_db', JSON.stringify(db)); }
-    function openM(id) { document.getElementById(id).classList.add('active'); }
-    function closeM() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+    function renderDiaries() {
+        document.getElementById('diary-list').innerHTML = db.diaries.map(d => `
+            <div style="background:#f9f9f9; margin:15px; padding:20px; border-radius:20px; border:1px solid #eee;">
+                <div style="font-size:0.8rem; color:var(--emi); font-weight:bold;">${d.date}</div>
+                <div style="margin-top:10px; line-height:1.6;">${d.text}</div>
+                ${d.img ? `<img src="${d.img}" style="width:100%; border-radius:12px; margin-top:10px;">` : ''}
+            </div>
+        `).join('');
+    }
 
-    window.onload = refreshHome;
+    // 輔助與基礎渲染
+    function toBase64(file) {
+        return new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(file); });
+    }
+
+    function renderHome() {
+        const c = d => Math.floor((new Date() - new Date(d)) / 86400000);
+        document.getElementById('d1').innerText = Math.max(0, c(db.settings.born));
+        document.getElementById('d2').innerText = Math.max(0, c(db.settings.meet));
+    }
+
+    function openM(id) {
+        document.getElementById(id).classList.add('active');
+        if(id === 'm-coll') renderColls();
+        if(id === 'm-diary') renderDiaries();
+    }
+
+    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+    window.onload = renderHome;
 </script>
-
 </body>
 </html>
-
-
 
