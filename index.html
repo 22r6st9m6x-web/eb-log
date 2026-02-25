@@ -4,194 +4,281 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EB Butterfly Log</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://img.icons8.com/fluent/180/000000/butterfly.png">
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         :root { 
-            --emi-orange: #ffcc99; --bonnie-purple: #e2dcfc; 
-            --eb-gradient: linear-gradient(135deg, #ffcc99 0%, #e2dcfc 100%);
-            --bg-dark: #121214; --card-bg: rgba(255, 255, 255, 0.06);
+            --emi-deep-orange: #f37021; /* 深橘 */
+            --bonnie-deep-purple: #662d91; /* 深紫 */
+            --eb-gradient: linear-gradient(135deg, #f37021 0%, #662d91 100%);
+            --bg-white: #ffffff;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
+        
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; 
-            background-color: var(--bg-dark); color: #ffffff; margin: 0; 
-            padding-bottom: env(safe-area-inset-bottom); overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", sans-serif; 
+            background-color: var(--bg-white); color: #333; margin: 0; padding: 0;
+            overflow-x: hidden;
         }
-        .bg-glow {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 10% 20%, rgba(255, 204, 153, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 90% 80%, rgba(226, 220, 252, 0.08) 0%, transparent 40%);
-            z-index: -1;
-        }
-        @keyframes flutter {
-            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.04; }
-            50% { transform: translateX(-50%) translateY(-20px); opacity: 0.08; }
-        }
-        body::before {
-            content: "🦋"; font-size: 280px; position: fixed; top: 15%; left: 50%; 
-            transform: translateX(-50%); pointer-events: none; animation: flutter 8s ease-in-out infinite; z-index: 0;
-        }
-        .container { padding: 20px; position: relative; z-index: 1; padding-top: calc(env(safe-area-inset-top) + 10px); }
-        .eb-logo { text-align: center; font-size: 2.5rem; font-weight: 800; background: var(--eb-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 5px; margin-bottom: 5px; }
-        .eb-symbol { text-align: center; color: var(--bonnie-purple); font-size: 0.65rem; margin-bottom: 30px; letter-spacing: 8px; opacity: 0.5; }
-        
-        .card { background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 30px; padding: 22px; margin-bottom: 25px; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .section-title { font-size: 1.1rem; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; color: var(--emi-orange); font-weight: 600; }
-        
-        /* 雙紀念日排版 */
-        .milestone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
-        .milestone-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .milestone-val { font-size: 2.2rem; font-weight: 800; font-family: 'Avenir Next', sans-serif; margin: 5px 0; color: #fff; }
-        .milestone-label { font-size: 0.7rem; color: var(--bonnie-purple); letter-spacing: 1px; opacity: 0.8; }
 
-        .wing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .wing { padding: 15px; border-radius: 22px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: none; background: rgba(255, 255, 255, 0.05); color: white; font-size: 14px; box-sizing: border-box; outline: none; }
-        .btn-eb { background: var(--eb-gradient); color: #1a1a1c; border: none; padding: 16px; border-radius: 18px; font-weight: 700; width: 100%; margin-top: 12px; font-size: 1rem; }
-        
-        .record-item { background: rgba(255,255,255,0.03); padding: 16px; border-radius: 18px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .itinerary-item { display: flex; gap: 15px; padding: 15px 0; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px; position: relative; }
-        .itinerary-item::before { content: ""; position: absolute; left: -5px; top: 18px; width: 9px; height: 9px; background: var(--eb-gradient); border-radius: 50%; }
+        /* 🦋 背景蝴蝶動畫 */
+        .butterfly-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+        }
+        .butterfly {
+            position: absolute; width: 30px; height: 30px; opacity: 0.2;
+            animation: float 15s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, 150px) rotate(15deg); }
+            50% { transform: translate(-50px, 300px) rotate(-10deg); }
+            75% { transform: translate(150px, 450px) rotate(5deg); }
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* 標題設計 */
+        .header-area { text-align: center; margin-bottom: 40px; padding-top: 30px; }
+        .eb-logo { 
+            font-size: 3.5rem; font-weight: 900; letter-spacing: 12px; margin: 0;
+            display: flex; justify-content: center; gap: 10px;
+        }
+        .logo-e { color: var(--emi-deep-orange); }
+        .logo-b { color: var(--bonnie-purple-deep); }
+        .sub-title { 
+            font-size: 0.9rem; letter-spacing: 5px; color: #888; margin-top: 10px;
+            font-weight: 300; text-transform: uppercase;
+        }
+
+        /* 佈局架構 */
+        .main-layout { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media (min-width: 992px) {
+            .main-layout { grid-template-columns: 380px 1fr; }
+            .left-col { position: sticky; top: 20px; height: fit-content; }
+        }
+
+        /* 卡片設計 - 增加漸變邊框感 */
+        .card { 
+            background: #ffffff; border-radius: 20px; padding: 25px; 
+            margin-bottom: 25px; box-shadow: var(--card-shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: var(--eb-gradient);
+        }
+
+        .section-title { font-size: 1.1rem; font-weight: 700; color: #444; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        /* 行程與時間軸樣式 */
+        .item-img { width: 100%; border-radius: 12px; margin: 15px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .tl-tag { font-size: 0.75rem; background: var(--eb-gradient); color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; display: inline-block; }
+        .tl-title { font-size: 1.2rem; font-weight: 800; color: #222; margin-bottom: 10px; }
+        .tl-box { background: #f9f9fb; padding: 18px; border-radius: 15px; font-size: 1rem; color: #555; line-height: 1.6; }
+        .tl-mood-quote { margin-top: 15px; color: var(--bonnie-deep-purple); border-left: 3px solid var(--bonnie-deep-purple); padding-left: 15px; font-style: italic; background: rgba(102, 45, 145, 0.03); padding: 10px 15px; border-radius: 0 10px 10px 0; }
+
+        /* 輸入框優化 */
+        input, textarea, select { 
+            width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #eee; 
+            background: #fcfcfd; color: #333; font-size: 15px; transition: 0.3s;
+        }
+        input:focus { border-color: var(--emi-deep-orange); outline: none; background: #fff; }
+        .file-label { background: #f0f0f5; padding: 12px; border-radius: 12px; display: block; text-align: center; cursor: pointer; color: #666; font-weight: 500; }
+        .btn-eb { background: var(--eb-gradient); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(243, 112, 33, 0.3); }
+
+        .milestone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .milestone-card { background: #fcfcfd; padding: 20px; border-radius: 18px; text-align: center; border: 1px solid #f0f0f5; }
     </style>
 </head>
 <body>
-<div class="bg-glow"></div>
+
+<div class="butterfly-bg" id="butterflyBg"></div>
+
 <div class="container">
-    <div class="eb-logo">E B</div>
-    <div class="eb-symbol">—— BUTTERFLY MEMORIES ——</div>
+    <div class="header-area">
+        <h1 class="eb-logo">
+            <span class="logo-e">E</span><span class="logo-b" style="color:#662d91">B</span>
+        </h1>
+        <div class="sub-title">— Butterfly Memories —</div>
+    </div>
 
-    <div class="card">
-        <div class="section-title">🦋 守護設定</div>
-        <div class="wing-grid">
-            <div class="wing">
-                <small style="color:var(--emi-orange)">組成的日子</small>
-                <input type="date" id="anniGroup" oninput="save(); updateDays();">
+    <div class="main-layout">
+        <div class="left-col">
+            <div class="milestone-grid">
+                <div class="milestone-card">
+                    <div style="font-size: 0.75rem; color: #999;">蝴蝶誕生</div>
+                    <div id="daysGroup" style="font-size: 2.2rem; font-weight: 900; color: var(--emi-deep-orange);">0</div>
+                    <input type="date" id="anniGroup" oninput="save(); updateDays();">
+                </div>
+                <div class="milestone-card">
+                    <div style="font-size: 0.75rem; color: #999;">與妳相遇</div>
+                    <div id="daysFollow" style="font-size: 2.2rem; font-weight: 900; color: #662d91;">0</div>
+                    <input type="date" id="anniFollow" oninput="save(); updateDays();">
+                </div>
             </div>
-            <div class="wing" style="text-align:right">
-                <small style="color:var(--bonnie-purple)">追她們的日子</small>
-                <input type="date" id="anniFollow" oninput="save(); updateDays();" style="text-align:right">
+
+            <div class="card">
+                <div class="section-title">📊 魅力雷達</div>
+                <select id="radarTarget" onchange="loadRadar()" style="margin-bottom: 10px;">
+                    <option value="emi">EMI 🍊</option>
+                    <option value="bonnie">BONNIE 💜</option>
+                </select>
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <div class="card">
+                <div class="section-title">🗓️ 蝴蝶未來行程</div>
+                <input type="date" id="planDate">
+                <input type="text" id="planTitle" placeholder="活動標題...">
+                <label class="file-label">🖼️ 添加配圖 <input type="file" id="planImg" hidden accept="image/*"></label>
+                <button class="btn-eb" onclick="addPlan()">儲存行程</button>
+                <div id="planList" style="margin-top: 20px;"></div>
             </div>
         </div>
-    </div>
 
-    <div class="milestone-grid">
-        <div class="card milestone-card" style="margin-bottom:0">
-            <div class="milestone-label">蝴蝶誕生</div>
-            <div class="milestone-val" id="daysGroup">0</div>
-            <div class="milestone-label">DAYS</div>
+        <div class="right-col">
+            <div class="card">
+                <div class="section-title">🎞️ 互動時間軸</div>
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 20px; margin-bottom: 30px; border: 1px solid #eee;">
+                    <input type="date" id="tlDate">
+                    <input type="text" id="tlTitle" placeholder="這是一個關於什麼的回憶？">
+                    <textarea id="tlDesc" rows="4" placeholder="詳細記下發生的點滴..."></textarea>
+                    <textarea id="tlMood" rows="2" placeholder="當時的好心情與想法..." style="border-left: 3px solid #662d91; color:#662d91"></textarea>
+                    <label class="file-label">📸 紀錄照片 <input type="file" id="tlImg" hidden accept="image/*"></label>
+                    <button class="btn-eb" onclick="addTimeline()">刻在時間軸上</button>
+                </div>
+                
+                <div id="timelineContainer"></div>
+            </div>
         </div>
-        <div class="card milestone-card" style="margin-bottom:0">
-            <div class="milestone-label">與妳相遇</div>
-            <div class="milestone-val" id="daysFollow">0</div>
-            <div class="milestone-label">DAYS</div>
-        </div>
-    </div>
-    <div style="height:25px;"></div>
-
-    <div class="card">
-        <div class="section-title">🗓️ 蝴蝶行程</div>
-        <input type="date" id="iDate">
-        <div style="display: flex; gap: 10px;">
-            <input type="time" id="iTime" style="flex: 1.2;">
-            <input type="text" id="iPlan" placeholder="計畫行程..." style="flex: 2;">
-        </div>
-        <button class="btn-eb" onclick="addPlan()">添加行程</button>
-        <div id="itineraryList" style="margin-top: 15px;"></div>
-    </div>
-
-    <div class="card">
-        <div class="section-title">✨ 閃光收藏</div>
-        <input type="text" id="mName" placeholder="活動或收藏品名稱">
-        <input type="number" id="mPrice" placeholder="花費金額" inputmode="numeric">
-        <button class="btn-eb" onclick="addItem()">記錄這一刻</button>
-        <div id="list" style="margin-top: 10px;"></div>
     </div>
 </div>
 
 <script>
-    let items = [], plans = [];
+    let plans = [], timelineData = [], myRadar;
+
+    // 🦋 生成背景蝴蝶
+    function createButterflies() {
+        const colors = ['#f37021', '#662d91', '#ffcc99', '#e2dcfc'];
+        const bg = document.getElementById('butterflyBg');
+        for(let i=0; i<15; i++) {
+            const b = document.createElement('div');
+            b.className = 'butterfly';
+            b.innerHTML = '🦋';
+            b.style.left = Math.random() * 100 + '%';
+            b.style.top = Math.random() * 100 + '%';
+            b.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            b.style.color = colors[Math.floor(Math.random() * colors.length)];
+            b.style.animationDelay = (Math.random() * 10) + 's';
+            bg.appendChild(b);
+        }
+    }
+
+    async function getBase64(file) {
+        return new Promise((res) => {
+            if (!file) res(null);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => res(reader.result);
+        });
+    }
 
     function save() {
         localStorage.setItem('eb_anniGroup', document.getElementById('anniGroup').value);
         localStorage.setItem('eb_anniFollow', document.getElementById('anniFollow').value);
+        localStorage.setItem('eb_plans', JSON.stringify(plans));
+        localStorage.setItem('eb_timeline', JSON.stringify(timelineData));
     }
 
     function load() {
         document.getElementById('anniGroup').value = localStorage.getItem('eb_anniGroup') || '';
         document.getElementById('anniFollow').value = localStorage.getItem('eb_anniFollow') || '';
-        items = JSON.parse(localStorage.getItem('eb_items')) || [];
         plans = JSON.parse(localStorage.getItem('eb_plans')) || [];
-        document.getElementById('iDate').valueAsDate = new Date();
-        render(); renderPlans(); updateDays();
+        timelineData = JSON.parse(localStorage.getItem('eb_timeline')) || [];
+        renderPlans(); renderTimeline(); updateDays(); initRadar(); createButterflies();
     }
 
-    function updateDays() {
-        const groupDate = document.getElementById('anniGroup').value;
-        const followDate = document.getElementById('anniFollow').value;
-        const now = new Date();
-
-        if(groupDate) {
-            const diff = Math.floor((now - new Date(groupDate)) / (1000 * 60 * 60 * 24));
-            document.getElementById('daysGroup').innerText = diff >= 0 ? diff : 0;
-        }
-        if(followDate) {
-            const diff = Math.floor((now - new Date(followDate)) / (1000 * 60 * 60 * 24));
-            document.getElementById('daysFollow').innerText = diff >= 0 ? diff : 0;
-        }
-    }
-
-    function addPlan() {
-        const d = document.getElementById('iDate').value, t = document.getElementById('iTime').value, p = document.getElementById('iPlan').value;
-        if(d && t && p) {
-            plans.push({d, t, p});
-            plans.sort((a, b) => (a.d + a.t).localeCompare(b.d + b.t));
-            localStorage.setItem('eb_plans', JSON.stringify(plans));
-            renderPlans();
-            document.getElementById('iPlan').value = '';
+    async function addPlan() {
+        const d = document.getElementById('planDate').value, title = document.getElementById('planTitle').value;
+        const img = await getBase64(document.getElementById('planImg').files[0]);
+        if(d && title) {
+            plans.push({ d, title, img });
+            plans.sort((a,b) => a.d.localeCompare(b.d));
+            save(); renderPlans();
         }
     }
 
     function renderPlans() {
-        document.getElementById('itineraryList').innerHTML = plans.map((item, i) => `
-            <div class="itinerary-item">
-                <div style="min-width: 90px;">
-                    <div style="color:var(--emi-orange); font-weight:700; font-size:0.75rem;">${item.d.replace(/-/g, '/')}</div>
-                    <div style="color:var(--bonnie-purple); font-size:0.9rem;">${item.t}</div>
-                </div>
-                <div style="flex:1; background:rgba(255,255,255,0.03); padding:12px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>${item.p}</span>
-                    <button onclick="delPlan(${i})" style="background:none; border:none; color:#ff6b6b; font-size:18px;">×</button>
-                </div>
-            </div>`).join('');
+        const box = document.getElementById('planList');
+        box.innerHTML = plans.map((p, i) => `
+            <div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid #eee;">
+                <div style="color:var(--emi-deep-orange); font-size:0.8rem; font-weight:bold;">${p.d}</div>
+                <div style="margin-top:5px; font-weight:600;">${p.title}</div>
+                ${p.img ? `<img src="${p.img}" class="item-img" style="max-height:120px">` : ''}
+            </div>
+        `).join('');
     }
 
-    function delPlan(i) { plans.splice(i, 1); localStorage.setItem('eb_plans', JSON.stringify(plans)); renderPlans(); }
-
-    function addItem() {
-        const n = document.getElementById('mName').value, p = document.getElementById('mPrice').value;
-        if(n.trim()) {
-            const today = new Date().toISOString().split('T')[0];
-            items.unshift({n, p, d: today});
-            localStorage.setItem('eb_items', JSON.stringify(items));
-            render();
-            document.getElementById('mName').value = ''; document.getElementById('mPrice').value = '';
+    async function addTimeline() {
+        const date = document.getElementById('tlDate').value, title = document.getElementById('tlTitle').value;
+        const desc = document.getElementById('tlDesc').value, mood = document.getElementById('tlMood').value;
+        const img = await getBase64(document.getElementById('tlImg').files[0]);
+        if(date && title) {
+            timelineData.unshift({ date, title, desc, mood, img });
+            save(); renderTimeline();
+            ['tlTitle', 'tlDesc', 'tlMood'].forEach(id => document.getElementById(id).value = '');
         }
     }
 
-    function render() {
-        document.getElementById('list').innerHTML = items.map(i => `
-            <div class="record-item">
-                <span><b style="color:var(--bonnie-purple)">${i.n}</b><br><small style="color:rgba(255,255,255,0.4)">${i.d.replace(/-/g, '/')}</small></span>
-                <span style="color:var(--emi-orange); font-weight:800;">${i.p?'$'+i.p:''}</span>
-            </div>`).join('');
+    function renderTimeline() {
+        const container = document.getElementById('timelineContainer');
+        container.innerHTML = timelineData.map((item, index) => `
+            <div style="margin-bottom:40px; position:relative;">
+                <div class="tl-tag">${item.date}</div>
+                <div class="tl-title">${item.title}</div>
+                <div class="tl-box">
+                    ${item.img ? `<img src="${item.img}" class="item-img" onclick="window.open(this.src)">` : ''}
+                    <div style="white-space: pre-wrap;">${item.desc}</div>
+                    ${item.mood ? `<div class="tl-mood-quote">💭 ${item.mood}</div>` : ''}
+                </div>
+                <button onclick="delTimeline(${index})" style="background:none; border:none; color:#ccc; font-size:0.7rem; margin-top:10px; cursor:pointer;">刪除此紀錄</button>
+            </div>
+        `).join('') || '<div style="text-align:center; opacity:0.3; padding:40px;">尚未添加任何互動紀錄</div>';
     }
 
+    function delTimeline(i){ if(confirm('確定刪除？')){timelineData.splice(i,1); save(); renderTimeline();} }
+    function updateDays() {
+        const g = document.getElementById('anniGroup').value, f = document.getElementById('anniFollow').value, now = new Date();
+        if(g) document.getElementById('daysGroup').innerText = Math.floor((now - new Date(g)) / 86400000);
+        if(f) document.getElementById('daysFollow').innerText = Math.floor((now - new Date(f)) / 86400000);
+    }
+    function initRadar() {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        myRadar = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['可愛', '帥氣', '歌聲', '綜藝', '寵粉'],
+                datasets: [{ data: [80, 80, 80, 80, 80], backgroundColor: 'rgba(243, 112, 33, 0.1)', borderColor: '#f37021', borderWidth: 2 }]
+            },
+            options: { scales: { r: { min: 0, max: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+        });
+        loadRadar();
+    }
+    function loadRadar() {
+        const target = document.getElementById('radarTarget').value;
+        const saved = JSON.parse(localStorage.getItem('eb_radar_' + target)) || [80, 80, 80, 80, 80];
+        myRadar.data.datasets[0].data = saved;
+        myRadar.data.datasets[0].borderColor = target === 'emi' ? '#f37021' : '#662d91';
+        myRadar.update();
+    }
     window.onload = load;
-    setInterval(updateDays, 60000);
 </script>
+
 </body>
 </html>
+
 
 
