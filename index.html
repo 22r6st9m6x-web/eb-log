@@ -6,250 +6,244 @@
     <title>EmiBonnie Memories Eternal</title>
     <style>
         :root {
-            --emi: #f37021; --bonnie: #662d91;
+            --emi: #f37021; /* 橘色 */
+            --bonnie: #662d91; /* 紫色 */
+            --any: #ff85a2; /* 更新為粉色 */
+            --eb: linear-gradient(135deg, #f37021, #662d91);
+            --eba: linear-gradient(135deg, #f37021, #662d91, #ff85a2);
             --grad: linear-gradient(135deg, #f37021, #662d91);
-            --glass: rgba(255, 255, 255, 0.85);
-            --glass-thick: rgba(255, 255, 255, 0.95);
+            --glass: rgba(255, 255, 255, 0.92);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* 基礎樣式保持不變 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; }
         
-        /* 視覺品牌背景 - 使用剛生成的設計風格 */
-        .bg-overlay { 
-            position: fixed; 
-            inset: 0; 
-            background: 
-                linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)),
-                url('https://r.jina.ai/i/058e0a6e76834f3194a20a4422e11a3b'); /* 這裡會呈現生成的蝴蝶意境圖 */
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: cover;
-            z-index: 0; 
+        .bg-overlay { position: fixed; inset: 0; z-index: 0; background: #fff; }
+        .butterfly-bg { position: absolute; font-size: 18px; opacity: 0.12; pointer-events: none; }
+
+        /* 首頁設計 */
+        .home-hero { position: fixed; top: 22%; width: 100%; text-align: center; z-index: 1; }
+        .main-title { font-size: 3.5rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; }
+        .dday-box { display: inline-flex; gap: 15px; }
+        .dday-item {
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); padding: 15px 20px;
+            border-radius: 20px 50px 20px 50px; border: 2px solid transparent;
+            background-image: linear-gradient(white, white), var(--grad);
+            background-origin: border-box; background-clip: padding-box, border-box;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        /* 首頁標題美化 */
-        .home-hero {
-            position: fixed;
-            top: 25%; /* 偏上方 */
-            width: 100%;
-            text-align: center;
-            z-index: 1;
-        }
-        .main-title {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: 2px;
-            background: var(--grad);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-        .stats-container {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 30px;
-            background: rgba(255,255,255,0.5);
-            backdrop-filter: blur(5px);
-            padding: 20px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-            border-radius: 30px;
-        }
+        /* 日曆標籤更新 */
+        .cal-ctrl { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 15px; background: #fff; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #f0f0f0; }
+        .cal-select { border: 1px solid #eee; padding: 6px 8px; border-radius: 10px; font-size: 0.9rem; font-weight: 700; background: #f9f9f9; color: #444; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #eee; margin: 0 10px; border-radius: 15px; overflow: hidden; border: 1px solid #eee; }
+        .cal-day { background: #fff; min-height: 90px; padding: 6px; font-size: 0.75rem; position: relative; transition: 0.2s; }
+        .cal-day.today { background: #fff9f5; }
 
+        /* 標籤顏色更新 */
+        .ev-tag { font-size: 0.55rem; padding: 2px 4px; border-radius: 4px; color: #fff; margin-top: 2px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tag-emi { background: var(--emi); }
+        .tag-bonnie { background: var(--bonnie); }
+        .tag-any { background: var(--any); } /* 現在是粉色 */
+        .tag-emibonnie { background: var(--eb); }
+        .tag-emibonnieany { background: var(--eba); }
+
+        /* UI 分頁效果保持一致 */
         .nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 94%; max-width: 600px; }
-        .main-nav { background: var(--glass); padding: 8px 12px; border-radius: 50px; backdrop-filter: blur(20px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; align-items: center; overflow-x: auto; border: 1px solid rgba(255,255,255,0.6); scrollbar-width: none; }
-        .main-nav::-webkit-scrollbar { display: none; }
-        .nav-logo-btn { font-size: 1.8rem; padding: 0 15px; border-right: 1.5px solid #eee; cursor: pointer; flex-shrink: 0; }
-        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 700; color: #555; padding: 12px 15px; flex-shrink: 0; }
+        .main-nav { background: var(--glass); padding: 8px 12px; border-radius: 50px; backdrop-filter: blur(25px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.7); }
+        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 700; color: #555; padding: 12px 14px; flex-shrink: 0; }
         .nav-btn.active-tab { color: var(--emi); }
-
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1); overflow-y: auto; padding-bottom: 120px; }
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); overflow-y: auto; padding-bottom: 120px; }
         .modal.active { transform: translateY(0); }
-        .header { position: sticky; top: 0; background: rgba(255,255,255,0.95); padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 600; border-bottom: 1px solid #f0f0f0; }
-        .m-title { font-size: 1.25rem; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header { position: sticky; top: 0; background: #fff; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #f2f2f2; }
 
-        .filter-bar { display: flex; gap: 10px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
-        .filter-tab { padding: 6px 18px; border-radius: 20px; background: #f5f5f5; font-size: 0.85rem; font-weight: 600; color: #666; border: none; white-space: nowrap; }
-        .filter-tab.active { background: var(--grad); color: #fff; }
-
-        .adm-section { background: #fbfbfb; padding: 20px; border-radius: 25px; margin: 15px; border: 1px solid #eee; }
-        .btn-main { background: var(--grad); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 15px; font-weight: 800; cursor: pointer; margin-top: 10px; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 5px 0 10px; border-radius: 12px; border: 1px solid #ddd; font-size: 1rem; }
-
-        .profile-card { text-align: center; padding: 40px 20px; }
-        .profile-img { width: 120px; height: 120px; border-radius: 60px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 20px; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .item-card { background: #fff; border-radius: 20px; border: 1px solid #f2f2f2; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .item-card img { width: 100%; height: 140px; object-fit: cover; background: #eee; }
-        .item-info { padding: 12px; }
-        .item-cat { font-size: 0.7rem; color: var(--emi); font-weight: 700; margin-bottom: 4px; display: block; }
-
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #eee; margin: 0 15px; border-radius: 15px; overflow: hidden; }
-        .cal-day { background: #fff; min-height: 80px; padding: 8px; font-size: 0.75rem; }
-        .cal-ev { font-size: 0.6rem; padding: 2px 4px; border-radius: 4px; margin-top: 2px; background: var(--grad); color: #fff; }
-
-        .manage-item { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px 15px; border-radius: 15px; margin-bottom: 8px; border: 1px solid #eee; }
-        .manage-info { font-size: 0.85rem; color: #444; }
-        .btn-del { background: #ff4d4d; color: #fff; border: none; padding: 5px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; }
-        #day-pop { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; width: 85%; z-index: 2000; padding: 25px; display: none; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+        #day-pop { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 2000; padding: 25px; border-radius: 30px 30px 0 0; box-shadow: 0 -15px 40px rgba(0,0,0,0.15); display: none; }
+        .pop-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; margin-top: 10px; background: #f9f9f9; }
+        .btn-add-inline { width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; border: none; color: #fff; background: var(--grad); font-weight: 800; }
     </style>
 </head>
 <body>
 
-<div class="bg-overlay"></div>
+<div class="bg-overlay" id="butterfly-layer"></div>
 
 <div class="home-hero">
     <h1 class="main-title">EmiBonnie</h1>
-    <div class="stats-container">
-        <div><span id="d1" style="font-size:2.2rem; font-weight:800; color:var(--emi)">0</span><div style="font-size:0.7rem; color:#666; font-weight:700;">蝴蝶誕生</div></div>
-        <div style="width:1px; background:#eee;"></div>
-        <div><span id="d2" style="font-size:2.2rem; font-weight:800; color:var(--bonnie)">0</span><div style="font-size:0.7rem; color:#666; font-weight:700;">與你相遇</div></div>
+    <div class="dday-box">
+        <div class="dday-item">
+            <div style="font-size:0.7rem; color:#999;">蝴蝶誕生</div>
+            <span id="d1" style="font-size:2.2rem; font-weight:900; color:var(--emi);">0</span><small> Days</small>
+        </div>
+        <div class="dday-item">
+            <div style="font-size:0.7rem; color:#999;">與你相遇</div>
+            <span id="d2" style="font-size:2.2rem; font-weight:900; color:var(--bonnie);">0</span><small> Days</small>
+        </div>
     </div>
 </div>
 
 <div class="nav-container">
     <nav class="main-nav">
-        <div class="nav-logo-btn" onclick="closeAll()">🦋</div>
-        <button class="nav-btn" onclick="openM('m-profile', this)">EmiBonnie</button>
+        <div style="padding:0 12px; font-size:1.4rem;" onclick="closeAll()">🦋</div>
+        <button class="nav-btn" onclick="openM('m-profile', this)">名牌</button>
+        <button class="nav-btn" onclick="openM('m-plans', this)">行程</button>
         <button class="nav-btn" onclick="openM('m-timeline', this)">軌跡</button>
         <button class="nav-btn" onclick="openM('m-works', this)">作品</button>
-        <button class="nav-btn" onclick="openM('m-plans', this)">行程</button>
-        <button class="nav-btn" onclick="openM('m-coll', this)">收藏</button>
         <button class="nav-btn" onclick="openM('m-diary', this)">日記</button>
         <button class="nav-btn" onclick="openM('m-admin', this)" style="color:var(--emi)">管理</button>
     </nav>
 </div>
 
-<div id="m-works" class="modal">
-    <div class="header"><span class="m-title">官方作品</span><span onclick="closeAll()">✕</span></div>
-    <div class="filter-bar">
-        <button class="filter-tab active" onclick="filterWorks('all', this)">全部</button>
-        <button class="filter-tab" onclick="filterWorks('movie', this)">影視</button>
-        <button class="filter-tab" onclick="filterWorks('show', this)">演出</button>
-        <button class="filter-tab" onclick="filterWorks('music', this)">音樂</button>
+<div id="m-plans" class="modal">
+    <div class="header"><b style="font-size:1.2rem;">蝴蝶行程月曆</b><span onclick="closeAll()">✕</span></div>
+    <div class="cal-ctrl">
+        <select class="cal-select" id="cal-year" onchange="jumpDate()"></select>
+        <select class="cal-select" id="cal-month" onchange="jumpDate()"></select>
+        <div style="flex:1"></div>
+        <button onclick="changeMonth(-1)" style="border:none; background:none; font-size:1.2rem;">◀</button>
+        <button onclick="changeMonth(1)" style="border:none; background:none; font-size:1.2rem;">▶</button>
     </div>
-    <div class="grid-2" id="w-render"></div>
+    <div class="cal-grid" id="cal-body"></div>
 </div>
 
-<div id="m-profile" class="modal"><div class="header"><span class="m-title">EmiBonnie 名牌</span><span onclick="closeAll()">✕</span></div><div id="p-render"></div></div>
-<div id="m-timeline" class="modal"><div class="header"><span class="m-title">蝴蝶軌跡</span><span onclick="closeAll()">✕</span></div><div id="tl-render" style="padding:20px;"></div></div>
-<div id="m-plans" class="modal"><div class="header"><span class="m-title">行程月曆</span><span onclick="closeAll()">✕</span></div><div style="display:flex;justify-content:space-between;padding:15px;"><span onclick="changeMonth(-1)">◀</span><span id="cal-title"></span><span onclick="changeMonth(1)">▶</span></div><div class="cal-grid" id="cal-body"></div></div>
-<div id="m-coll" class="modal"><div class="header"><span class="m-title">收藏館</span><span onclick="closeAll()">✕</span></div><div class="grid-2" id="coll-render"></div></div>
-<div id="m-diary" class="modal"><div class="header"><span class="m-title">蝴蝶日記</span><span onclick="closeAll()">✕</span></div><div id="diary-render" style="padding:20px;"></div></div>
+<div id="m-profile" class="modal">
+    <div class="header"><b>名牌介紹</b><span onclick="closeAll()">✕</span></div>
+    <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
+        <button class="nav-btn" style="border:1.5px solid var(--emi); border-radius:15px; color:var(--emi);" onclick="renderProfile('emi')">Emi</button>
+        <button class="nav-btn" style="border:1.5px solid var(--bonnie); border-radius:15px; color:var(--bonnie);" onclick="renderProfile('bonnie')">Bonnie</button>
+        <button class="nav-btn" style="border:1.5px solid var(--any); border-radius:15px; color:var(--any);" onclick="renderProfile('any')">Any</button>
+    </div>
+    <div id="p-render"></div>
+</div>
 
-<div id="m-admin" class="modal">
-    <div class="header"><span class="m-title">管理中心</span><span onclick="closeAll()">✕</span></div>
-    <div class="adm-section">
-        <h4>✍️ 新增回憶內容</h4>
-        內容類型：
-        <select id="adm-type">
-            <option value="tl">軌跡</option>
-            <option value="work_movie">作品 - 影視</option>
-            <option value="work_show">作品 - 演出</option>
-            <option value="work_music">作品 - 音樂</option>
-            <option value="coll">收藏</option>
-            <option value="diary">日記</option>
+<div id="m-timeline" class="modal"><div class="header"><b>軌跡</b><span onclick="closeAll()">✕</span></div><div id="tl-render" style="padding:20px;"></div></div>
+<div id="m-works" class="modal"><div class="header"><b>作品</b><span onclick="closeAll()">✕</span></div><div id="w-render" style="padding:15px;"></div></div>
+<div id="m-diary" class="modal"><div class="header"><b>日記</b><span onclick="closeAll()">✕</span></div><div id="diary-render" style="padding:20px;"></div></div>
+<div id="m-admin" class="modal"><div class="header"><b>管理中心</b><span onclick="closeAll()">✕</span></div><div style="padding:20px;" id="adm-render">此處可擴充數據管理...</div></div>
+
+<div id="day-pop">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <b id="pop-date" style="font-size:1.1rem;"></b>
+        <span onclick="document.getElementById('day-pop').style.display='none'">✕</span>
+    </div>
+    <div id="pop-list" style="max-height:150px; overflow-y:auto; margin-bottom:15px;"></div>
+    
+    <div style="background:#f5f5f5; padding:15px; border-radius:15px;">
+        <div style="font-size:0.8rem; margin-bottom:8px; color:#666;">新增行程對象：</div>
+        <select id="pop-who" class="cal-select" style="width:100%; margin-bottom:10px; border:1px solid #ddd;">
+            <option value="emi">Emi (橘)</option>
+            <option value="bonnie">Bonnie (紫)</option>
+            <option value="any">Any (粉)</option>
+            <option value="emibonnie">EmiBonnie (漸層)</option>
+            <option value="emibonnieany">EmiBonnieAny (全成員)</option>
         </select>
-        標題/名稱：<input type="text" id="adm-name" placeholder="標題">
-        內容描述：<textarea id="adm-txt" rows="2" placeholder="詳細內容..."></textarea>
-        上傳圖片：<input type="file" id="adm-file" accept="image/*">
-        <button class="btn-main" onclick="handleNew()">發布回憶</button>
-    </div>
-    <div class="adm-section">
-        <h4>🗑️ 內容管理 (刪除)</h4>
-        <div id="adm-list-render"></div>
-    </div>
-    <div class="adm-section">
-        <h4>👤 基本資料與日期</h4>
-        關鍵日期(誕生)：<input type="date" id="adm-born">
-        關鍵日期(相遇)：<input type="date" id="adm-meet">
-        名牌暱稱：<input type="text" id="adm-p-name">
-        名牌簡介：<textarea id="adm-p-bio"></textarea>
-        名牌頭像：<input type="file" id="adm-p-file" accept="image/*">
-        <button class="btn-main" onclick="updateProfile()">更新基本資料</button>
+        <input type="text" id="pop-new-ev" class="pop-input" placeholder="輸入行程內容...">
+        <button class="btn-add-inline" onclick="quickAddPlan()">發布行程</button>
     </div>
 </div>
-
-<div id="day-pop"><b id="pop-date"></b><div id="pop-list" style="margin:15px 0;"></div><button class="btn-main" onclick="document.getElementById('day-pop').style.display='none'">關閉</button></div>
 
 <script>
-    // JS 邏輯保持原本強大的 LocalStorage 系統 (v3)
-    let db = JSON.parse(localStorage.getItem('eb_mega_v3')) || {
-        profile: { name: "EmiBonnie", bio: "蝴蝶的故事從這裡開始...", img: "" },
-        settings: { born: "2024-01-01", meet: "2024-01-01" },
-        timeline: [], works: [], colls: [], diaries: [], plans: []
+    // 邏輯保持 v6，確保標籤對應正準確
+    let db = JSON.parse(localStorage.getItem('eb_mega_v7')) || {
+        profiles: { emi: { bio: "熱情的橘色小蝴蝶 Emi", img: "" }, bonnie: { bio: "優雅的紫色小蝴蝶 Bonnie", img: "" }, any: { bio: "甜美的粉色小蝴蝶 Any", img: "" } },
+        settings: { born: "2024-01-01", meet: "2024-05-20" },
+        plans: [], timeline: [], works: [], diaries: []
     };
 
-    let curDate = new Date();
-    const toBase64 = f => new Promise(r => { if(!f) {r("");return;} const rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(f); });
-    function save() { localStorage.setItem('eb_mega_v3', JSON.stringify(db)); renderHome(); }
+    let viewDate = new Date();
+    const save = () => { localStorage.setItem('eb_mega_v7', JSON.stringify(db)); renderHome(); };
 
-    async function handleNew() {
-        const typeRaw = document.getElementById('adm-type').value;
-        const img = await toBase64(document.getElementById('adm-file').files[0]);
-        const data = { id: Date.now(), n: document.getElementById('adm-name').value, t: document.getElementById('adm-txt').value, i: img, date: new Date().toLocaleString() };
-        if(typeRaw.startsWith('work_')) { data.cat = typeRaw.split('_')[1]; db.works.unshift(data); } 
-        else if(typeRaw === 'tl') db.timeline.unshift(data);
-        else if(typeRaw === 'coll') db.colls.unshift(data);
-        else if(typeRaw === 'diary') db.diaries.unshift(data);
-        save(); renderManageList(); alert("發布成功！");
+    function initButterflies() {
+        const layer = document.getElementById('butterfly-layer');
+        for(let i=0; i<15; i++){
+            const b = document.createElement('div');
+            b.className = 'butterfly-bg'; b.innerHTML = '🦋';
+            b.style.left = Math.random()*95+'%'; b.style.top = Math.random()*95+'%';
+            layer.appendChild(b);
+        }
     }
 
-    function deleteItem(type, id) {
-        if(!confirm("確定要刪除這條回憶嗎？")) return;
-        db[type] = db[type].filter(i => i.id !== id);
-        save(); renderManageList();
+    function initCalCtrls() {
+        const ySel = document.getElementById('cal-year'), mSel = document.getElementById('cal-month');
+        for(let y=2024; y<=2026; y++) ySel.add(new Option(y+'年', y));
+        for(let m=1; m<=12; m++) mSel.add(new Option(m+'月', m-1));
     }
 
-    function renderManageList() {
-        const container = document.getElementById('adm-list-render');
-        const allItems = [
-            ...db.timeline.map(i => ({...i, type: 'timeline', label: '軌跡'})),
-            ...db.works.map(i => ({...i, type: 'works', label: `作品(${i.cat})`})),
-            ...db.colls.map(i => ({...i, type: 'colls', label: '收藏'})),
-            ...db.diaries.map(i => ({...i, type: 'diaries', label: '日記'}))
-        ].sort((a,b) => b.id - a.id);
-        container.innerHTML = allItems.map(i => `<div class="manage-item"><div class="manage-info"><span style="color:var(--emi);font-weight:700;">[${i.label}]</span> ${i.n || i.t.substring(0,10)}</div><button class="btn-del" onclick="deleteItem('${i.type}', ${i.id})">刪除</button></div>`).join('') || '<p style="text-align:center;color:#999;font-size:0.8rem;">目前沒有內容可管理</p>';
+    function renderCal() {
+        const y = viewDate.getFullYear(), m = viewDate.getMonth();
+        document.getElementById('cal-year').value = y;
+        document.getElementById('cal-month').value = m;
+        const first = new Date(y, m, 1).getDay(), days = new Date(y, m+1, 0).getDate();
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        let html = ['日','一','二','三','四','五','六'].map(d => `<div style="text-align:center; padding:8px; font-size:0.7rem; color:#bbb;">${d}</div>`).join('');
+        for(let i=0; i<first; i++) html += `<div></div>`;
+        for(let d=1; d<=days; d++) {
+            const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const evs = db.plans.filter(p => p.date === ds);
+            const isToday = ds === todayStr ? 'today' : '';
+            html += `<div class="cal-day ${isToday}" onclick="showPop('${ds}')">
+                <b>${d}</b>
+                ${evs.map(e => `<span class="ev-tag tag-${e.who}">${e.txt}</span>`).join('')}
+            </div>`;
+        }
+        document.getElementById('cal-body').innerHTML = html;
     }
 
-    function filterWorks(cat, btn) {
-        if(btn) { document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-        const container = document.getElementById('w-render');
-        const list = cat === 'all' ? db.works : db.works.filter(w => w.cat === cat);
-        const catMap = { movie: '影視', show: '演出', music: '音樂' };
-        container.innerHTML = list.map(w => `<div class="item-card"><img src="${w.i || 'https://via.placeholder.com/150'}"><div class="item-info"><span class="item-cat">${catMap[w.cat] || '作品'}</span><b>${w.n}</b></div></div>`).join('');
+    function showPop(d) {
+        document.getElementById('pop-date').innerText = d;
+        const evs = db.plans.filter(p => p.date === d);
+        const nameMap = { emi: 'Emi', bonnie: 'Bonnie', any: 'Any', emibonnie: 'EB', emibonnieany: 'EBA' };
+        document.getElementById('pop-list').innerHTML = evs.map((e, i) => `
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem; align-items:center;">
+                <span><b class="ev-tag tag-${e.who}" style="display:inline; padding:2px 6px;">${nameMap[e.who]}</b> ${e.txt}</span>
+                <button onclick="delPlan('${d}',${i})" style="border:none; color:red; background:none; font-size:0.75rem;">刪除</button>
+            </div>
+        `).join('') || "<p style='color:#ccc; font-size:0.8rem;'>今日無行程</p>";
+        document.getElementById('day-pop').style.display = 'block';
     }
 
-    function renderContent(id) {
-        if(id==='m-profile') document.getElementById('p-render').innerHTML = `<div class="profile-card"><img src="${db.profile.img || 'https://via.placeholder.com/150'}" class="profile-img"><h2>${db.profile.name}</h2><p>${db.profile.bio}</p></div>`;
-        if(id==='m-timeline') document.getElementById('tl-render').innerHTML = db.timeline.map(t => `<div style="margin-bottom:20px;border-left:2px solid var(--emi);padding-left:15px;"><b>${t.n}</b><p>${t.t}</p>${t.i?`<img src="${t.i}" style="width:100%;border-radius:10px;">`:''}</div>`).join('');
-        if(id==='m-works') filterWorks('all', document.querySelector('.filter-tab'));
-        if(id==='m-coll') document.getElementById('coll-render').innerHTML = db.colls.map(c => `<div class="item-card"><img src="${c.i}"><b>${c.n}</b></div>`).join('');
-        if(id==='m-diary') document.getElementById('diary-render').innerHTML = db.diaries.map(d => `<div style="background:#f9f9f9;padding:15px;margin-bottom:15px;border-radius:15px;"><small>${d.date}</small><p>${d.t}</p>${d.i?`<img src="${d.i}" style="width:100%;">`:''}</div>`).join('');
+    function quickAddPlan() {
+        const d = document.getElementById('pop-date').innerText;
+        const w = document.getElementById('pop-who').value;
+        const t = document.getElementById('pop-new-ev').value;
+        if(!t) return alert("請輸入行程內容");
+        db.plans.push({ date: d, who: w, txt: t });
+        document.getElementById('pop-new-ev').value = '';
+        save(); renderCal(); showPop(d);
+    }
+
+    function delPlan(d, idx) {
+        db.plans = db.plans.filter((p, i) => !(p.date === d && i === idx));
+        save(); renderCal(); showPop(d);
+    }
+
+    function jumpDate() { viewDate = new Date(document.getElementById('cal-year').value, document.getElementById('cal-month').value, 1); renderCal(); }
+    function changeMonth(s) { viewDate.setMonth(viewDate.getMonth()+s); renderCal(); }
+    function openM(id, btn) { 
+        closeAll(); document.getElementById(id).classList.add('active'); 
+        if(btn) btn.classList.add('active-tab'); 
         if(id==='m-plans') renderCal();
+        if(id==='m-profile') renderProfile('emi');
+    }
+    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab')); }
+    
+    function renderProfile(who) {
+        const p = db.profiles[who];
+        document.getElementById('p-render').innerHTML = `<div style="text-align:center; padding:30px;"><img src="${p.img || 'https://via.placeholder.com/150'}" style="width:120px; height:120px; border-radius:60px; object-fit:cover; border:3px solid var(--${who}); box-shadow:0 10px 20px rgba(0,0,0,0.1);"><h2 style="margin-top:15px; color:var(--${who})">${who.toUpperCase()}</h2><p style="color:#666;">${p.bio}</p></div>`;
     }
 
-    function openM(id, btn) { closeAll(); document.getElementById(id).classList.add('active'); if(btn) btn.classList.add('active-tab'); renderContent(id); if(id==='m-admin') { document.getElementById('adm-born').value = db.settings.born; document.getElementById('adm-meet').value = db.settings.meet; document.getElementById('adm-p-name').value = db.profile.name; document.getElementById('adm-p-bio').value = db.profile.bio; renderManageList(); } }
-    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab')); }
     function renderHome() {
         const calc = d => Math.floor((new Date() - new Date(d)) / 86400000);
         document.getElementById('d1').innerText = Math.max(0, calc(db.settings.born));
         document.getElementById('d2').innerText = Math.max(0, calc(db.settings.meet));
     }
-    async function updateProfile() { db.settings.born = document.getElementById('adm-born').value; db.settings.meet = document.getElementById('adm-meet').value; db.profile.name = document.getElementById('adm-p-name').value; db.profile.bio = document.getElementById('adm-p-bio').value; const img = await toBase64(document.getElementById('adm-p-file').files[0]); if(img) db.profile.img = img; save(); alert("更新成功！"); }
-    function renderCal() { const y = curDate.getFullYear(), m = curDate.getMonth(); document.getElementById('cal-title').innerText = `${y}年 ${m+1}月`; const first = new Date(y, m, 1).getDay(), days = new Date(y, m+1, 0).getDate(); let h = ['日','一','二','三','四','五','六'].map(d => `<div style="text-align:center;padding:5px;font-size:0.6rem;color:#999;">${d}</div>`).join(''); for(let i=0; i<first; i++) h += `<div></div>`; for(let d=1; d<=days; d++) { const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; const evs = db.plans.filter(p => p.date === ds); h += `<div class="cal-day" onclick="showPop('${ds}')"><b>${d}</b>${evs.map(e => `<div class="cal-ev">${e.txt}</div>`).join('')}</div>`; } document.getElementById('cal-body').innerHTML = h; }
-    function showPop(d) { document.getElementById('pop-date').innerText = d; const evs = db.plans.filter(p => p.date === d); document.getElementById('pop-list').innerHTML = evs.map((e,i) => `<div style="display:flex;justify-content:space-between;padding:5px 0;"><span>${e.txt}</span><span style="color:red;" onclick="delPlan('${d}',${i})">刪除</span></div>`).join('') || "無行程"; document.getElementById('day-pop').style.display='block'; }
-    function delPlan(d, i) { db.plans = db.plans.filter((p,idx) => !(p.date===d && idx===i)); save(); renderCal(); showPop(d); }
-    function changeMonth(s) { curDate.setMonth(curDate.getMonth()+s); renderCal(); }
-    window.onload = renderHome;
+
+    window.onload = () => { initButterflies(); initCalCtrls(); renderHome(); };
 </script>
 </body>
 </html>
+
+
 
 
 
