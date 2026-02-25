@@ -3,367 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EmiBonnie Memories Eternal - Pro Max</title>
+    <title>EmiBonnie Memories Eternal - Mobile Pro</title>
     <style>
         :root {
             --emi: #f37021; --bonnie: #662d91; --any: #ff85a2;
-            --eb: linear-gradient(135deg, #f37021, #662d91);
-            --eba: linear-gradient(135deg, #f37021, #662d91, #ff85a2);
             --grad: linear-gradient(135deg, #f37021, #662d91);
-            --glass: rgba(255, 255, 255, 0.94);
+            --glass: rgba(255, 255, 255, 0.95);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif; color: #333; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; color: #333; }
         
-        /* 視覺品牌層 */
-        .bg-overlay { position: fixed; inset: 0; z-index: 0; background: radial-gradient(circle at 20% 20%, rgba(243, 112, 33, 0.05) 0%, transparent 40%), radial-gradient(circle at 80% 80%, rgba(102, 45, 145, 0.05) 0%, transparent 40%); }
-        .butterfly-bg { position: absolute; font-size: 20px; opacity: 0.18; pointer-events: none; transition: 0.3s; }
-
-        /* 首頁四邊圓弧看板 */
-        .home-hero { position: fixed; top: 18%; width: 100%; text-align: center; z-index: 1; padding: 0 20px; }
-        .main-title { font-size: 4rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 40px 0; letter-spacing: -1px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.05)); }
-        .dday-box { display: flex; justify-content: center; gap: 20px; }
+        /* 首頁框框改版：手機卡片感 */
+        .home-hero { position: fixed; top: 12%; width: 100%; text-align: center; z-index: 1; padding: 0 15px; }
+        .main-title { font-size: 3.5rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 25px; }
+        .dday-box { display: flex; flex-direction: column; gap: 15px; align-items: center; }
         .dday-item {
-            background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); padding: 25px 30px;
-            border-radius: 20px 60px 20px 60px; /* 特色四邊圓弧 */
-            border: 2px solid transparent;
-            background-image: linear-gradient(white, white), var(--grad);
-            background-origin: border-box; background-clip: padding-box, border-box;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            min-width: 140px;
+            background: #fff; width: 85%; padding: 20px; border-radius: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-left: 8px solid var(--emi);
+        }
+        .dday-item:nth-child(2) { border-left-color: var(--bonnie); }
+
+        /* 底部導航：放大點擊範圍 */
+        .nav-container { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; padding: 15px 10px 30px; background: linear-gradient(transparent, #fff 40%); }
+        .main-nav { background: #333; padding: 8px; border-radius: 35px; display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; }
+        .nav-btn { color: #aaa; padding: 12px 18px; border: none; background: none; font-weight: 800; font-size: 0.9rem; flex-shrink: 0; }
+        .nav-btn.active-tab { color: #fff; background: var(--grad); border-radius: 25px; }
+
+        /* 全螢幕模態框 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.4s cubic-bezier(0.1, 0.7, 0.1, 1); overflow-y: auto; padding-bottom: 150px; }
+        .modal.active { transform: translateY(0); }
+        .header { position: sticky; top: 0; background: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #eee; }
+
+        /* 拍立得排版 (左往右) */
+        .polaroid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .polaroid {
+            background: #fff; padding: 10px 10px 30px 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: rotate(calc(var(--r) * 1deg)); border: 1px solid #eee;
+        }
+        .polaroid img { width: 100%; height: 140px; object-fit: cover; }
+        .polaroid-label { font-size: 0.7rem; text-align: center; margin-top: 10px; font-weight: 800; color: #555; }
+
+        /* 階梯式時間線 */
+        .timeline-container { position: relative; padding: 20px 10px; }
+        .timeline-line { position: absolute; left: 20px; width: 2px; background: #eee; height: 100%; }
+        .tl-item { position: relative; margin-left: 45px; margin-bottom: 30px; }
+        .tl-card { background: #f9f9f9; padding: 15px; border-radius: 20px; border: 1px solid #eee; }
+        .tl-card img { width: 100%; border-radius: 12px; margin-top: 10px; }
+        .tl-dot { position: absolute; left: -31px; top: 15px; width: 12px; height: 12px; background: var(--grad); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px #eee; }
+
+        /* 日記年鑑：滑動選書 */
+        .diary-shelf { display: flex; gap: 20px; padding: 40px 20px; overflow-x: auto; scroll-snap-type: x mandatory; }
+        .book {
+            min-width: 140px; height: 200px; background: var(--bonnie); color: #fff;
+            border-radius: 5px 15px 15px 5px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 900; scroll-snap-align: center;
+            box-shadow: 5px 10px 20px rgba(0,0,0,0.2); border-left: 10px solid rgba(0,0,0,0.1);
         }
 
-        /* 導航控制 */
-        .nav-container { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 92%; max-width: 650px; }
-        .main-nav { background: var(--glass); padding: 10px; border-radius: 40px; backdrop-filter: blur(30px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; border: 1px solid rgba(255,255,255,0.8); }
-        .main-nav::-webkit-scrollbar { display: none; }
-        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 800; color: #666; padding: 12px 18px; flex-shrink: 0; transition: 0.3s; }
-        .nav-btn.active-tab { color: var(--emi); transform: scale(1.1); }
-
-        /* 全能內容模態框 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); overflow-y: auto; padding-bottom: 150px; }
-        .modal.active { transform: translateY(0); }
-        .header { position: sticky; top: 0; background: rgba(255,255,255,0.98); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #f0f0f0; backdrop-filter: blur(10px); }
-        .m-title { font-size: 1.4rem; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* 行程與標籤 (包含 Any 粉色) */
-        .cal-ctrl { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #fbfbfb; margin: 15px; border-radius: 20px; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: #eee; margin: 0 15px; border-radius: 20px; overflow: hidden; border: 2px solid #eee; }
-        .cal-day { background: #fff; min-height: 100px; padding: 10px; font-size: 0.8rem; position: relative; cursor: pointer; }
-        .cal-day:active { background: #f0f0f0; }
-        .ev-tag { font-size: 0.6rem; padding: 3px 6px; border-radius: 6px; color: #fff; margin-top: 3px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
-        .tag-emi { background: var(--emi); } .tag-bonnie { background: var(--bonnie); } .tag-any { background: var(--any); }
-        .tag-emibonnie { background: var(--eb); } .tag-emibonnieany { background: var(--eba); }
-
-        /* 列表展示內容 (作品/收藏) */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .item-card { background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid #eee; box-shadow: 0 8px 20px rgba(0,0,0,0.04); transition: 0.3s; }
-        .item-card:active { transform: scale(0.96); }
-        .item-card img { width: 100%; height: 160px; object-fit: cover; background: #f5f5f5; }
-        .item-info { padding: 15px; }
-        .item-cat { font-size: 0.7rem; font-weight: 800; color: var(--emi); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .item-n { font-size: 1rem; font-weight: 800; color: #222; }
-
-        /* 管理面板 */
-        .adm-card { background: #f9f9f9; padding: 25px; border-radius: 25px; margin: 15px; border: 1px solid #eee; }
-        .btn-action { background: var(--grad); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: 800; font-size: 1rem; margin-top: 10px; box-shadow: 0 10px 20px rgba(243, 112, 33, 0.2); }
-        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; font-size: 1rem; background: #fff; }
-
-        /* 彈窗細節 */
-        #day-pop { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 2000; padding: 30px; border-radius: 35px 35px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.15); display: none; }
-        .pop-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8f8f8; border-radius: 12px; margin-bottom: 8px; }
+        /* 互動詳情頁 */
+        .detail-view { position: fixed; inset: 0; background: #fff; z-index: 2000; display: none; flex-direction: column; }
+        
+        /* 按鈕與輸入 */
+        .btn-action { background: var(--grad); color: #fff; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: 800; margin-top: 10px; }
+        .edit-input { width: 100%; border: 1px solid #ddd; padding: 12px; border-radius: 10px; margin: 10px 0; font-size: 1rem; }
+        .upload-btn { background: #f0f0f0; padding: 20px; text-align: center; border-radius: 15px; border: 2px dashed #ccc; margin: 10px 0; }
     </style>
 </head>
 <body>
-
-<div class="bg-overlay" id="butterfly-layer"></div>
 
 <div class="home-hero">
     <h1 class="main-title">EmiBonnie</h1>
     <div class="dday-box">
         <div class="dday-item">
-            <div style="font-size:0.8rem; color:#888; margin-bottom:5px; font-weight:700;">蝴蝶誕生</div>
-            <span id="d1" style="font-size:2.8rem; font-weight:900; color:var(--emi);">0</span><small> Days</small>
+            <span style="font-weight: 800; color: #888;">蝴蝶誕生</span>
+            <div><span id="d1" style="font-size: 2rem; font-weight: 900; color: var(--emi);">0</span> <small>Days</small></div>
         </div>
         <div class="dday-item">
-            <div style="font-size:0.8rem; color:#888; margin-bottom:5px; font-weight:700;">與你相遇</div>
-            <span id="d2" style="font-size:2.8rem; font-weight:900; color:var(--bonnie);">0</span><small> Days</small>
+            <span style="font-weight: 800; color: #888;">與你相遇</span>
+            <div><span id="d2" style="font-size: 2rem; font-weight: 900; color: var(--bonnie);">0</span> <small>Days</small></div>
         </div>
     </div>
 </div>
 
 <div class="nav-container">
     <nav class="main-nav">
-        <div style="padding:0 20px; font-size:1.6rem; cursor:pointer;" onclick="closeAll()">🦋</div>
-        <button class="nav-btn" onclick="openM('m-profile', this)">名牌介紹</button>
-        <button class="nav-btn" onclick="openM('m-plans', this)">行程安排</button>
-        <button class="nav-btn" onclick="openM('m-works', this)">官方作品</button>
+        <button class="nav-btn" onclick="openM('m-profile', this)">名牌編輯</button>
+        <button class="nav-btn" onclick="openM('m-works', this)">作品拍立得</button>
         <button class="nav-btn" onclick="openM('m-timeline', this)">成長軌跡</button>
         <button class="nav-btn" onclick="openM('m-coll', this)">珍藏圖庫</button>
-        <button class="nav-btn" onclick="openM('m-diary', this)">私密日記</button>
-        <button class="nav-btn" onclick="openM('m-admin', this)" style="color:var(--emi)">管理後台</button>
+        <button class="nav-btn" onclick="openM('m-diary', this)">年鑑日記</button>
+        <button class="nav-btn" onclick="openM('m-admin', this)" style="color:var(--emi)">管理中心</button>
     </nav>
 </div>
 
 <div id="m-profile" class="modal">
-    <div class="header"><span class="m-title">成員名牌</span><span onclick="closeAll()">✕</span></div>
-    <div style="display:flex; justify-content:center; gap:15px; padding:20px;">
-        <button class="nav-btn" style="border:2px solid var(--emi); border-radius:20px;" onclick="renderProfile('emi')">Emi</button>
-        <button class="nav-btn" style="border:2px solid var(--bonnie); border-radius:20px;" onclick="renderProfile('bonnie')">Bonnie</button>
-        <button class="nav-btn" style="border:2px solid var(--any); border-radius:20px; color:var(--any);" onclick="renderProfile('any')">Any</button>
+    <div class="header"><span style="font-weight:900;">蝴蝶名牌介紹與修改</span><span onclick="closeAll()">✕</span></div>
+    <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
+        <button class="nav-btn" style="color:var(--emi)" onclick="renderProfile('emi')">Emi</button>
+        <button class="nav-btn" style="color:var(--bonnie)" onclick="renderProfile('bonnie')">Bonnie</button>
+        <button class="nav-btn" style="color:var(--any)" onclick="renderProfile('any')">Any</button>
     </div>
-    <div id="p-render"></div>
-</div>
-
-<div id="m-plans" class="modal">
-    <div class="header"><span class="m-title">行程月曆</span><span onclick="closeAll()">✕</span></div>
-    <div class="cal-ctrl">
-        <select class="cal-select" id="cal-year" onchange="jumpDate()" style="width:100px; margin:0;"></select>
-        <select class="cal-select" id="cal-month" onchange="jumpDate()" style="width:100px; margin:0;"></select>
-        <div style="display:flex; gap:10px;">
-            <button class="nav-btn" onclick="changeMonth(-1)">上月</button>
-            <button class="nav-btn" onclick="changeMonth(1)">下月</button>
-        </div>
-    </div>
-    <div class="cal-grid" id="cal-body"></div>
+    <div id="p-render" style="padding:20px;"></div>
 </div>
 
 <div id="m-works" class="modal">
-    <div class="header"><span class="m-title">官方作品集</span><span onclick="closeAll()">✕</span></div>
-    <div class="filter-bar" style="display:flex; gap:10px; padding:10px 20px; overflow-x:auto;">
-        <button class="filter-tab active" onclick="filterWorks('all', this)">全部作品</button>
-        <button class="filter-tab" onclick="filterWorks('movie', this)">影視錄像</button>
-        <button class="filter-tab" onclick="filterWorks('music', this)">音樂單曲</button>
-        <button class="filter-tab" onclick="filterWorks('show', this)">現場演出</button>
-    </div>
-    <div class="grid-2" id="w-render"></div>
+    <div class="header"><span style="font-weight:900;">官方作品集</span><span onclick="closeAll()">✕</span></div>
+    <div class="polaroid-grid" id="w-render"></div>
 </div>
 
 <div id="m-timeline" class="modal">
-    <div class="header"><span class="m-title">成長軌跡</span><span onclick="closeAll()">✕</span></div>
-    <div id="tl-render" style="padding:25px;"></div>
+    <div class="header"><span style="font-weight:900;">成長軌跡</span><span onclick="closeAll()">✕</span></div>
+    <div class="timeline-container">
+        <div class="timeline-line"></div>
+        <div id="tl-render"></div>
+    </div>
 </div>
 
 <div id="m-coll" class="modal">
-    <div class="header"><span class="m-title">珍藏館</span><span onclick="closeAll()">✕</span></div>
-    <div class="grid-2" id="coll-render"></div>
+    <div class="header"><span style="font-weight:900;">珍藏圖庫</span><span onclick="closeAll()">✕</span></div>
+    <div class="timeline-container">
+        <div class="timeline-line"></div>
+        <div id="coll-render"></div>
+    </div>
 </div>
 
 <div id="m-diary" class="modal">
-    <div class="header"><span class="m-title">蝴蝶私語日記</span><span onclick="closeAll()">✕</span></div>
-    <div id="diary-render" style="padding:25px;"></div>
+    <div class="header"><span style="font-weight:900;">翻頁日記年鑑</span><span onclick="closeAll()">✕</span></div>
+    <div class="diary-shelf" id="diary-shelf"></div>
+    <div id="diary-pages" style="display:none; padding:20px;">
+        <button onclick="backToShelf()" style="border:none; background:none; font-weight:800; color:var(--emi); margin-bottom:20px;">← 返回書架</button>
+        <div id="pages-render"></div>
+    </div>
 </div>
 
 <div id="m-admin" class="modal">
-    <div class="header"><span class="m-title">管理中心</span><span onclick="closeAll()">✕</span></div>
-    <div class="adm-card">
-        <h3>✨ 新增內容</h3>
-        內容分類：<select id="adm-type">
-            <option value="tl">成長軌跡 (Timeline)</option>
-            <option value="work_movie">作品 - 影視錄像</option>
-            <option value="work_music">作品 - 音樂單曲</option>
-            <option value="work_show">作品 - 現場演出</option>
-            <option value="coll">珍藏館 (Collection)</option>
-            <option value="diary">私密日記 (Diary)</option>
-        </select>
-        標題名稱：<input type="text" id="adm-name" placeholder="請輸入標題...">
-        內容詳述：<textarea id="adm-txt" rows="3" placeholder="請描述精彩內容..."></textarea>
-        圖片上傳：<input type="file" id="adm-file">
-        <button class="btn-action" onclick="handleNew()">確認發布</button>
-    </div>
-    <div class="adm-card">
-        <h3>👤 成員/日期設定</h3>
-        成員頭像：<select id="adm-p-who"><option value="emi">Emi</option><option value="bonnie">Bonnie</option><option value="any">Any</option></select>
-        <input type="file" id="adm-p-file">
-        成員簡介：<textarea id="adm-p-bio" placeholder="更新個人簡介..."></textarea>
-        誕生日期：<input type="date" id="adm-born">
-        相遇日期：<input type="date" id="adm-meet">
-        <button class="btn-action" style="background:#444;" onclick="updateSystem()">更新系統設定</button>
-    </div>
-    <div class="adm-card" style="margin-bottom:100px;">
-        <h3>🗑️ 內容清理清單</h3>
-        <div id="adm-list-render"></div>
+    <div class="header"><span style="font-weight:900;">記憶添加中心</span><span onclick="closeAll()">✕</span></div>
+    <div style="padding:20px;">
+        <div style="background:#f9f9f9; padding:20px; border-radius:20px;">
+            <h3>添加照片記憶</h3>
+            分類：<select id="adm-type" class="edit-input">
+                <option value="works">官方作品 (拍立得)</option>
+                <option value="timeline">成長軌跡 (時間線)</option>
+                <option value="colls">珍藏圖庫 (時間線)</option>
+                <option value="diaries">私密日記 (年鑑本)</option>
+            </select>
+            標題：<input type="text" id="adm-name" class="edit-input">
+            日期：<input type="date" id="adm-date" class="edit-input">
+            詳情：<textarea id="adm-txt" class="edit-input" rows="4"></textarea>
+            上傳照片：
+            <div class="upload-btn" onclick="document.getElementById('adm-file').click()">
+                <span id="file-status">點擊開啟相簿</span>
+                <input type="file" id="adm-file" hidden accept="image/*" onchange="document.getElementById('file-status').innerText='已選取照片'">
+            </div>
+            <button class="btn-action" onclick="handleNew()">發布記憶</button>
+        </div>
     </div>
 </div>
 
-<div id="day-pop">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 id="pop-date" style="margin:0; font-size:1.5rem; color:var(--bonnie);"></h2>
-        <span onclick="document.getElementById('day-pop').style.display='none'" style="font-size:1.5rem;">✕</span>
-    </div>
-    <div id="pop-list" style="max-height:180px; overflow-y:auto; margin-bottom:20px;"></div>
-    <div style="background:#f9f9f9; padding:20px; border-radius:20px;">
-        <div style="font-size:0.8rem; color:#888; margin-bottom:10px;">快速新增行程：</div>
-        <select id="pop-who" class="cal-select" style="width:100%; margin-bottom:10px;">
-            <option value="emi">Emi (橘)</option>
-            <option value="bonnie">Bonnie (紫)</option>
-            <option value="any">Any (粉)</option>
-            <option value="emibonnie">EmiBonnie (雙人)</option>
-            <option value="emibonnieany">全體 (三人)</option>
-        </select>
-        <input type="text" id="pop-new-ev" placeholder="輸入行程內容..." style="margin-bottom:10px;">
-        <button class="btn-action" onclick="quickAddPlan()">發布行程</button>
+<div id="detail-view" class="detail-view">
+    <div class="header"><span id="det-title" style="font-weight:900;">詳情</span><span onclick="closeDetail()">✕</span></div>
+    <div style="overflow-y:auto; padding:20px;">
+        <img id="det-img" style="width:100%; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+        <p id="det-date" style="color:#aaa; margin-top:15px; font-weight:800;"></p>
+        <p id="det-txt" style="line-height:1.8; font-size:1.1rem;"></p>
+        <button class="btn-action" style="background:#ff4757; margin-top:40px;" id="det-del-btn">刪除此記憶</button>
     </div>
 </div>
 
 <script>
-    // 終極資料庫 v9
-    let db = JSON.parse(localStorage.getItem('eb_mega_v9')) || {
+    // 資料庫初始化
+    let db = JSON.parse(localStorage.getItem('eb_v10_mobile')) || {
         profiles: { 
-            emi: { bio: "Emi 是充滿活力的橘色小蝴蝶，最喜歡唱歌。", img: "" }, 
-            bonnie: { bio: "Bonnie 是優雅神祕的紫色小蝴蝶，擅長舞蹈。", img: "" }, 
-            any: { bio: "Any 是甜美可人的粉色小蝴蝶，是大家的開心果。", img: "" } 
+            emi: { bio: "Emi 是充滿活力的橘色蝴蝶。", img: "" }, 
+            bonnie: { bio: "Bonnie 是優雅神祕的紫色蝴蝶。", img: "" }, 
+            any: { bio: "Any 是甜美可人的粉色蝴蝶。", img: "" } 
         },
         settings: { born: "2024-01-01", meet: "2024-05-20" },
         timeline: [], works: [], colls: [], diaries: [], plans: []
     };
 
-    let viewDate = new Date();
-    const save = () => { localStorage.setItem('eb_mega_v9', JSON.stringify(db)); renderHome(); };
+    const save = () => { localStorage.setItem('eb_v10_mobile', JSON.stringify(db)); renderHome(); };
     const toBase64 = f => new Promise(r => { if(!f) r(""); else { const rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(f); } });
 
-    // 管理中心功能
-    async function handleNew() {
-        const typeRaw = document.getElementById('adm-type').value;
-        const img = await toBase64(document.getElementById('adm-file').files[0]);
-        const data = { id: Date.now(), n: document.getElementById('adm-name').value, t: document.getElementById('adm-txt').value, i: img, date: new Date().toLocaleDateString() };
-        
-        if(typeRaw.startsWith('work_')) { data.cat = typeRaw.split('_')[1]; db.works.unshift(data); }
-        else if(typeRaw === 'tl') db.timeline.unshift(data);
-        else if(typeRaw === 'coll') db.colls.unshift(data);
-        else if(typeRaw === 'diary') db.diaries.unshift(data);
-        
-        save(); renderManageList(); alert("發布完成！");
-    }
-
-    async function updateSystem() {
-        const who = document.getElementById('adm-p-who').value;
-        const bio = document.getElementById('adm-p-bio').value;
-        const born = document.getElementById('adm-born').value;
-        const meet = document.getElementById('adm-meet').value;
-        const img = await toBase64(document.getElementById('adm-p-file').files[0]);
-
-        if(bio) db.profiles[who].bio = bio;
-        if(img) db.profiles[who].img = img;
-        if(born) db.settings.born = born;
-        if(meet) db.settings.meet = meet;
-        save(); alert("系統與名牌已更新！");
-    }
-
-    function renderManageList() {
-        const container = document.getElementById('adm-list-render');
-        const items = [
-            ...db.timeline.map(x=>({...x, l:'軌跡', ty:'timeline'})),
-            ...db.works.map(x=>({...x, l:'作品', ty:'works'})),
-            ...db.colls.map(x=>({...x, l:'珍藏', ty:'colls'})),
-            ...db.diaries.map(x=>({...x, l:'日記', ty:'diaries'}))
-        ];
-        container.innerHTML = items.map(i => `
-            <div class="pop-list-item">
-                <span><b>[${i.l}]</b> ${i.n || i.t.substring(0,10)}</span>
-                <button onclick="delData('${i.ty}', ${i.id})" style="color:red; border:none; background:none; font-weight:800;">✕</button>
-            </div>
-        `).join('') || "目前無任何發布內容。";
-    }
-
-    function delData(ty, id) { if(confirm("確定刪除？")) { db[ty] = db[ty].filter(x => x.id !== id); save(); renderManageList(); } }
-
-    // 行程系統
-    function renderCal() {
-        const y = viewDate.getFullYear(), m = viewDate.getMonth();
-        document.getElementById('cal-year').value = y; document.getElementById('cal-month').value = m;
-        const first = new Date(y, m, 1).getDay(), days = new Date(y, m+1, 0).getDate();
-        let h = ['日','一','二','三','四','五','六'].map(d => `<div style="text-align:center; padding:10px; font-size:0.7rem; color:#bbb;">${d}</div>`).join('');
-        for(let i=0; i<first; i++) h += `<div></div>`;
-        for(let d=1; d<=days; d++) {
-            const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const evs = db.plans.filter(p => p.date === ds);
-            h += `<div class="cal-day" onclick="showPop('${ds}')"><b>${d}</b>${evs.map(e => `<span class="ev-tag tag-${e.who}">${e.txt}</span>`).join('')}</div>`;
-        }
-        document.getElementById('cal-body').innerHTML = h;
-    }
-
-    function showPop(d) {
-        document.getElementById('pop-date').innerText = d;
-        const evs = db.plans.filter(p => p.date === d);
-        document.getElementById('pop-list').innerHTML = evs.map((e, i) => `
-            <div class="pop-list-item">
-                <span><span class="ev-tag tag-${e.who}" style="display:inline;">${e.who.toUpperCase()}</span> ${e.txt}</span>
-                <button onclick="delPlan('${d}',${i})" style="color:red; border:none; background:none;">✕</button>
-            </div>
-        `).join('') || "<div style='color:#ccc; text-align:center;'>今天暫時沒有行程～</div>";
-        document.getElementById('day-pop').style.display = 'block';
-    }
-
-    function quickAddPlan() {
-        const d = document.getElementById('pop-date').innerText, w = document.getElementById('pop-who').value, t = document.getElementById('pop-new-ev').value;
-        if(!t) return alert("請輸入行程內容");
-        db.plans.push({ date: d, who: w, txt: t });
-        document.getElementById('pop-new-ev').value = ''; save(); renderCal(); showPop(d);
-    }
-
-    function delPlan(d, idx) { db.plans = db.plans.filter((p, i) => !(p.date === d && i === idx)); save(); renderCal(); showPop(d); }
-
-    // 頁面渲染邏輯
-    function openM(id, btn) {
-        closeAll(); document.getElementById(id).classList.add('active');
-        if(btn) btn.classList.add('active-tab');
-        if(id === 'm-plans') renderCal();
-        if(id === 'm-profile') renderProfile('emi');
-        if(id === 'm-works') filterWorks('all');
-        if(id === 'm-timeline') document.getElementById('tl-render').innerHTML = db.timeline.map(t => `<div style="margin-bottom:30px; border-left:4px solid var(--emi); padding-left:20px; position:relative;"><small style="color:#aaa;">${t.date}</small><br><b>${t.n}</b><p>${t.t}</p>${t.i?`<img src="${t.i}" style="width:100%; border-radius:15px; margin-top:10px;">`:''}</div>`).join('') || "等待記錄第一份回憶...";
-        if(id === 'm-coll') document.getElementById('coll-render').innerHTML = db.colls.map(c => `<div class="item-card"><img src="${c.i}"><div class="item-info"><span class="item-n">${c.n}</span></div></div>`).join('') || "圖庫暫無內容";
-        if(id === 'm-diary') document.getElementById('diary-render').innerHTML = db.diaries.map(d => `<div style="background:#fff9f9; padding:25px; border-radius:25px; margin-bottom:20px; border:1px solid #ffebeb;"><small style="color:var(--any); font-weight:800;">${d.date}</small><h3 style="margin:10px 0;">${d.n}</h3><p style="line-height:1.6;">${d.t}</p>${d.i?`<img src="${d.i}" style="width:100%; border-radius:15px; margin-top:15px;">`:''}</div>`).join('') || "這裡寫下的都是悄悄話...";
-        if(id === 'm-admin') {
-            document.getElementById('adm-born').value = db.settings.born;
-            document.getElementById('adm-meet').value = db.settings.meet;
-            renderManageList();
-        }
-    }
-
-    function filterWorks(cat, btn) {
-        if(btn) { document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-        const list = cat === 'all' ? db.works : db.works.filter(w => w.cat === cat);
-        const map = { movie: '影視錄像', music: '音樂單曲', show: '現場演出' };
-        document.getElementById('w-render').innerHTML = list.map(w => `<div class="item-card"><img src="${w.i || 'https://via.placeholder.com/300x200'}"><div class="item-info"><span class="item-cat">${map[w.cat] || '作品'}</span><span class="item-n">${w.n}</span><p style="font-size:0.8rem; color:#888; margin-top:8px;">${w.t}</p></div></div>`).join('') || "作品集備妥中...";
-    }
-
-    function renderProfile(who) {
+    // 1. 名牌介紹與撰寫功能
+    async function renderProfile(who) {
         const p = db.profiles[who];
         document.getElementById('p-render').innerHTML = `
-            <div style="text-align:center; padding:40px;">
-                <img src="${p.img || 'https://via.placeholder.com/200'}" style="width:150px; height:150px; border-radius:75px; object-fit:cover; border:5px solid var(--${who}); box-shadow:0 15px 30px rgba(0,0,0,0.1);">
-                <h1 style="color:var(--${who}); font-size:2.2rem; margin-top:20px;">${who.toUpperCase()}</h1>
-                <div style="background:#fcfcfc; padding:25px; border-radius:25px; margin:20px; line-height:1.8;">${p.bio}</div>
+            <div style="text-align:center;">
+                <img src="${p.img || 'https://via.placeholder.com/150'}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:4px solid var(--${who});">
+                <div class="upload-btn" style="padding:10px; font-size:0.8rem;" onclick="document.getElementById('p-img-in').click()">更換頭像
+                    <input type="file" id="p-img-in" hidden accept="image/*" onchange="updatePImg('${who}')">
+                </div>
+                <h2 style="color:var(--${who}); margin:10px 0;">${who.toUpperCase()}</h2>
+                <textarea id="p-bio-in" class="edit-input" rows="5" placeholder="輸入個人簡介...">${p.bio}</textarea>
+                <button class="btn-action" onclick="saveP('${who}')">儲存名牌內容</button>
             </div>`;
     }
 
-    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab')); }
-    function jumpDate() { viewDate = new Date(document.getElementById('cal-year').value, document.getElementById('cal-month').value, 1); renderCal(); }
-    function changeMonth(s) { viewDate.setMonth(viewDate.getMonth()+s); renderCal(); }
-    
+    async function updatePImg(who) {
+        const file = document.getElementById('p-img-in').files[0];
+        if(file) { db.profiles[who].img = await toBase64(file); save(); renderProfile(who); }
+    }
+
+    function saveP(who) {
+        db.profiles[who].bio = document.getElementById('p-bio-in').value;
+        save(); alert("名牌已更新！");
+    }
+
+    // 2. 拍立得渲染 (左往右)
+    function renderWorks() {
+        const container = document.getElementById('w-render');
+        container.innerHTML = db.works.map(w => `
+            <div class="polaroid" style="--r:${Math.random()*6-3}" onclick="showDetail('works', ${w.id})">
+                <img src="${w.i}">
+                <div class="polaroid-label">${w.n}</div>
+            </div>
+        `).join('') || "<p style='padding:20px; color:#ccc;'>尚無作品</p>";
+    }
+
+    // 3. 階梯式渲染 (軌跡/珍藏)
+    function renderStep(type, target) {
+        const container = document.getElementById(target);
+        container.innerHTML = db[type].map(item => `
+            <div class="tl-item" onclick="showDetail('${type}', ${item.id})">
+                <div class="tl-dot"></div>
+                <div class="tl-card">
+                    <b style="font-size:0.8rem; color:var(--emi);">${item.date}</b>
+                    <div style="font-weight:800; margin:5px 0;">${item.n}</div>
+                    ${item.i ? `<img src="${item.i}">` : ''}
+                </div>
+            </div>
+        `).join('') || "<p style='padding:20px; color:#ccc;'>等待添加回憶</p>";
+    }
+
+    // 4. 年鑑日記系統
+    function renderDiary() {
+        const shelf = document.getElementById('diary-shelf');
+        const years = [...new Set(db.diaries.map(d => d.date.substring(0,4)))].sort().reverse();
+        shelf.innerHTML = years.map(y => `<div class="book" onclick="openBook('${y}')">${y}年</div>`).join('') || "<p>尚無年鑑</p>";
+    }
+
+    function openBook(year) {
+        document.getElementById('diary-shelf').style.display = 'none';
+        document.getElementById('diary-pages').style.display = 'block';
+        const list = db.diaries.filter(d => d.date.startsWith(year));
+        document.getElementById('pages-render').innerHTML = list.map(d => `
+            <div class="tl-card" style="margin-bottom:15px;" onclick="showDetail('diaries', ${d.id})">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <b>${d.date}</b>
+                    <span style="font-size:0.8rem; background:#eee; padding:2px 8px; border-radius:10px;">閱讀日記</span>
+                </div>
+                <div style="margin-top:10px; color:#666;">${d.n}</div>
+            </div>
+        `).join('');
+    }
+
+    function backToShelf() {
+        document.getElementById('diary-shelf').style.display = 'flex';
+        document.getElementById('diary-pages').style.display = 'none';
+    }
+
+    // 詳情與刪除
+    function showDetail(type, id) {
+        const item = db[type].find(x => x.id === id);
+        if(!item) return;
+        document.getElementById('det-title').innerText = item.n || "記憶詳情";
+        document.getElementById('det-date').innerText = item.date;
+        document.getElementById('det-txt').innerText = item.t;
+        document.getElementById('det-img').src = item.i || "";
+        document.getElementById('det-img').style.display = item.i ? "block" : "none";
+        document.getElementById('det-del-btn').onclick = () => {
+            if(confirm("確定刪除這段記憶嗎？")) {
+                db[type] = db[type].filter(x => x.id !== id);
+                save(); closeDetail(); openM(getModalId(type));
+            }
+        };
+        document.getElementById('detail-view').style.display = 'flex';
+    }
+
+    function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
+    function getModalId(type) {
+        const map = { works: 'm-works', timeline: 'm-timeline', colls: 'm-coll', diaries: 'm-diary' };
+        return map[type];
+    }
+
+    // 發布功能
+    async function handleNew() {
+        const type = document.getElementById('adm-type').value;
+        const img = await toBase64(document.getElementById('adm-file').files[0]);
+        const name = document.getElementById('adm-name').value;
+        const date = document.getElementById('adm-date').value;
+        const txt = document.getElementById('adm-txt').value;
+
+        if(!name || !date) return alert("標題與日期為必填！");
+
+        db[type].unshift({ id: Date.now(), n: name, date: date, t: txt, i: img });
+        db[type].sort((a,b) => new Date(b.date) - new Date(a.date));
+        save();
+        alert("記憶已收藏！");
+        // 清空輸入
+        document.getElementById('adm-name').value = "";
+        document.getElementById('adm-txt').value = "";
+        document.getElementById('file-status').innerText = "點擊開啟相簿";
+    }
+
+    // 基礎開關邏輯
+    function openM(id, btn) {
+        closeAll();
+        document.getElementById(id).classList.add('active');
+        if(btn) btn.classList.add('active-tab');
+        if(id === 'm-profile') renderProfile('emi');
+        if(id === 'm-works') renderWorks();
+        if(id === 'm-timeline') renderStep('timeline', 'tl-render');
+        if(id === 'm-coll') renderStep('colls', 'coll-render');
+        if(id === 'm-diary') { backToShelf(); renderDiary(); }
+    }
+
+    function closeAll() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab'));
+        closeDetail();
+    }
+
     function renderHome() {
         const calc = d => Math.floor((new Date() - new Date(d)) / 86400000);
         document.getElementById('d1').innerText = Math.max(0, calc(db.settings.born));
         document.getElementById('d2').innerText = Math.max(0, calc(db.settings.meet));
     }
 
-    window.onload = () => {
-        const yS = document.getElementById('cal-year'), mS = document.getElementById('cal-month');
-        for(let y=2024; y<=2026; y++) yS.add(new Option(y+'年', y));
-        for(let m=1; m<=12; m++) mS.add(new Option(m+'月', m-1));
-        
-        const layer = document.getElementById('butterfly-layer');
-        for(let i=0; i<20; i++){
-            const b = document.createElement('div'); b.className = 'butterfly-bg'; b.innerHTML = '🦋';
-            b.style.left = Math.random()*95+'%'; b.style.top = Math.random()*95+'%';
-            b.style.fontSize = (12 + Math.random()*15) + 'px';
-            layer.appendChild(b);
-        }
-        renderHome();
-    };
+    window.onload = renderHome;
 </script>
 </body>
 </html>
+
 
