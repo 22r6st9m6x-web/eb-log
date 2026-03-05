@@ -14,227 +14,43 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: -apple-system, "PingFang TC", sans-serif; color: #333; }
         
-        /* 首頁大標題：確保使用漸變色 */
-        .home-hero { position: fixed; top: 18%; width: 100%; text-align: center; z-index: 1; padding: 0 20px; }
+        /* 首頁 */
+        .home-hero { position: fixed; top: 15%; width: 100%; text-align: center; z-index: 1; padding: 0 20px; transition: 0.5s; }
         .main-title { 
-            font-size: 4rem; 
-            font-weight: 900; 
-            background: var(--grad); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            margin: 0 0 40px 0; 
-            display: inline-block;
+            font-size: 3.5rem; font-weight: 900; background: var(--grad); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            margin: 0 0 30px 0; display: inline-block;
         }
 
-        /* 原始 D-Day 框框 */
-        .dday-box { display: flex; justify-content: center; gap: 15px; }
+        .dday-box { display: flex; justify-content: center; gap: 12px; }
         .dday-item {
-            background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); padding: 25px 20px;
-            border-radius: 20px 60px 20px 60px; border: 2px solid transparent;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); padding: 20px 15px;
+            border-radius: 20px 50px 20px 50px; border: 2px solid transparent;
             background-image: linear-gradient(white, white), var(--grad);
             background-origin: border-box; background-clip: padding-box, border-box;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08); min-width: 130px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); min-width: 140px;
         }
 
-        /* 導航欄與首頁按鈕 */
-        .nav-container { position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 92%; max-width: 650px; }
-        .main-nav { background: var(--glass); padding: 10px; border-radius: 40px; backdrop-filter: blur(30px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; border: 1px solid rgba(255,255,255,0.8); }
-        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 800; color: #666; padding: 12px 18px; flex-shrink: 0; cursor: pointer; }
+        /* 導航 */
+        .nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 92%; max-width: 600px; }
+        .main-nav { background: var(--glass); padding: 8px; border-radius: 40px; backdrop-filter: blur(30px); box-shadow: 0 15px 40px rgba(0,0,0,0.15); display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; border: 1px solid rgba(255,255,255,0.8); }
+        .main-nav::-webkit-scrollbar { display: none; }
+        .nav-btn { background: transparent; border: none; font-size: 0.9rem; font-weight: 800; color: #888; padding: 12px 18px; flex-shrink: 0; cursor: pointer; transition: 0.3s; }
         .nav-btn.active-tab { color: var(--emi); transform: scale(1.1); }
 
-        /* 分頁設定 */
-        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1); overflow-y: auto; padding-bottom: 150px; }
+        /* 模態視窗 */
+        .modal { position: fixed; inset: 0; background: #fff; z-index: 500; transform: translateY(100%); transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1); overflow-y: auto; padding-bottom: 120px; }
         .modal.active { transform: translateY(0); }
-        .header { position: sticky; top: 0; background: rgba(255,255,255,0.98); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #f0f0f0; backdrop-filter: blur(10px); }
+        .header { position: sticky; top: 0; background: rgba(255,255,255,0.98); padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; border-bottom: 1px solid #f0f0f0; backdrop-filter: blur(10px); }
         
-        /* 拍立得排版 */
+        /* 拍立得 */
         .polaroid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .polaroid { background: #fff; padding: 10px 10px 30px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transform: rotate(calc(var(--r) * 1deg)); border: 1px solid #eee; }
-        .polaroid img { width: 100%; height: 150px; object-fit: cover; }
-
-        /* 階梯式排版 */
-        .step-container { position: relative; padding: 20px; }
-        .step-line { position: absolute; left: 50%; width: 2px; background: #eee; height: 100%; transform: translateX(-50%); }
-        .step-item { width: 45%; margin-bottom: 30px; position: relative; }
-        .step-item.left { float: left; text-align: right; }
-        .step-item.right { float: right; text-align: left; }
-        .step-card { background: #fff; padding: 10px; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .step-card img { width: 100%; border-radius: 10px; }
-
-        /* 年鑑日記與新增框 */
-        .book { min-width: 120px; height: 170px; background: var(--bonnie); color: #fff; border-radius: 5px 15px 15px 5px; display: flex; align-items: center; justify-content: center; font-weight: 900; box-shadow: 5px 10px 15px rgba(0,0,0,0.1); }
-        .add-box { background: #f9f9f9; padding: 15px; margin: 15px; border-radius: 15px; display: none; }
-        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 10px; }
-        .btn-action { background: var(--grad); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
-
-        /* 詳情頁 */
-        .detail-pop { position: fixed; inset: 0; background: #fff; z-index: 2000; display: none; flex-direction: column; }
-    </style>
-</head>
-<body>
-
-<div class="home-hero">
-    <h1 class="main-title">EmiBonnie</h1>
-    <div class="dday-box">
-        <div class="dday-item"><div>蝴蝶誕生</div><span id="d1" style="font-size:2.5rem; font-weight:900; color:var(--emi);">0</span><small> Days</small></div>
-        <div class="dday-item"><div>與你相遇</div><span id="d2" style="font-size:2.5rem; font-weight:900; color:var(--bonnie);">0</span><small> Days</small></div>
-    </div>
-</div>
-
-<div class="nav-container">
-    <nav class="main-nav">
-        <div style="padding:0 15px; font-size:1.5rem; cursor:pointer;" onclick="closeAll()">🦋</div>
-        <button class="nav-btn" onclick="openM('m-profile', this)">名牌編輯</button>
-        <button class="nav-btn" onclick="openM('m-works', this)">官方作品</button>
-        <button class="nav-btn" onclick="openM('m-timeline', this)">成長軌跡</button>
-        <button class="nav-btn" onclick="openM('m-coll', this)">珍藏圖庫</button>
-        <button class="nav-btn" onclick="openM('m-diary', this)">翻頁日記</button>
-    </nav>
-</div>
-
-<div id="m-works" class="modal">
-    <div class="header"><b>官方作品 (拍立得)</b><span onclick="toggleAdd('add-w')">＋ 新增</span><span onclick="closeAll()">✕</span></div>
-    <div id="add-w" class="add-box">
-        <input type="text" id="w-n" placeholder="標題">
-        <input type="date" id="w-d">
-        <textarea id="w-t" placeholder="內容"></textarea>
-        <input type="file" id="w-f" accept="image/*">
-        <button class="btn-action" onclick="addItem('works', 'w')">發布作品</button>
-    </div>
-    <div class="polaroid-grid" id="w-render"></div>
-</div>
-
-<div id="m-timeline" class="modal">
-    <div class="header"><b>成長軌跡</b><span onclick="toggleAdd('add-tl')">＋ 新增</span><span onclick="closeAll()">✕</span></div>
-    <div id="add-tl" class="add-box">
-        <input type="text" id="tl-n" placeholder="標題">
-        <input type="date" id="tl-d">
-        <textarea id="tl-t" placeholder="細節"></textarea>
-        <input type="file" id="tl-f" accept="image/*">
-        <button class="btn-action" onclick="addItem('timeline', 'tl')">新增軌跡</button>
-    </div>
-    <div class="step-container"><div class="step-line"></div><div id="tl-render"></div></div>
-</div>
-
-<div id="m-coll" class="modal">
-    <div class="header"><b>珍藏圖庫</b><span onclick="toggleAdd('add-cl')">＋ 新增</span><span onclick="closeAll()">✕</span></div>
-    <div id="add-cl" class="add-box">
-        <input type="text" id="cl-n" placeholder="主題">
-        <input type="date" id="cl-d">
-        <textarea id="cl-t" placeholder="描述"></textarea>
-        <input type="file" id="cl-f" accept="image/*">
-        <button class="btn-action" onclick="addItem('colls', 'cl')">存入圖庫</button>
-    </div>
-    <div class="step-container"><div class="step-line"></div><div id="cl-render"></div></div>
-</div>
-
-<div id="m-diary" class="modal">
-    <div class="header"><b>翻頁日記</b><span onclick="toggleAdd('add-dy')">＋ 寫日記</span><span onclick="closeAll()">✕</span></div>
-    <div id="add-dy" class="add-box">
-        <input type="text" id="dy-n" placeholder="日記主題">
-        <input type="date" id="dy-d">
-        <textarea id="dy-t" placeholder="心情內容..."></textarea>
-        <input type="file" id="dy-f" accept="image/*">
-        <button class="btn-action" onclick="addItem('diaries', 'dy')">封存日記</button>
-    </div>
-    <div class="diary-shelf" id="shelf-render"></div>
-    <div id="diary-list" style="display:none; padding:20px;">
-        <button onclick="backToShelf()" style="border:none; background:none; color:var(--emi); font-weight:bold;">← 返回書架</button>
-        <div id="pages-render" style="margin-top:20px;"></div>
-    </div>
-</div>
-
-<div id="m-profile" class="modal">
-    <div class="header"><b>蝴蝶名牌修改</b><span onclick="closeAll()">✕</span></div>
-    <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
-        <button class="nav-btn" onclick="renderProfile('emi')">Emi</button>
-        <button class="nav-btn" onclick="renderProfile('bonnie')">Bonnie</button>
-        <button class="nav-btn" onclick="renderProfile('any')">Any</button>
-    </div>
-    <div id="p-render" style="padding:20px;"></div>
-</div>
-
-<div id="detail-pop" class="detail-pop">
-    <div class="header"><b id="det-n">詳情</b><span onclick="this.parentElement.parentElement.style.display='none'">✕</span></div>
-    <div style="padding:20px; overflow-y:auto;">
-        <img id="det-i" style="width:100%; border-radius:15px;">
-        <p id="det-d" style="color:#aaa;"></p>
-        <p id="det-t" style="line-height:1.7; white-space: pre-wrap;"></p>
-        <button class="btn-action" style="background:#ff4757; margin-top:30px;" id="det-del">刪除此內容</button>
-    </div>
-</div>
-
-<script>
-    let db = JSON.parse(localStorage.getItem('eb_v12_final')) || {
-        profiles: { emi: { bio: "橘色蝴蝶介紹...", img: "" }, bonnie: { bio: "紫色蝴蝶介紹...", img: "" }, any: { bio: "粉色蝴蝶介紹...", img: "" } },
-        settings: { born: "2024-01-01", meet: "2024-05-20" },
-        timeline: [], works: [], colls: [], diaries: []
-    };
-
-    const save = () => { localStorage.setItem('eb_v12_final', JSON.stringify(db)); renderHome(); };
-    const toBase64 = f => new Promise(r => { if(!f) r(""); else { const rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(f); } });
-
-    function toggleAdd(id) { const el = document.getElementById(id); el.style.display = el.style.display==='block' ? 'none' : 'block'; }
-    async function addItem(type, pre) {
-        const n=document.getElementById(pre+'-n').value, d=document.getElementById(pre+'-d').value, t=document.getElementById(pre+'-t').value, f=document.getElementById(pre+'-f').files[0];
-        if(!n || !d) return alert("請填寫標題與日期");
-        db[type].unshift({ id: Date.now(), n, date: d, t, i: await toBase64(f) });
-        db[type].sort((a,b) => new Date(b.date) - new Date(a.date));
-        save(); toggleAdd('add-'+pre); openM(document.querySelector('.modal.active').id);
-    }
-
-    function showDet(type, id) {
-        const item = db[type].find(x => x.id === id);
-        document.getElementById('det-n').innerText = item.n;
-        document.getElementById('det-d').innerText = item.date;
-        document.getElementById('det-t').innerText = item.t;
-        document.getElementById('det-i').src = item.i || "";
-        document.getElementById('det-del').onclick = () => { if(confirm("確定刪除？")){ db[type]=db[type].filter(x=>x.id!==id); save(); document.getElementById('detail-pop').style.display='none'; openM(document.querySelector('.modal.active').id); } };
-        document.getElementById('detail-pop').style.display = 'flex';
-    }
-
-    async function renderProfile(who) {
-        const p = db.profiles[who];
-        document.getElementById('p-render').innerHTML = `<div style="text-align:center;"><img src="${p.img || ''}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:4px solid var(--${who});"><input type="file" id="p-img" accept="image/*" onchange="upPImg('${who}')" style="margin-top:10px;"><textarea id="p-bio" rows="4" style="margin-top:15px;">${p.bio}</textarea><button class="btn-action" onclick="saveP('${who}')">儲存修改</button></div>`;
-    }
-    async function upPImg(who) { const f = document.getElementById('p-img').files[0]; if(f) { db.profiles[who].img = await toBase64(f); save(); renderProfile(who); } }
-    function saveP(who) { db.profiles[who].bio = document.getElementById('p-bio').value; save(); alert("儲存成功"); }
-
-    function renderWorks() {
-        document.getElementById('w-render').innerHTML = db.works.map(w => `<div class="polaroid" style="--r:${Math.random()*6-3}" onclick="showDet('works', ${w.id})"><img src="${w.i}"><div style="text-align:center;font-weight:bold;font-size:0.75rem;margin-top:10px;">${w.n}<br><small>${w.date}</small></div></div>`).join('');
-    }
-    function renderStep(type, target) {
-        document.getElementById(target).innerHTML = db[type].map((item, i) => `<div class="step-item ${i%2===0?'left':'right'}" onclick="showDet('${type}', ${item.id})"><div class="step-card"><b>${item.n}</b><br><small>${item.date}</small>${item.i?`<img src="${item.i}">`:''}</div></div>`).join('') + `<div style="clear:both;"></div>`;
-    }
-    function renderDiary() {
-        const years = [...new Set(db.diaries.map(d => d.date.substring(0,4)))].sort().reverse();
-        document.getElementById('shelf-render').innerHTML = years.map(y => `<div class="book" onclick="openBook('${y}')">${y}年</div>`).join('');
-    }
-    function openBook(y) {
-        document.getElementById('shelf-render').style.display='none'; document.getElementById('diary-list').style.display='block';
-        document.getElementById('pages-render').innerHTML = db.diaries.filter(d => d.date.startsWith(y)).map(d => `<div class="step-card" style="margin-bottom:10px;" onclick="showDet('diaries', ${d.id})"><b>${d.date}</b><br>${d.n}</div>`).join('');
-    }
-    function backToShelf() { document.getElementById('shelf-render').style.display='flex'; document.getElementById('diary-list').style.display='none'; }
-
-    function openM(id, btn) {
-        closeAll(); document.getElementById(id).classList.add('active');
-        if(btn) btn.classList.add('active-tab');
-        if(id==='m-works') renderWorks();
-        if(id==='m-timeline') renderStep('timeline', 'tl-render');
-        if(id==='m-coll') renderStep('colls', 'cl-render');
-        if(id==='m-diary') { backToShelf(); renderDiary(); }
-        if(id==='m-profile') renderProfile('emi');
-    }
-    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab')); }
-    function renderHome() {
-        const calc = d => Math.floor((new Date() - new Date(d)) / 86400000);
-        document.getElementById('d1').innerText = Math.max(0, calc(db.settings.born));
-        document.getElementById('d2').innerText = Math.max(0, calc(db.settings.meet));
-    }
-    window.onload = renderHome;
+        .polaroid { background: #fff; padding: 10px 10px 25px 10px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); border: 1px solid #eee; transition: 0.3s; }
+        .polaroid img { width: 100
 </script>
 </body>
 </html>
+
 
 
 
